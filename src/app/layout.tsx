@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@/components/analytics";
 import { ImageDragGuard } from "@/components/image-drag-guard";
 
 const inter = Inter({
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ImageDragGuard />
         {children}
+        <Analytics />
       </body>
     </html>
   );

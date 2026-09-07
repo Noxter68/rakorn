@@ -17,7 +17,8 @@
   "dependencies": {
     "next": "16.2.12",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "resend": "^6.26.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -26,9 +27,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
-    "tailwindcss": "^4",
-    "typescript": "^5",
     "playwright": "^1.62.1",
-    "sharp": "^0.34.5"
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

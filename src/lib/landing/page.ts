@@ -6,13 +6,14 @@
 /**
  * Où mènent les boutons.
  *
- * La vitrine et le jeu ne vivent pas au même endroit : deux ports en local,
- * deux domaines le jour où cette app partira dans son dépôt. Les liens ne
- * peuvent donc pas être des routes internes — `next/link` les résoudrait ici,
- * où ni `/register` ni `/login` n'existent, et le visiteur tomberait sur un 404
- * au seul endroit de la page où il a dit oui.
+ * Nulle part, désormais : ils descendent à `#final`, où l'on demande une
+ * adresse. Ils ont pointé vers le `/register` du jeu tant qu'on a cru pouvoir
+ * ouvrir tout de suite — mais un bouton « Jouer » qui mène à un jeu fermé
+ * dépense, en une seconde, la confiance que neuf scènes viennent de bâtir. Il
+ * n'y a donc plus de lien sortant, et plus de `NEXT_PUBLIC_JEU_URL` : le jour
+ * de l'ouverture, on rebranchera les trois `href` sur le jeu, ce qui est une
+ * ligne par bouton.
  */
-export const JEU_URL = process.env.NEXT_PUBLIC_JEU_URL ?? "http://localhost:3000";
 
 /** L'emblème, muet — les deux planches gravées portent l'ancien nom du jeu. */
 export const EMBLEME = "/game/UI/icons/logo/rakorn-logo.avif";
@@ -54,7 +55,7 @@ export const HERO = {
     "Un jeu de rôle d'artisanat et de commerce, dans votre navigateur, sans rien à installer. Huit métiers à monter, cent vingt créatures à vaincre au tour par tour, une cité à bâtir avec votre guilde.",
     "Et une économie qui vous appartient : chaque matière a été extraite par un joueur, chaque pièce forgée par un autre, et c'est vous qui fixez vos prix.",
   ],
-  action: "Entrer dans Rakorn",
+  action: "Rejoindre la bêta",
   actionSecondaire: "Découvrir",
 };
 
@@ -142,6 +143,26 @@ export const FINAL = {
   titre: "Commencez avec presque rien.",
   accent: "Bâtissez tout le reste.",
   texte:
-    "Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Aucune installation, aucun abonnement : vous créez votre personnage et vous êtes dans Rakorn en une minute.",
-  action: "Créer mon personnage",
+    "Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre bientôt en bêta : laissez votre adresse, et vous serez prévenu le jour où la vallée s'ouvre.",
+  action: "Rejoindre la bêta",
+};
+
+/**
+ * Ce que dit la fenêtre d'inscription.
+ *
+ * Elle répète le titre du bouton qu'on vient de presser — c'est voulu : une
+ * fenêtre qui s'ouvre sur un autre titre que celui qu'on a cliqué donne une
+ * demi-seconde de doute sur ce qu'on est en train de faire, et c'est une
+ * demi-seconde de trop au moment de donner son adresse.
+ */
+export const BETA = {
+  titre: "Rejoindre la bêta",
+  texte:
+    "Rakorn ouvre bientôt ses portes à un premier groupe de joueurs. Laissez votre adresse : vous serez prévenu le jour où la vallée s'ouvre.",
+  action: "Je m'inscris",
+  /* Sous le champ, en permanence. Dire ce qu'on fera de l'adresse coûte une
+     ligne et lève la seule question que se pose quelqu'un qui hésite à la
+     donner — bien plus efficacement qu'une case à cocher, qui pose la
+     question sans y répondre. */
+  mention: "Une adresse, un seul message le jour de l'ouverture. Rien d'autre.",
 };

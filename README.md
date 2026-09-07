@@ -2,14 +2,35 @@
 
 La vitrine de Rakorn : neuf scènes plein écran, montées sur les assets du jeu.
 
-Elle ne dépend de rien — ni API, ni session, ni `@rpg/shared` — et rend
-entièrement en statique. Elle vivait dans le monorepo du jeu, le temps
+Elle ne dépend ni du jeu, ni d'une session, ni de `@rpg/shared`, et ses onze
+scènes rendent en statique. Elle vivait dans le monorepo du jeu, le temps
 d'arrêter sa forme ; elle en est sortie et n'y revient pas.
+
+Une seule route est dynamique, `/api/beta` : l'inscription à la bêta, qui
+dépose l'adresse dans une audience Resend et renvoie un accusé de réception.
+C'est la seule chose que la page demande, et le seul secret qu'elle détienne.
 
 ```bash
 pnpm install
-pnpm dev                # http://localhost:3002
+cp .env.example .env.local   # les clés Resend, et rien d'autre
+pnpm dev                     # http://localhost:3002
 ```
+
+## L'inscription
+
+Trois boutons — la barre du haut, l'ouverture, la clôture — ouvrent la même
+fenêtre, montée une seule fois au pied de `page.tsx`. Aucun ne mène au jeu :
+tant que la bêta n'est pas ouverte, un bouton « Jouer » dépense en une seconde
+la confiance que neuf scènes viennent de bâtir. Le jour venu, on rebranche les
+trois `href` — une ligne par bouton.
+
+L'adresse est vérifiée deux fois par le même code, `lib/landing/courriel.ts` :
+dans le navigateur pour répondre sans attendre le réseau, sur le serveur parce
+qu'une requête n'a pas à passer par la page pour arriver. La vérification
+n'est pas une liste blanche de fournisseurs — elle refuserait toutes les
+adresses professionnelles, et `support@rakorn.fr` en premier. Elle écarte les
+boîtes jetables, et propose une correction quand le domaine est un fournisseur
+connu mal tapé.
 
 ## Les illustrations
 

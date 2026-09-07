@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ApercuScene } from "@/components/landing/apercu-scene";
 import { AutresScene } from "@/components/landing/autres-scene";
+import { BetaModale } from "@/components/landing/beta-modal";
 import { CampagneScene } from "@/components/landing/campagne-scene";
 import { CarteScene } from "@/components/landing/carte-scene";
 import { CombatScene } from "@/components/landing/combat-scene";
@@ -50,6 +51,9 @@ export default function LandingPage() {
         <ApercuScene />
         <FinalScene />
       </main>
+      {/* Une seule fenêtre pour les trois appels — barre du haut, ouverture,
+          clôture. Ils ne partagent rien d'autre que ce qu'ils déclenchent. */}
+      <BetaModale />
     </>
   );
 }

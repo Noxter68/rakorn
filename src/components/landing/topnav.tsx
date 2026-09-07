@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { EMBLEME, JEU_URL, NAVIGATION } from "@/lib/landing/page";
+import { EMBLEME, NAVIGATION } from "@/lib/landing/page";
+import { BetaTrigger } from "./beta-trigger";
 
 /**
  * La barre du haut, et la jauge qui court sous elle.
@@ -30,9 +31,14 @@ export function Topnav() {
               </a>
             ))}
           </div>
-          <a href={`${JEU_URL}/register`} className="rpg-lp-nav-play">
-            Jouer
-          </a>
+          {/* Le seul bouton de la barre descend au formulaire, en bas de page.
+              Il a porté le mot « jouer » tant qu'on a cru ouvrir tout de
+              suite ; ce mot est plus fort que celui-ci, et c'est exactement le
+              problème — il promettait une partie, et on n'a qu'un champ à
+              offrir. « S'inscrire » plutôt que le « Rejoindre la bêta » des
+              deux autres appels : la barre porte déjà sept liens, et c'est le
+              seul endroit de la page où trois mots en coûteraient un. */}
+          <BetaTrigger className="rpg-lp-nav-play">S&apos;inscrire</BetaTrigger>
         </div>
       </nav>
     </>

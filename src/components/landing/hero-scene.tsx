@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { CHIFFRES, EMBLEME, HERO, JEU_URL } from "@/lib/landing/page";
+import { CHIFFRES, EMBLEME, HERO } from "@/lib/landing/page";
+import { BetaTrigger } from "./beta-trigger";
 import { Scene } from "./scene";
 import { SceneBackdrop } from "./scene-backdrop";
 
@@ -56,9 +57,7 @@ export function HeroScene() {
           </div>
 
           <div className="rpg-lp-actions">
-            <a href={`${JEU_URL}/register`} className="rpg-lp-btn">
-              {HERO.action}
-            </a>
+            <BetaTrigger className="rpg-lp-btn">{HERO.action}</BetaTrigger>
             <a href="#metiers" className="rpg-lp-btn is-ghost">
               {HERO.actionSecondaire}
             </a>

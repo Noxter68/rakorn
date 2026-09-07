@@ -1,4 +1,5 @@
-import { FINAL, JEU_URL } from "@/lib/landing/page";
+import { FINAL } from "@/lib/landing/page";
+import { BetaTrigger } from "./beta-trigger";
 import { Reveal } from "./reveal";
 import { Scene } from "./scene";
 import { SceneBackdrop } from "./scene-backdrop";
@@ -11,11 +12,16 @@ import { SceneCaption } from "./scene-caption";
  * à droite. Elle a d'abord été centrée, comme l'ouverture — mais l'ouverture
  * peut se le permettre, elle n'a rien derrière elle ; une clôture centrée,
  * arrivant après sept scènes bâties sur la même ligne, se lit comme une page
- * d'un autre site. Le seul écart qu'elle garde, ce sont les deux boutons,
- * qu'on ne pouvait pas ranger ailleurs qu'au bout du texte.
+ * d'un autre site. Le seul écart qu'elle garde, c'est le dernier appel, qu'on
+ * ne pouvait pas ranger ailleurs qu'au bout du texte : c'est là qu'on a fini
+ * de lire, et donc le seul endroit où la question se pose d'elle-même.
  *
- * Ils y étaient posés en absolu, et sur un téléphone ils tombaient en travers
- * du titre. `is-pliable-etroit` les remet dans le flux, à leur place dans le
+ * Le champ, lui, a essayé de tenir ici avant de partir dans la fenêtre. Sur
+ * une vallée de nuit, un champ de saisie n'a aucun contraste à emprunter : il
+ * était là, mesurable dans le DOM, et invisible à l'œil.
+ *
+ * Il y était posé en absolu, et sur un téléphone il tombait en travers du
+ * titre. `is-pliable-etroit` le remet dans le flux, à sa place dans le
  * balisage : après le texte, avant le pied de page.
  */
 export function FinalScene() {
@@ -32,12 +38,7 @@ export function FinalScene() {
         />
 
         <Reveal delay={340} className="rpg-lp-final-actions">
-          <a href={`${JEU_URL}/register`} className="rpg-lp-btn">
-            {FINAL.action}
-          </a>
-          <a href={`${JEU_URL}/login`} className="rpg-lp-btn is-ghost">
-            J&apos;ai déjà un compte
-          </a>
+          <BetaTrigger className="rpg-lp-btn">{FINAL.action}</BetaTrigger>
         </Reveal>
 
         <footer className="rpg-lp-foot">
