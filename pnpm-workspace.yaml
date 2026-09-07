@@ -1,0 +1,11 @@
+# pnpm ne laisse plus un paquet exécuter son script d'installation sans qu'on
+# l'ait nommé. Ces deux-là en ont besoin : `sharp` va chercher le binaire natif
+# de sa plateforme, `unrs-resolver` le sien. Sans eux, `pnpm assets` n'a pas
+# d'encodeur et le lint n'a pas de résolveur.
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
+
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver

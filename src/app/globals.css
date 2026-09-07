@@ -1,0 +1,3726 @@
+@import 'tailwindcss';
+
+/* ══════════════════════════════════════════════════════════════════════════
+   La feuille de la vitrine.
+
+   Elle ne reprend du jeu que ce qu'une page publique en a besoin : la palette,
+   les deux polices, l'arrondi maison, le verre dépoli — et le bloc `rpg-lp-*`
+   de la page elle-même. Les trente mille lignes de `apps/web`, ce sont les
+   plateaux, l'inventaire, l'arène et la forge : rien de tout cela n'a de sens
+   ici, et les traîner rendrait chaque retouche de vitrine risquée pour le jeu.
+
+   Le prix de cette séparation est connu : deux fichiers à faire évoluer si la
+   palette change. Il est assumé — cette app est destinée à partir vivre dans
+   son propre dépôt, où le lien sera de toute façon coupé.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --color-parchment-50: #fdf8ec;
+  --color-parchment-100: #faf0d6;
+  --color-parchment-200: #f3e2b3;
+  --color-parchment-300: #e9cd85;
+  --color-parchment-400: #ddb35a;
+
+  --color-wood-950: #2a1a10;
+  --color-wood-900: #3a2416;
+  --color-wood-800: #4d301e;
+  --color-wood-700: #63402a;
+  --color-wood-600: #7a5236;
+
+  --color-gold-300: #f6d989;
+  --color-gold-400: #eec158;
+  --color-gold-500: #d9a441;
+  --color-gold-600: #b9822c;
+  --color-gold-700: #93641f;
+
+  /* Le bleu des Sceaux Célestes, relevé sur `money-sceau-celeste.avif` — la
+     moyenne de ses pixels franchement colorés donne #24438c, et c'est
+     `--color-sceau-700` tel quel. C'est la troisième fois que cette palette
+     change de teinte avec le dessin : une sphère violette, puis un losange
+     magenta, maintenant un parchemin scellé de bleu. Elle suit à chaque fois,
+     sans quoi la monnaie et la couleur qui l'annonce cesseraient d'être la
+     même chose.
+
+     Le sceau est serti d'or, mais l'or ne monte pas dans cette palette : tout
+     le jeu est déjà doré, et une monnaie qui s'achète doit se reconnaître sans
+     qu'on lise le chiffre. C'est le bleu qui fait ce travail.
+
+     Le halo de la marque en tient ses trois teintes — voir
+     `.rpg-met-cta-sceau-mark`, où elles sont recopiées en clair pour que la
+     transition reste interpolable. Le fond du bouton, lui, garde les gris-bleus
+     de sa planche d'ardoise : la matière et l'emblème n'ont pas à être de la
+     même teinte, et c'est même ce qui permet au second de se détacher du
+     premier. */
+  --color-sceau-200: #cfe2fb;
+  --color-sceau-300: #9cc2f2;
+  --color-sceau-500: #3d7bd4;
+  --color-sceau-700: #24438c;
+
+  --color-success-500: #5c8a3a;
+  --color-success-600: #4a7230;
+  --color-danger-500: #b3432f;
+  --color-danger-600: #942f1e;
+
+  /* Bleus-nuit du style cinématique : jusqu'ici recopiés en dur (#060a0e,
+     #120c08, rgba(6,10,14,…)) dans une quarantaine de règles. */
+  --color-night-900: #060a0e;
+  --color-night-950: #020304;
+  --color-ember-950: #120c08;
+
+  /* ── La matière des boutons ─────────────────────────────────────────────
+     Nommée ici parce qu'elle se pose à seize classes à la fois — le bloc
+     commun en fin de calque — et qu'une URL recopiée seize fois se remplace
+     quinze fois sur seize le jour où le dessin change.
+
+     Il y en avait quatre autres — `texture-btn-default`, `-premium`, `-blue`,
+     `-yellow` —, supprimées du dépôt. Les deux qui restent les remplacent
+     toutes, et les onglets et bandeaux qui empruntaient leur grain s'en
+     passent : leur voile sombre faisait déjà tout le travail. */
+  /* Les deux matières du bouton global. Contrairement aux planches ci-dessus,
+     celles-ci ne portent **aucun ornement** — de l'or battu, de l'ardoise
+     bleue, et rien d'autre. C'est ce qui leur permet de s'étirer en `cover`
+     sur n'importe quelle taille de bouton : il n'y a pas de motif à écraser.
+
+     Converties du PNG en webp : trois mégaoctets par planche pour un fond de
+     bouton faisaient six mégaoctets sur le premier écran venu.
+
+     La matière complète est nommée, et pas seulement son image, parce que la
+     plaque dorée se déclare à **deux** endroits (les seize familles, puis les
+     neuf boutons qui les ont rejointes) et le bleu à deux autres. Quatre
+     copies d'un fond à trois couches se désynchronisent le jour où l'une
+     bouge. Ordre des couches : le voile qui fait le relief, la matière, puis
+     un dégradé de repli — si le webp manque, le bouton reste un bouton. */
+  --texture-btn-gold: url("/game/UI/textures/buttons/bg-btn-texture-yellow.webp");
+  --texture-btn-sceau: url("/game/UI/textures/buttons/bg-btn-texture-blue.webp");
+  --btn-fill-gold:
+    linear-gradient(to bottom, rgba(255, 246, 214, 0.24), rgba(116, 74, 12, 0.3)),
+    var(--texture-btn-gold) center / cover no-repeat,
+    linear-gradient(to bottom, var(--color-gold-300), var(--color-gold-500));
+  --btn-fill-sceau:
+    linear-gradient(to bottom, rgba(158, 197, 236, 0.16), rgba(3, 8, 15, 0.44)),
+    var(--texture-btn-sceau) center / cover no-repeat,
+    linear-gradient(to bottom, #2c405a, #151f2d);
+
+  /* Le cadre des boutons, recomposé des huit pièces en un atlas 9-tranches.
+     Voir la règle qui l'emploie pour le pourquoi de sa géométrie. */
+  --frame-btn: url("/game/UI/frames/premium/frame-premium.webp");
+
+  /* Or translucide : la bordure fine signature du design validé. */
+  --border-gold-faint: rgba(246, 217, 137, 0.16);
+  --border-gold-soft: rgba(246, 217, 137, 0.28);
+  --border-gold-strong: rgba(246, 217, 137, 0.45);
+
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-cinzel);
+  /* Le jeu charge Geist Mono ; une vitrine n'a rien à écrire en chasse fixe,
+     et une police de plus est une police de plus à télécharger avant le
+     premier écran. La pile système fait l'affaire si `font-mono` sert un jour. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── L'arrondi du jeu ────────────────────────────────────────────────────
+     Une seule valeur pour tout ce qui a un cadre ou un bouton, et l'échelle
+     de Tailwind y est ramenée : `rounded-sm` — le seul rayon employé dans
+     presque tout le jeu — comme `-md`, `-lg`, `-xl` et `-2xl`, qui étaient
+     quatre valeurs différentes pour la même intention.
+
+     **Changer l'allure du jeu tient à cette ligne, et à elle seule.**
+
+     Le panneau de campagne l'a inspirée, mais sa valeur à lui (0,75 rem) ne
+     supporte pas d'être portée par tout : un panneau large l'absorbe, une
+     case d'inventaire de quarante pixels en devient un galet. On garde donc
+     son intention, pas son chiffre.
+
+     Ce qui reste dehors le reste par choix : `rounded-full` pour ce qui est
+     rond (pastilles, jetons), `rounded-none` pour les étiquettes de pierre,
+     que la maison veut à angles vifs, et pour les jauges de deux pixels de
+     haut, qu'un rayon ne ferait que grignoter. */
+  --rpg-radius: 0.325rem;
+  --rpg-radius-tight: 0.25rem;
+
+  --radius-xs: var(--rpg-radius-tight);
+  --radius-sm: var(--rpg-radius);
+  --radius-md: var(--rpg-radius);
+  --radius-lg: var(--rpg-radius);
+  --radius-xl: var(--rpg-radius);
+  --radius-2xl: var(--rpg-radius);
+
+  /* La colonne utile de la vitrine, et la hauteur de sa barre. Plus large que
+     les plateaux du jeu : on regarde ici, on ne manipule pas. */
+  --lp-max: 1540px;
+  --lp-nav-h: 5.125rem;
+
+  --breakpoint-3xl: 1921px;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  /* Surtout pas de `scroll-padding-top` ici. Le réflexe est de dégager la
+     hauteur de la barre pour qu'une ancre ne passe pas dessous — mais une
+     scène fait exactement une hauteur d'écran, et lui en retirer quatre-vingts
+     pixels par le haut fait tomber son titre sous le bord inférieur. La barre
+     survole le haut du décor, qui est vide de tout texte : elle n'a rien à
+     dégager. */
+}
+body {
+  background: var(--color-night-900);
+  color: var(--color-parchment-200);
+  overflow-x: hidden;
+}
+
+@layer base {
+  /* L'anneau de focus du navigateur est bleu système : il tranche sur tout ce
+     que le jeu dessine, et se posait en travers des boutons dorés. Retiré
+     partout où l'on clique. Les champs de saisie gardent le leur — c'est là
+     qu'on a besoin de savoir où le clavier écrit.
+
+     À savoir : la navigation au clavier n'aura plus de repère visible sur les
+     boutons. C'est un choix assumé, pas un oubli. */
+  button:focus,
+  button:focus-visible,
+  a:focus,
+  a:focus-visible,
+  [role='button']:focus,
+  [role='button']:focus-visible,
+  summary:focus,
+  summary:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* Les deux triangles gris d'un champ numérique sont dessinés par le système :
+     ni la police, ni la couleur, ni la bordure du jeu ne les atteignent. On les
+     retire partout et on garde `type="number"` — c'est lui qui ouvre le pavé
+     numérique sur mobile et qui borne la saisie. Les boutons − et + du
+     sélecteur de quantité font le même travail, en habillés. */
+  input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Ascenseurs : filiformes et dorés, comme les barres de progression. On ne
+     les cache pas — dans un bestiaire ou une liste d'offres, la barre est ce
+     qui annonce qu'il reste du contenu plus bas.
+     Le dessin passe par les pseudo-éléments WebKit, seuls à donner une barre
+     franche et entièrement peinte. Les propriétés standard sont réservées à
+     Firefox : posées pour tout le monde, Chrome 121+ les préfère et abandonne
+     alors le dessin ci-dessous pour son ascenseur système.
+
+     **Aucune règle de composant ne doit donc écrire `scrollbar-width` ni
+     `scrollbar-color`.** Sept d'entre elles le faisaient, avec la meilleure
+     intention — « thin » —, et rendaient à Chrome sa barre blanche en travers
+     des salles sombres, précisément là où l'or était le plus attendu.
+     `scrollbar-width: none` reste permis : il *cache*, il ne redessine pas. */
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.7);
+  }
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color-gold-500), var(--color-gold-700));
+    border-radius: 0;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--color-gold-400), var(--color-gold-600));
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-gold-600) rgba(0, 0, 0, 0.35);
+    }
+  }
+}
+
+@layer components {
+  /* ── Verre dépoli ─────────────────────────────────────────────────────
+     Un panneau qui laisse passer le décor de la page au lieu de le recouvrir
+     d'une texture.
+
+     Le repli opaque n'est pas une coquetterie — sans `backdrop-filter`, un
+     fond à 42 % laisserait le texte se poser à même l'illustration. */
+  .rpg-glass {
+    border: 1px solid var(--border-gold-soft);
+    background-color: rgba(8, 11, 16, 0.74);
+    background-image: none;
+    box-shadow: none;
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .rpg-glass {
+      background-color: rgba(8, 11, 16, 0.42);
+      backdrop-filter: blur(14px) saturate(1.1);
+    }
+  }
+}
+
+@layer components {
+  /* ══════════════════════════════════════════════════════════════════════════
+     LA VITRINE — neuf scènes, une seule règle.
+
+     Chaque section fait une hauteur d'écran, porte son décor en plein cadre,
+     et n'y pose que trois choses : des onglets discrets en haut, un titre en
+     bas à gauche, ce qu'il faut en savoir en bas à droite. Ce qui flotte au
+     milieu ne flotte que s'il démontre quelque chose — et deux scènes, la
+     campagne et le combat, n'y posent rien du tout.
+
+     Le principe est plus facile à énoncer qu'à tenir : la tentation, à chaque
+     section, est d'ajouter un panneau pour « caler » le contenu. C'est ainsi
+     qu'une vitrine devient un tableau de bord. Ici, l'espace vide est le
+     sujet — c'est l'illustration qu'on est venu voir.
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  .rpg-lp {
+    @apply flex w-full flex-col;
+    background: var(--color-night-950);
+    color: var(--color-parchment-100);
+  }
+
+  /* ── La scène ───────────────────────────────────────────────────────────── */
+  .rpg-lp-scene {
+    @apply relative flex items-stretch overflow-hidden;
+    min-height: 100svh;
+    background: var(--color-night-950);
+    /* L'échelle de la fiche d'objet, déclarée **ici** et non sur la fiche.
+       Posée sur l'élément lui-même, une propriété personnalisée bat celle
+       qu'il hérite : la forge avait beau en redéclarer une, la fiche gardait
+       la sienne, et sa mise à l'échelle n'avait aucun effet. Déclarée sur la
+       scène, chaque section peut la reprendre. */
+    --fiche-echelle: 1.2;
+  }
+  .rpg-lp-inner {
+    @apply relative z-[2] mx-auto w-full;
+    max-width: min(var(--lp-max), calc(100% - 4rem));
+    min-height: 100svh;
+  }
+
+  /* ── Le décor ───────────────────────────────────────────────────────────── */
+  /* Débordant de cinq pour cent de tous côtés : la parallaxe le déplace, et
+     sans cette réserve on verrait le bord du monde passer en haut de l'écran. */
+  .rpg-lp-backdrop {
+    @apply pointer-events-none absolute;
+    /* Trois pour cent et non cinq. Ce débord n'existe que pour cacher les bords
+       pendant la parallaxe, qui déplace le décor de dix-huit pixels : vingt-sept
+       de réserve suffisent, quarante-cinq étaient du luxe. Et ce luxe se paie en
+       netteté — les décors du jeu font mille six cent soixante-douze pixels de
+       large, et chaque pour cent de débord est un pour cent d'agrandissement de
+       plus sur un écran à double densité. */
+    inset: -3%;
+    /* La seule chose qui bouge au défilement, et elle ne bouge qu'en
+       composition — ni mise en page, ni repeinte. `--p` vaut −1 quand la scène
+       arrive, 0 quand elle est centrée, +1 quand elle sort : voir
+       `ScrollDirector`, qui l'écrit sur la section et non ici. */
+    transform: translate3d(0, calc(var(--p, 0) * 18px), 0);
+  }
+  .rpg-lp-backdrop-art {
+    @apply object-cover opacity-0;
+    /* Neuf cents millisecondes : au-dessous, le changement se voit comme une
+       coupe ; au-dessus, on attend. C'est la durée qui fait toute la
+       différence entre « le fond a changé » et « on a changé de lieu ». */
+    transition: opacity 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-backdrop-art.is-on {
+    @apply opacity-100;
+  }
+  /* Le voile porte tout le texte de la page.
+     Sombre en bas, où le titre se pose ; sombre à gauche, où la lecture
+     commence ; presque transparent au centre droit, là où l'illustration doit
+     rester visible. Sans lui, aucun mot clair ne tiendrait sur ces fonds. */
+  .rpg-lp-backdrop-veil {
+    @apply pointer-events-none absolute inset-0;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(2, 3, 4, 0.66) 0%,
+        rgba(2, 3, 4, 0.12) 22%,
+        rgba(2, 3, 4, 0.08) 50%,
+        rgba(2, 3, 4, 0.86) 84%,
+        rgba(2, 3, 4, 0.98) 100%
+      ),
+      linear-gradient(90deg, rgba(2, 3, 4, 0.62) 0%, rgba(2, 3, 4, 0.06) 52%, rgba(2, 3, 4, 0.24) 100%);
+  }
+  /* Le mur de la page Métiers, recopié du jeu.
+     Le décor n'est pas une scène peinte mais la pierre de la Maison de Maître,
+     sous les deux mêmes dégradés que `.rpg-met-stone` : une lueur dorée au
+     zénith, puis un assombrissement franc. C'est ce que la page Métiers
+     affiche réellement sous ses colonnes, et c'est ce qui permet à quatre
+     objets d'acier sombre de s'y voir.
+     Une illustration a tenu cette place, et il a fallu l'assourdir jusqu'à
+     l'éteindre pour que la surimpression se lise. Un mur, c'est exactement ce
+     qu'on lui demandait de devenir. */
+  /* Le décor du marché est une capture d'écran, pas une peinture : la
+     parallaxe la ferait dériver et le débord de cinq pour cent l'agrandirait
+     d'autant, ce qui coûte de la netteté sur du texte d'interface. Elle reste
+     immobile et à sa taille. */
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop {
+    /* Une bande libre sous la barre, où la rangée d'onglets se pose sans rien
+       recouvrir. Sans elle, nos onglets tombaient pile sur ceux du jeu, dans
+       la capture : deux rangées disant la même chose, à quarante pixels l'une
+       de l'autre. */
+    /* Plus petite qu'elle ne peut l'être, et centrée. Étirée sur toute la
+       largeur, la capture était affichée au-dessus de sa taille native et son
+       texte d'interface bavait — un écran de mille six cents pixels ne gagne
+       rien à en occuper mille huit cents. Bornée, elle est servie à l'échelle
+       un ou en dessous, et redevient nette. */
+    inset: 15% 12% 8%;
+    transform: none;
+  }
+  /* `contain` et non `cover` : une capture d'interface se montre entière ou ne
+     se montre pas. Rognée sur les côtés, c'est la colonne des catégories qui
+     part la première — celle qui prouve qu'il y a cent vingt-trois objets. */
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop-art {
+    object-fit: contain;
+    object-position: center center;
+  }
+  /* Et son voile s'allège : il est là pour porter le titre, pas pour éteindre
+     l'écran qu'on est venu montrer. Sombre en bas, où le texte se pose ;
+     presque transparent au milieu, où l'interface se lit. */
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop-veil {
+    background: linear-gradient(
+      180deg,
+      rgba(2, 3, 4, 0.08) 0%,
+      rgba(2, 3, 4, 0.06) 42%,
+      rgba(2, 3, 4, 0.55) 66%,
+      rgba(2, 3, 4, 0.93) 84%,
+      rgba(2, 3, 4, 1) 96%
+    );
+  }
+  .rpg-lp-scene.is-pierre .rpg-lp-backdrop-veil {
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(199, 154, 69, 0.07) 0%, transparent 56%),
+      linear-gradient(to bottom, rgba(5, 7, 9, 0.76) 0%, rgba(3, 5, 7, 0.9) 100%);
+  }
+
+  /* ── Les onglets ────────────────────────────────────────────────────────── */
+  /* Pas de pilules, pas de fond, pas de cadre : un mot, et un trait qui se
+     déroule sous celui qui est actif. C'est le seul ornement que la scène
+     tolère au-dessus de l'illustration. */
+  .rpg-lp-tabs {
+    @apply absolute inset-x-0 flex items-center overflow-x-auto;
+    top: 7.4rem;
+    gap: clamp(1.1rem, 2vw, 1.9rem);
+    scrollbar-width: none;
+  }
+  .rpg-lp-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .rpg-lp-tab {
+    @apply font-heading relative shrink-0 cursor-pointer border-0 bg-transparent uppercase;
+    padding: 0.625rem 0 0.875rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: rgba(236, 238, 233, 0.6);
+    /* Un décor de campagne peut être un ciel clair : sans cette ombre, la
+       rangée d'onglets y disparaît purement et simplement. */
+    text-shadow: 0 2px 14px rgba(2, 3, 4, 0.95);
+    transition: color 250ms ease;
+  }
+  .rpg-lp-tab::after {
+    content: "";
+    @apply absolute bottom-[5px] left-0 h-px;
+    right: 100%;
+    background: var(--color-gold-400);
+    transition: right 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-tab:hover,
+  .rpg-lp-tab.is-on {
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-tab.is-on::after {
+    right: 0;
+  }
+
+  /* ── Le bas de scène ────────────────────────────────────────────────────── */
+  /* Deux colonnes qui ne se rejoignent jamais : le titre à gauche, le propos à
+     droite, et quatre-vingt-dix pixels de vide entre les deux. C'est ce vide
+     qui empêche l'ensemble de se lire comme un bloc de texte posé sur une
+     image. */
+  .rpg-lp-caption {
+    @apply absolute inset-x-0 grid items-end;
+    bottom: 3.6rem;
+    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.72fr);
+    gap: clamp(2rem, 5vw, 5.6rem);
+  }
+  /* Quatre emblèmes chiffrés ne tiennent pas dans la colonne d'un paragraphe :
+     ils passaient à la ligne, et le filet du quatrième restait pendu au bout
+     du premier rang. La colonne s'élargit là où ils se posent, et nulle part
+     ailleurs. */
+  .rpg-lp-caption:has(.rpg-lp-repere-row) {
+    grid-template-columns: minmax(0, 1.02fr) minmax(23rem, 0.92fr);
+  }
+  .rpg-lp-kicker {
+    @apply font-heading uppercase;
+    margin-bottom: 0.9rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--color-gold-400);
+  }
+  .rpg-lp-title {
+    @apply font-heading m-0 text-balance font-bold;
+    /* À quatre-vingts pixels, un titre de trois mots passait sur quatre lignes
+       et remontait jusque dans la surimpression. */
+    font-size: clamp(2.4rem, 4.4vw, 4.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.012em;
+    color: var(--color-parchment-50);
+    text-shadow: 0 4px 26px rgba(0, 0, 0, 0.8);
+  }
+  .rpg-lp-gold {
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-desc {
+    @apply m-0;
+    max-width: 36rem;
+    font-size: 1rem;
+    line-height: 1.72;
+    color: rgba(243, 226, 179, 0.76);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+  }
+  .rpg-lp-meta {
+    @apply m-0 flex list-none flex-wrap p-0;
+    margin-top: 1.25rem;
+    gap: 1.1rem;
+  }
+  .rpg-lp-meta li {
+    @apply font-heading;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    color: rgba(233, 205, 133, 0.58);
+  }
+
+  /* ── La rangée d'emblèmes, sous le texte de droite ──────────────────────── */
+  /* Elle ferme les trois scènes qui portent une démonstration dense. Sous une
+     rotation de compétences ou un réseau de métiers, la ligne de mots gris
+     qu'est `.rpg-lp-meta` ne pèse plus rien : le regard quitte la page avant
+     d'avoir lu combien il y a de recettes. Un emblème, un nombre, et un filet
+     entre chacun — la fin d'une jaquette, pas une liste d'étiquettes.
+
+     Le filet est une bordure droite et non un `gap` bordé : c'est ce qui
+     permet au dernier de ne pas en porter, sans compter les éléments. */
+  .rpg-lp-repere-row {
+    @apply m-0 flex list-none flex-wrap items-center p-0;
+    margin-top: 1.5rem;
+    gap: 0 clamp(0.7rem, 1.2vw, 1.2rem);
+  }
+  .rpg-lp-repere-row li {
+    @apply flex items-center;
+    gap: 0.55rem;
+    padding-right: clamp(0.7rem, 1.2vw, 1.2rem);
+    border-right: 1px solid var(--border-gold-faint);
+  }
+  .rpg-lp-repere-row li:last-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+  .rpg-lp-repere-ico {
+    @apply relative block shrink-0;
+    width: 1.7rem;
+    aspect-ratio: 1;
+    filter: drop-shadow(0 2px 8px rgba(2, 3, 4, 0.9));
+  }
+  .rpg-lp-repere-texte b {
+    @apply font-heading block tabular-nums font-bold;
+    font-size: 1.0625rem;
+    line-height: 1.05;
+    color: var(--color-parchment-50);
+    text-shadow: 0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+  .rpg-lp-repere-texte span {
+    @apply font-heading mt-0.5 block whitespace-nowrap uppercase;
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+    color: rgba(233, 205, 133, 0.62);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 0.95);
+  }
+
+  /* ── La surimpression ───────────────────────────────────────────────────── */
+  /* Le cadre où flotte ce qui démontre : à droite du titre, au-dessus du
+     décor, et jamais sur toute la largeur. Ces bornes sont ce qui garantit
+     qu'il reste du monde à voir. */
+  .rpg-lp-stage {
+    @apply pointer-events-none absolute;
+    top: 18%;
+    right: 2%;
+    bottom: 30%;
+    left: 38%;
+  }
+  /* Les captures du jeu réclament plus de place : ce sont des écrans de mille
+     six cents pixels, et sous huit cents ils cessent d'être lisibles pour
+     devenir une texture. La scène leur cède donc sa moitié gauche, et le
+     maximum de hauteur que le bas de scène veut bien lâcher — c'est la hauteur
+     qui les bride, pas la largeur, un écran étant plus large que haut. */
+  .rpg-lp-scene.is-captures .rpg-lp-stage {
+    /* Sous la rangée d'onglets, pas par-dessus : à dix pour cent, la capture
+       commençait au-dessus d'eux et cachait le quatrième. */
+    top: 16%;
+    left: 8%;
+    right: 8%;
+    bottom: 24%;
+  }
+  /* Les scènes dont la surimpression est le sujet la centrent sur l'écran au
+     lieu de la ranger à droite. Le décalage à droite sert à ménager le vide
+     où l'illustration de fond respire ; quand ce qu'on montre par-dessus *est*
+     le propos — les quatre temps du jeu, les bâtiments d'une cité —, ce vide
+     ne protège plus rien et déséquilibre la scène. */
+  .rpg-lp-scene.is-centre .rpg-lp-stage {
+    left: 6%;
+    right: 6%;
+  }
+  /* La forge et le combat ont pris du corps : quatre fiches ou quatre coups à
+     leur nouvelle taille sont plus hauts que la bande que les autres scènes
+     se donnent. */
+  /* La forge, les métiers et le combat ont pris du corps : un réseau à quatre
+     branches, une chaîne de quatre pièces et sa fiche, une rotation de
+     compétences — tous trois sont plus hauts que la bande que les autres
+     scènes se donnent. La référence leur accorde les trois cinquièmes de
+     l'écran, et c'est ce qu'il leur faut. */
+  .rpg-lp-scene.is-pierre .rpg-lp-stage,
+  .rpg-lp-scene.is-combat .rpg-lp-stage {
+    /* Un pourcentage seul ne suffit pas : la rangée d'onglets, elle, est posée
+       en rem, et sur une fenêtre de huit cents pixels de haut quinze et demi
+       pour cent tombent au-dessus d'elle. Le `max` fait que la scène commence
+       toujours sous les onglets, quelle que soit la hauteur. */
+    top: max(15.5%, 10.5rem);
+    /* Le bas est calé sur le pire des titres, pas sur le meilleur : « Le métal
+       ne pardonne rien, et il garde tout » tient sur trois lignes, et un bas de
+       scène réglé sur les titres de deux lignes lui faisait remonter le
+       chapeau dans la rangée d'objets. */
+    bottom: 32%;
+  }
+  /* La surimpression ne prend pas la souris : elle couvre la moitié de l'écran
+     et intercepterait tout ce qui passe dessous — le décor, mais aussi la
+     sélection du texte du titre. Ce qui s'y survole vraiment la reprend, une
+     règle plus bas. */
+  .rpg-lp-stage-layer {
+    @apply pointer-events-none absolute inset-0 flex items-center justify-center opacity-0;
+    transform: translateY(16px) scale(0.985);
+    transition:
+      opacity 620ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 620ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-stage-layer.is-on {
+    @apply opacity-100;
+    transform: none;
+  }
+
+  /* ── La boucle du jeu : quatre temps, quatre objets ─────────────────────── */
+  /* Récolter, fabriquer, échanger, compléter. Les quatre illustrations ont la
+     même taille : une version antérieure les faisait croître de gauche à
+     droite pour figurer une montée en valeur, et l'œil y lisait une hiérarchie
+     là où il n'y a qu'un enchaînement. À tailles égales, ce qui reste à lire,
+     c'est la flèche. */
+  .rpg-lp-flow {
+    @apply flex list-none items-start justify-center p-0;
+    margin: 0;
+    gap: clamp(1rem, 2.4vw, 2.4rem);
+  }
+  .rpg-lp-flow-step {
+    @apply relative flex flex-col items-center text-center;
+    /* Assez large pour que « Vendez ou commandez » tienne sur une ligne : dès
+       qu'un des quatre libellés se replie, les quatre légendes cessent d'être
+       à la même hauteur et la rangée perd son alignement. Ramenée depuis onze
+       rem et demi : la rangée ne dispose plus que de la colonne gauche de la
+       scène, la fiche occupant l'autre. */
+    width: clamp(6rem, 11.5vw, 10.5rem);
+    gap: 0.4rem;
+  }
+  .rpg-lp-flow-art {
+    @apply relative block;
+    width: clamp(3.6rem, 6.4vw, 6.2rem);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 26px 38px rgba(0, 0, 0, 0.7));
+  }
+  /* Le chevron, dessiné en deux bordures plutôt qu'écrit en caractère : une
+     flèche typographique change de dessin d'une police à l'autre, et celle de
+     Cinzel n'existe pas. Il se pose à la hauteur du milieu de l'illustration,
+     et non entre les légendes. */
+  .rpg-lp-flow-step:not(:last-child)::after {
+    content: "";
+    @apply absolute block;
+    top: calc(50% - 2.7rem);
+    right: calc(clamp(1rem, 2.4vw, 2.4rem) / -2 - 0.3rem);
+    width: 0.55rem;
+    height: 0.55rem;
+    border-top: 1px solid var(--color-gold-500);
+    border-right: 1px solid var(--color-gold-500);
+    transform: rotate(45deg);
+    opacity: 0.65;
+  }
+  .rpg-lp-flow-num {
+    @apply font-heading font-bold;
+    margin-top: 0.35rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.24em;
+    color: var(--color-gold-500);
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-flow-titre {
+    @apply font-heading font-bold;
+    font-size: 0.8125rem;
+    line-height: 1.25;
+    color: var(--color-parchment-50);
+    text-shadow:
+      0 1px 2px rgba(2, 3, 4, 1),
+      0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+  .rpg-lp-flow-item {
+    font-size: 0.6875rem;
+    line-height: 1.3;
+    color: rgba(243, 226, 179, 0.6);
+    text-shadow:
+      0 1px 2px rgba(2, 3, 4, 1),
+      0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+
+  /* ── Une rangée de pièces ───────────────────────────────────────────────── */
+  /* Toutes de même taille, toujours. Au-delà de quatre, la rangée passe à la
+     ligne : les huit expéditions tiennent en deux rangs de quatre plutôt qu'en
+     une file de huit vignettes réduites à rien. */
+  .rpg-lp-row {
+    @apply flex list-none flex-wrap items-start justify-center p-0;
+    margin: 0;
+    gap: clamp(0.9rem, 2.2vw, 2rem);
+    max-width: 70rem;
+  }
+  .rpg-lp-row-item {
+    @apply flex flex-col items-center text-center;
+    width: clamp(5rem, 10vw, 9rem);
+    gap: 0.45rem;
+  }
+  /* ── Les lieux de guilde ────────────────────────────────────────────────
+     Des tableaux peints, pas des objets détourés : ils réclament de la surface
+     et le clic les ouvre en grand. Posés plus bas que les autres
+     surimpressions — le décor de la cité a son ciel en haut, et c'est le seul
+     endroit de la page où l'on gagne à ne pas le couvrir. */
+  .rpg-lp-scene.is-guilde .rpg-lp-stage {
+    top: 26%;
+    bottom: 24%;
+  }
+  .rpg-lp-lieux {
+    @apply m-0 flex list-none flex-wrap items-start justify-center p-0;
+    gap: clamp(0.8rem, 1.8vw, 1.6rem);
+    max-width: 74rem;
+  }
+  .rpg-lp-lieu {
+    @apply flex cursor-pointer flex-col items-center border-0 bg-transparent p-0 text-center;
+    gap: 0.6rem;
+    width: clamp(9rem, 18vw, 17rem);
+  }
+  .rpg-lp-lieu-art {
+    @apply relative block w-full overflow-hidden rounded-sm;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--border-gold-faint);
+    box-shadow: 0 20px 36px rgba(0, 0, 0, 0.6);
+    transition:
+      border-color 280ms ease,
+      transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-lieu:hover .rpg-lp-lieu-art {
+    border-color: var(--border-gold-strong);
+    transform: translateY(-4px);
+  }
+  /* Le mot n'apparaît qu'au survol : posé en permanence, huit « agrandir »
+     sur une rangée d'images se lisent avant les images. */
+  .rpg-lp-lieu-loupe {
+    @apply font-heading absolute inset-0 grid place-items-center uppercase opacity-0;
+    font-size: 0.625rem;
+    letter-spacing: 0.22em;
+    color: var(--color-parchment-50);
+    background: rgba(2, 3, 4, 0.55);
+    transition: opacity 260ms ease;
+  }
+  .rpg-lp-lieu:hover .rpg-lp-lieu-loupe,
+  .rpg-lp-lieu:focus-visible .rpg-lp-lieu-loupe {
+    @apply opacity-100;
+  }
+  .rpg-lp-lieu-nom {
+    @apply font-heading font-bold;
+    font-size: 0.9375rem;
+    line-height: 1.25;
+    color: var(--color-parchment-50);
+    text-shadow:
+      0 1px 2px rgba(2, 3, 4, 1),
+      0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+
+  /* ── La carte interactive ───────────────────────────────────────────────
+   *
+   * La seule surimpression de la page qui porte du texte plutôt qu'une
+   * illustration, et c'est assumé : son sujet est une **mécanique**, pas un
+   * objet. Une capture de la carte au milieu d'un décor qui est déjà la carte
+   * n'aurait rien montré de plus ; l'horloge et les trois règles, si.
+   *
+   * `--teinte` arrive du composant, relevée dans la vignette de l'activité —
+   * rouge pour les placards, ambre pour les chantiers, vert d'eau pour les
+   * coffres. Ce sont les couleurs du jeu : qui aura lu cette section
+   * reconnaîtra les losanges à la couleur avant d'en lire le nom.
+   */
+  .rpg-lp-scene.is-carte .rpg-lp-stage {
+    top: 24%;
+    bottom: 26%;
+  }
+  .rpg-lp-carte-fiche {
+    @apply relative flex flex-col items-center rounded-xl border text-center;
+    width: min(34rem, 88vw);
+    gap: 0.9rem;
+    padding: clamp(1.4rem, 2.4vw, 2.2rem) clamp(1.2rem, 2.6vw, 2.4rem);
+    border-color: color-mix(in srgb, var(--teinte) 42%, transparent);
+    background: color-mix(in srgb, #05070a 78%, transparent);
+    backdrop-filter: blur(14px);
+    box-shadow:
+      0 0 0 1px rgba(2, 3, 4, 0.6),
+      0 24px 70px rgba(2, 3, 4, 0.7),
+      0 0 42px color-mix(in srgb, var(--teinte) 18%, transparent);
+  }
+  /* Le médaillon, cerclé de sa teinte : c'est le losange de la carte, rendu
+     rond parce qu'ici il ne désigne pas un point du monde. */
+  .rpg-lp-carte-embleme {
+    @apply grid place-items-center rounded-full border-2;
+    width: clamp(4.5rem, 8vw, 6rem);
+    height: clamp(4.5rem, 8vw, 6rem);
+    border-color: color-mix(in srgb, var(--teinte) 65%, transparent);
+    background: color-mix(in srgb, #05070a 90%, transparent);
+    box-shadow: 0 0 26px color-mix(in srgb, var(--teinte) 45%, transparent);
+  }
+  .rpg-lp-carte-embleme img {
+    @apply object-contain;
+    width: 68%;
+    height: 68%;
+  }
+  /* Le rythme en grand, et dans la teinte : c'est l'information que la section
+     existe pour donner, et la seule qu'une image ne saurait pas dire. */
+  .rpg-lp-carte-horloge {
+    @apply font-heading m-0 font-bold uppercase;
+    font-size: clamp(1.05rem, 1.9vw, 1.5rem);
+    letter-spacing: 0.16em;
+    color: var(--teinte);
+    text-shadow: 0 2px 16px color-mix(in srgb, var(--teinte) 40%, transparent);
+  }
+  .rpg-lp-carte-points {
+    @apply m-0 flex list-none flex-col p-0 text-left;
+    gap: 0.55rem;
+  }
+  .rpg-lp-carte-points li {
+    @apply relative;
+    padding-left: 1.1rem;
+    font-size: clamp(0.82rem, 1.15vw, 0.95rem);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--color-parchment-100) 88%, transparent);
+  }
+  /* Un losange en puce, et pas un rond : c'est la forme que la carte donne à
+     tout ce qu'on peut y cliquer. */
+  .rpg-lp-carte-points li::before {
+    @apply absolute block;
+    content: "";
+    top: 0.55em;
+    left: 0;
+    width: 0.42rem;
+    height: 0.42rem;
+    background: var(--teinte);
+    transform: rotate(45deg);
+  }
+
+  /* ── La planche en grand ────────────────────────────────────────────────
+     Le fond ne disparaît pas, il se retire : flou et sombre, on doit sentir
+     qu'on est resté sur la même scène plutôt que d'avoir changé de page. */
+  .rpg-lp-loupe {
+    @apply fixed inset-0 z-[120] flex items-center justify-center;
+    padding: clamp(1.5rem, 5vw, 5rem);
+    background: rgba(2, 3, 4, 0.82);
+    animation: rpg-lp-voile 220ms ease both;
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .rpg-lp-loupe {
+      background: rgba(2, 3, 4, 0.66);
+      backdrop-filter: blur(18px) saturate(0.9);
+    }
+  }
+  .rpg-lp-loupe-cadre {
+    @apply relative m-0 overflow-hidden rounded-sm;
+    max-width: min(72rem, 100%);
+    border: 1px solid var(--border-gold-soft);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+    animation: rpg-lp-rise 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .rpg-lp-loupe-img {
+    @apply block h-auto w-full;
+  }
+  .rpg-lp-loupe-cadre figcaption {
+    @apply font-heading absolute inset-x-0 bottom-0 font-bold uppercase;
+    padding: 2.5rem 1.4rem 1rem;
+    font-size: 0.9375rem;
+    letter-spacing: 0.16em;
+    color: var(--color-parchment-50);
+    background: linear-gradient(180deg, transparent, rgba(2, 3, 4, 0.92));
+  }
+  .rpg-lp-loupe-fermer {
+    @apply absolute grid cursor-pointer place-items-center rounded-full;
+    top: clamp(1rem, 3vw, 2.5rem);
+    right: clamp(1rem, 3vw, 2.5rem);
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1rem;
+    border: 1px solid var(--border-gold-soft);
+    background: rgba(8, 11, 16, 0.7);
+    color: var(--color-parchment-100);
+    transition: all 220ms ease;
+  }
+  .rpg-lp-loupe-fermer:hover {
+    border-color: var(--border-gold-strong);
+    background: rgba(246, 217, 137, 0.14);
+  }
+
+  .rpg-lp-row.is-grande .rpg-lp-row-item {
+    width: clamp(8rem, 16vw, 15rem);
+  }
+  .rpg-lp-row-art {
+    @apply relative block w-full;
+    aspect-ratio: 1;
+    filter: drop-shadow(0 24px 36px rgba(0, 0, 0, 0.66));
+  }
+  /* Les planches peintes gardent leur format : dans un carré, `cover` les
+     rognerait de haut en bas et le masque tomberait à côté du bord réel. */
+  .rpg-lp-row.is-peint .rpg-lp-row-art {
+    aspect-ratio: 4 / 3;
+    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.55));
+  }
+  .rpg-lp-row-palier {
+    @apply font-heading uppercase;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold-300);
+    text-shadow:
+      0 1px 2px rgba(2, 3, 4, 1),
+      0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+  .rpg-lp-row-nom {
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: rgba(243, 226, 179, 0.78);
+    text-shadow:
+      0 1px 2px rgba(2, 3, 4, 1),
+      0 2px 14px rgba(2, 3, 4, 0.95);
+  }
+
+  /* Ces planches-là ne sont pas détourées : ce sont des tableaux peints, fond
+     compris. Posées telles quelles, elles montrent leur rectangle et se lisent
+     comme des vignettes collées sur le décor. Deux dégradés croisés, et leur
+     intersection : quatre bords qui se dissolvent sans que le centre
+     s'éclaircisse. Un seul dégradé radial aurait mangé la tête et les pieds du
+     personnage avant d'atteindre les coins ; et le composite est par défaut
+     une addition — sans `intersect`, les deux masques se complètent et ne
+     masquent plus rien. */
+  .rpg-lp-feather {
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, #000 15%, #000 85%, transparent 100%),
+      linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(180deg, transparent 0%, #000 15%, #000 85%, transparent 100%),
+      linear-gradient(90deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     UN MÉTIER : SON RÉSEAU, SA BOUCLE, SA FICHE
+
+     Trois étages posés en absolu et non empilés en colonne. Le réseau prend
+     toute la largeur, la rangée seulement la gauche, et la fiche passe sous le
+     bras droit du cercle : trois boîtes qui se chevauchent en hauteur mais
+     jamais au même endroit. Une colonne aurait réservé à la fiche une bande
+     vide sur toute la hauteur — le tiers droit de la scène perdu pour qu'un
+     seul étage sur trois en ait l'usage.
+     ══════════════════════════════════════════════════════════════════════════ */
+  .rpg-lp-metier {
+    @apply relative h-full w-full;
+    /* La colonne de la fiche, nommée parce que **trois** règles s'en servent :
+       la largeur que le réseau lui cède, celle que la rangée d'objets lui cède,
+       et celle qu'elle occupe. Trois valeurs qui doivent coïncider finissent
+       par diverger.
+
+       Jamais plus étroite que l'infobulle du jeu, qui fait dix-neuf rem : sous
+       un quart de scène, la fiche débordait de sa colonne au lieu de se centrer
+       dedans, et venait mordre sur la rangée d'objets. */
+    --col-fiche: max(25%, 20rem);
+  }
+
+  /* ── Le réseau ──────────────────────────────────────────────────────────── */
+  /* Il prend les deux tiers hauts de la scène et toute sa largeur : c'est le
+     sujet, et le sujet ne se range pas dans une colonne. */
+  /* Il cède le quart droit à la fiche et garde le reste, où il se centre.
+     La référence le donne étalé sur toute la largeur, la fiche passant sous
+     son bras droit ; c'était tenable avec une carte de trois cent cinquante
+     pixels de haut, ça ne l'est plus avec l'infobulle du jeu, qui en fait
+     quatre cent quatre-vingt-sept dès qu'une pièce porte un bonus d'ensemble —
+     et qui est justement ce qu'on nous demande de réemployer. La colonne rendue
+     à la fiche est ce qui permet aux quatre nœuds de rester symétriques. */
+  .rpg-lp-reseau {
+    @apply absolute left-0 top-0;
+    right: var(--col-fiche);
+    height: 64%;
+  }
+  /* Les quatre fils, étirés avec leur boîte — `preserveAspectRatio: none`.
+     C'est voulu : aplaties en largeur, les courbes s'écartent moins du centre
+     et frôlent moins le nom du métier. Un tracé qui garderait ses proportions
+     imposerait de reprendre ses coordonnées à chaque largeur d'écran. */
+  .rpg-lp-reseau-fils {
+    @apply pointer-events-none absolute inset-0 h-full w-full;
+  }
+  .rpg-lp-reseau-fils path {
+    fill: none;
+    stroke: rgba(207, 166, 70, 0.5);
+    /* Un pixel, et pas une unité de la boîte : `non-scaling-stroke` mesure le
+       trait à l'écran, et la boîte fait dix fois cent unités en largeur. À
+       trois dixièmes, le fil disparaissait sous le sous-pixel. */
+    stroke-width: 1;
+    stroke-dasharray: 1.6 3;
+    vector-effect: non-scaling-stroke;
+    transition: stroke 260ms ease, opacity 260ms ease;
+  }
+
+  /* ── Le centre : la nature morte, le nom, les trois lignes ──────────────── */
+  .rpg-lp-reseau-centre {
+    @apply absolute left-1/2 top-0 flex flex-col items-center text-center;
+    transform: translateX(-50%);
+    /* Étroit, et c'est une contrainte de place et non un goût : entre le bord
+       du cercle et la fiche du coin bas-droit, il ne reste qu'une colonne pour
+       le nœud qui s'y glisse. Le socle du métier doit s'arrêter avant. */
+    width: min(19rem, 28%);
+  }
+  /* L'anneau. Deux cercles concentriques et rien d'autre : un seul se lisait
+     comme un cadre, deux se lisent comme une orbite — et c'est ce qui fait que
+     les quatre fils semblent y aboutir plutôt que passer dessous. */
+  .rpg-lp-reseau-anneau {
+    @apply pointer-events-none absolute left-1/2 rounded-full;
+    top: min(4.75rem, 6.5vw);
+    width: min(9.5rem, 13vw);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(207, 166, 70, 0.24);
+    box-shadow:
+      inset 0 0 0 1px rgba(2, 3, 4, 0.5),
+      inset 0 0 70px rgba(207, 166, 70, 0.07);
+  }
+  .rpg-lp-reseau-anneau::before {
+    content: "";
+    @apply absolute rounded-full;
+    inset: 1.15rem;
+    border: 1px solid rgba(207, 166, 70, 0.11);
+  }
+  .rpg-lp-reseau-portrait {
+    @apply relative block;
+    width: min(9.5rem, 13vw);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 30px 48px rgba(0, 0, 0, 0.7));
+  }
+  .rpg-lp-reseau-nom {
+    @apply font-heading m-0 font-bold uppercase;
+    margin-top: -0.5rem;
+    font-size: clamp(1.2rem, 1.7vw, 1.7rem);
+    line-height: 1;
+    letter-spacing: 0.06em;
+    color: var(--color-parchment-50);
+    text-shadow: 0 3px 20px rgba(2, 3, 4, 0.95);
+  }
+  /* Le filet sous le nom : il sépare l'identité des chiffres, et il est le
+     seul trait horizontal de la scène — c'est ce qui lui donne son poids. */
+  .rpg-lp-reseau-nom::after {
+    content: "";
+    @apply mx-auto mt-2.5 block h-px;
+    width: 4.5rem;
+    background: linear-gradient(90deg, transparent, var(--color-gold-500), transparent);
+  }
+  .rpg-lp-reseau-socle {
+    @apply m-0 flex list-none flex-col items-center p-0;
+    margin-top: 0.6rem;
+    gap: 0.22rem;
+  }
+  .rpg-lp-reseau-socle li {
+    @apply font-heading uppercase;
+    font-size: 0.625rem;
+    letter-spacing: 0.16em;
+    color: rgba(233, 205, 133, 0.62);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 0.95);
+  }
+
+  /* ── Les quatre voisins ─────────────────────────────────────────────────── */
+  /* L'emblème regarde toujours vers le centre : texte puis emblème à gauche,
+     emblème puis texte à droite. C'est ce qui fait que les fils semblent
+     entrer dans le nœud au lieu de le traverser. */
+  .rpg-lp-noeud {
+    @apply pointer-events-auto absolute flex items-center;
+    gap: 0.9rem;
+    width: min(17rem, 27%);
+    transition: opacity 260ms ease;
+  }
+  .rpg-lp-noeud.is-hg,
+  .rpg-lp-noeud.is-bg {
+    @apply flex-row-reverse text-right;
+    left: 0;
+  }
+  .rpg-lp-noeud.is-hd,
+  .rpg-lp-noeud.is-bd {
+    right: 0;
+  }
+  /* Sept pour cent et non zéro : la rangée d'onglets descend jusqu'à cent
+     cinquante-cinq pixels du haut de scène, et un nœud calé en haut de son
+     cadre lui passait dessous. */
+  .rpg-lp-noeud.is-hg,
+  .rpg-lp-noeud.is-hd {
+    top: 7%;
+  }
+  .rpg-lp-noeud.is-bg,
+  .rpg-lp-noeud.is-bd {
+    top: 64%;
+  }
+  .rpg-lp-noeud-art {
+    @apply relative block shrink-0 rounded-full;
+    width: clamp(3.2rem, 4.6vw, 4.6rem);
+    aspect-ratio: 1;
+    border: 1px solid rgba(207, 166, 70, 0.26);
+    background: radial-gradient(circle at 50% 45%, rgba(207, 166, 70, 0.11), transparent 68%);
+    transition: border-color 260ms ease, filter 260ms ease;
+  }
+  .rpg-lp-noeud-art img {
+    padding: 0.4rem;
+  }
+  .rpg-lp-noeud-texte b {
+    @apply font-heading block font-bold uppercase;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    color: var(--color-parchment-50);
+    text-shadow: 0 1px 12px rgba(2, 3, 4, 0.98);
+  }
+  .rpg-lp-noeud-texte span {
+    @apply mt-1 block;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: rgba(243, 226, 179, 0.58);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 0.98);
+  }
+  /* Survoler un voisin allume son fil et assourdit les trois autres. Sans cet
+     effacement on ne voit qu'un halo de plus ; avec lui, on voit qu'il y a
+     quatre relations distinctes, et laquelle on regarde. */
+  .rpg-lp-reseau:has(.rpg-lp-noeud:hover) .rpg-lp-noeud:not(:hover) {
+    opacity: 0.42;
+  }
+  .rpg-lp-reseau:has(.rpg-lp-noeud:hover) .rpg-lp-reseau-fils path {
+    opacity: 0.22;
+  }
+  .rpg-lp-noeud:hover .rpg-lp-noeud-art {
+    border-color: var(--border-gold-strong);
+    filter: brightness(1.12);
+  }
+  .rpg-lp-reseau:has(.is-hg:hover) .rpg-lp-reseau-fils .is-hg,
+  .rpg-lp-reseau:has(.is-bg:hover) .rpg-lp-reseau-fils .is-bg,
+  .rpg-lp-reseau:has(.is-hd:hover) .rpg-lp-reseau-fils .is-hd,
+  .rpg-lp-reseau:has(.is-bd:hover) .rpg-lp-reseau-fils .is-bd {
+    opacity: 1;
+    stroke: var(--color-gold-300);
+  }
+
+  /* ── La boucle, en bas à gauche ─────────────────────────────────────────── */
+  /* Elle ne prend que les deux tiers gauches : le tiers droit est à la fiche,
+     et une rangée qui passerait dessous la recouvrirait. */
+  .rpg-lp-metier-boucle {
+    @apply absolute bottom-0 left-0 flex items-end;
+    right: var(--col-fiche);
+  }
+
+  /* ── La fiche, en bas à droite ──────────────────────────────────────────── */
+  /* Elle est **posée**, pas ouverte au survol. Elle attendait un geste que
+     personne ne faisait, et c'est la seule chose de la scène qui réponde à
+     « qu'est-ce que ça vaut ». Le survol de la dernière case l'avance d'un
+     cran : le geste est récompensé au lieu d'être exigé. */
+  /* Centrée dans sa colonne, et non collée au bord droit de la scène. Collée,
+     elle tirait tout le poids de la composition vers la marge : le réseau se
+     centre, la rangée d'objets se centre, et la fiche seule fuyait vers le
+     bord. C'est aussi ce qui permet à l'échelle de jouer sans la déplacer —
+     l'origine est au milieu du bas de la colonne, pas dans son coin. */
+  .rpg-lp-metier-fiche {
+    @apply pointer-events-none absolute bottom-0 right-0 flex origin-bottom justify-center;
+    width: var(--col-fiche);
+    /* À sa taille native, et non aux six cinquièmes comme l'infobulle qui
+       s'ouvrait au survol. Celle-ci ne s'ouvre plus : elle occupe une place
+       fixe, et cette place est bornée en haut par le nœud qui passe au-dessus
+       d'elle. Une fiche légendaire fait déjà quatre cent quatre-vingts pixels
+       — les huit dixièmes de la hauteur de scène. */
+    /* Réglée sur la plus haute des huit — la couronne, quatre cent
+       quatre-vingt-sept pixels avec ses quatre paliers d'ensemble — et sur la
+       plus courte des scènes : une fenêtre de neuf cents pixels de haut donne
+       quatre cent quarante à la surimpression. Rien ne la surplombe plus
+       depuis que le réseau lui a rendu sa colonne ; c'est le pied de scène qui
+       la borne maintenant. */
+    --fiche-echelle: 0.92;
+    transform: scale(var(--fiche-echelle));
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.85));
+    transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-metier:has(.has-tip:hover) .rpg-lp-metier-fiche,
+  .rpg-lp-metier:has(.has-tip:focus-visible) .rpg-lp-metier-fiche {
+    transform: scale(calc(var(--fiche-echelle) + 0.05));
+  }
+  /* La case que la fiche détaille porte son nom en or, et rien d'autre ne le
+     dirait : la fiche vit à deux cents pixels de là. */
+  .rpg-lp-flow-step.is-lie .rpg-lp-flow-item {
+    color: var(--color-gold-300);
+  }
+
+  /* ── Le porteur, sur le dernier onglet de la forge ──────────────────────── */
+  .rpg-lp-forge {
+    @apply relative flex h-full w-full items-center;
+    /* Les fiches de la forge sont les plus hautes de la page — une pièce
+       mythique porte cinq statistiques, trois gemmes, leurs primes, quatre
+       paliers et un poinçon, soit six cent trente pixels à taille native.
+       Un et un dixième la porte à sept cents : c'est le plus qu'elle puisse
+       prendre en restant sous la barre du haut, une fois descendue de trois
+       rem et demi. Elle était à sept huitièmes, et se lisait moins bien que
+       la fiche des métiers alors qu'elle est ici le sujet. */
+    --fiche-echelle: 1.1;
+  }
+  /* Centrée dans la colonne que la liste laisse libre.
+     La colonne n'est pas devinée en pourcentage : elle est **déduite de la
+     liste**. En bornant la fiche à gauche par le bord de la scène et à droite
+     par la largeur de la liste plus son écart, `margin-inline: auto` la centre
+     dans ce qui reste — et la centre encore le jour où la liste change de
+     largeur. Un `left: 23 %` réglé à l'œil sur un écran de mille six cents
+     pixels dérivait partout ailleurs, la liste étant tantôt bornée par ses
+     quarante rem, tantôt par ses cinquante-six pour cent.
+
+     Verticalement, elle descend de trois rem et demi sous le centre de la
+     scène. Ce décalage n'est pas cosmétique : la bande utile ne va pas du haut
+     de l'écran au bas mais de la barre au pied de scène, et son milieu est
+     plus bas que celui de la surimpression. C'est ce qui permet à la fiche de
+     grandir sans que son nom passe sous la barre. */
+  /* ── L'explication d'une fonctionnalité ─────────────────────────────────
+     Elle occupe la colonne que la liste laisse libre, et la fiche la recouvre
+     au survol : l'une n'est utile que tant que l'autre dort. */
+  .rpg-lp-explique {
+    @apply absolute;
+    left: 0;
+    right: min(40rem, 56%);
+    top: 50%;
+    max-width: 30rem;
+    margin: 0 auto;
+    transform: translateY(-50%);
+    padding-right: 2rem;
+  }
+  .rpg-lp-explique h3 {
+    @apply font-heading m-0 font-bold;
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.1rem, 1.5vw, 1.45rem);
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-explique p {
+    @apply m-0;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: rgba(243, 226, 179, 0.74);
+  }
+  .rpg-lp-explique p + p {
+    margin-top: 0.7rem;
+  }
+
+  /* ── Les quatre traitements, en rangée ──────────────────────────────────
+     Ils n'ouvrent aucune fiche — ce sont des recherches de Maître, pas des
+     objets —, donc rien ne les retient dans une colonne : ils prennent la
+     largeur, et leurs planches avec. */
+  .rpg-lp-forge.is-rangee {
+    @apply items-center justify-center;
+  }
+  .rpg-lp-fiches.is-rangee {
+    @apply grid w-full;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1rem, 2.4vw, 2.2rem);
+    max-width: none;
+    margin-left: 0;
+  }
+  .rpg-lp-fiches.is-rangee .rpg-lp-fiche {
+    @apply flex-col items-center text-center;
+    gap: 0.7rem;
+    padding: 0;
+  }
+  .rpg-lp-fiches.is-rangee .rpg-lp-fiche-art {
+    width: clamp(5rem, 9vw, 8.5rem);
+  }
+  .rpg-lp-fiche-recit {
+    @apply mt-1.5 block;
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: rgba(243, 226, 179, 0.6);
+  }
+
+  /* Étirée sur toute la colonne libre, et la fiche centrée dedans par flex.
+     `margin-inline: auto` n'y suffisait pas : un bloc absolu avec `left` et
+     `right` posés et une largeur automatique **s'étire** au lieu de se réduire
+     à son contenu, et il ne reste alors aucune marge à répartir. La fiche se
+     retrouvait collée au bord gauche de l'écran.
+
+     De quel côté ? En colonne, la liste tient la droite et la fiche prend ce
+     qui reste à gauche. En rangée, la liste prend la largeur : la fiche se
+     range à droite, dans la colonne que la rangée lui a cédée. */
+  .rpg-lp-forge .rpg-lp-tip {
+    @apply flex justify-center;
+    left: 0;
+    /* Exactement la largeur de la liste : la colonne libre est ce qui reste,
+       et la fiche s'y centre au pixel. Un écart ajouté ici la décalait de sa
+       moitié. */
+    right: min(40rem, 56%);
+    margin-top: 3.5rem;
+    transform-origin: center center;
+    transform: translateY(-50%) scale(calc(var(--fiche-echelle) * 0.97));
+  }
+  .rpg-lp-fiche:hover .rpg-lp-tip,
+  .rpg-lp-fiche:focus-within .rpg-lp-tip {
+    transform: translateY(-50%) scale(var(--fiche-echelle));
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     LA CHAÎNE DE FABRICATION
+
+     Quatre pièces numérotées, trois chevrons, et la fiche de la dernière en
+     colonne de droite. Les quatre illustrations s'alignaient jusqu'ici à
+     égalité, sans numéro ni liaison : on lisait « en voici quatre », jamais
+     « voici comment on y arrive ». Un chiffre au-dessus et une flèche entre
+     deux suffisent à retourner la lecture — et ce sont les deux choses les
+     moins coûteuses de la page.
+
+     La case n'est **pas** positionnée. C'est délibéré : la fiche qu'elle
+     contient se cale alors sur la chaîne entière et non sur les cent
+     cinquante pixels de sa case, ce qui lui permet d'occuper la colonne de
+     droite. Le chevron, qui a besoin d'un repère, se pose sur l'illustration.
+     ══════════════════════════════════════════════════════════════════════════ */
+  .rpg-lp-forge.is-chaine {
+    @apply flex-col items-start justify-center;
+    gap: clamp(1.25rem, 4vh, 2.75rem);
+  }
+  .rpg-lp-chaine {
+    @apply m-0 grid list-none items-start p-0;
+    /* Les quatre cases prennent les trois quarts gauches ; la fiche tient le
+       reste. C'est le même partage que la scène des métiers, et pour la même
+       raison : l'infobulle du jeu réclame une colonne à elle. */
+    width: 74%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.6rem, 1.6vw, 1.6rem);
+  }
+  .rpg-lp-chaine-case {
+    @apply flex flex-col items-center text-center;
+    gap: 0.35rem;
+    cursor: help;
+    outline: none;
+  }
+  .rpg-lp-chaine-num {
+    @apply font-heading font-bold;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: var(--color-gold-500);
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  /* Les illustrations de la référence sont deux fois plus grosses que celles
+     qu'elles remplacent. C'est le fond du reproche fait à cette scène : quatre
+     pièces d'acier perdues au milieu d'un écran noir ne se regardent pas. */
+  .rpg-lp-chaine-art {
+    @apply relative block;
+    width: clamp(6rem, 11vw, 11rem);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.72));
+    transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), filter 260ms ease;
+  }
+  .rpg-lp-chaine-case:hover .rpg-lp-chaine-art,
+  .rpg-lp-chaine-case:focus-visible .rpg-lp-chaine-art {
+    transform: translateY(-4px) scale(1.025);
+    filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.72)) brightness(1.08);
+  }
+  /* Le chevron, dessiné en deux bordures plutôt qu'écrit en caractère : une
+     flèche typographique change de dessin d'une police à l'autre, et celle de
+     Cinzel n'existe pas. Il se pose sur l'illustration, à mi-hauteur, et non
+     entre les légendes — c'est la pièce qu'il enchaîne, pas son nom. */
+  .rpg-lp-chaine-case:not(:last-child) .rpg-lp-chaine-art::after {
+    content: "";
+    @apply absolute block;
+    top: 50%;
+    left: calc(100% + clamp(0.6rem, 1.6vw, 1.6rem) / 2 - 0.3rem);
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-top: -0.3rem;
+    border-top: 1px solid var(--color-gold-500);
+    border-right: 1px solid var(--color-gold-500);
+    transform: rotate(45deg);
+    opacity: 0.6;
+  }
+  .rpg-lp-chaine-nom {
+    @apply font-heading mt-1 block font-bold;
+    font-size: clamp(0.9rem, 1.15vw, 1.15rem);
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-chaine-role {
+    @apply block;
+    max-width: 13rem;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: rgba(243, 226, 179, 0.6);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 0.98);
+  }
+
+  /* ── L'enclume, derrière la chaîne ──────────────────────────────────────── */
+  /* Décorative au sens strict : retirée, la scène perd son atmosphère et pas
+     une information. D'où l'opacité basse et le fondu par les bords — elle
+     doit dire de quel atelier il s'agit sans jamais disputer la lecture des
+     quatre pièces, qui sont le sujet. */
+  .rpg-lp-forge-enclume {
+    @apply pointer-events-none absolute left-1/2 block;
+    top: 4%;
+    width: min(27rem, 32%);
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    opacity: 0.1;
+    mask-image: radial-gradient(ellipse at 50% 50%, #000 24%, transparent 66%);
+  }
+
+  /* ── Les trois systèmes que la recette n'épuise pas ─────────────────────── */
+  /* Beaucoup plus discrets que la fiche : un filet, un fond à peine posé, et
+     rien d'autre. Ils ne sont pas là pour être lus en premier mais pour qu'on
+     sache, en quittant la scène, que la pièce sortie de l'enclume n'est pas
+     finie. */
+  .rpg-lp-apercus {
+    @apply m-0 grid list-none p-0;
+    width: 74%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.7rem, 1.4vw, 1.3rem);
+    max-width: 52rem;
+  }
+  .rpg-lp-apercus li {
+    @apply flex items-center rounded-sm;
+    gap: 0.8rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(188, 150, 67, 0.23);
+    background: rgba(10, 13, 15, 0.65);
+  }
+  .rpg-lp-apercu-art {
+    @apply relative block shrink-0;
+    width: 2.6rem;
+    aspect-ratio: 1;
+  }
+  .rpg-lp-apercu-titre {
+    @apply font-heading block uppercase;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold-400);
+  }
+  .rpg-lp-apercu-texte b {
+    @apply font-heading mt-0.5 block font-bold;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-apercu-gain {
+    @apply mt-0.5 block;
+    font-size: 0.6875rem;
+    line-height: 1.35;
+    color: rgba(233, 205, 133, 0.7);
+  }
+
+  /* ── La fiche de la chaîne ──────────────────────────────────────────────── */
+  /* Cinq fiches empilées au même endroit : celle de la pièce finie, posée, et
+     une par case, éteinte. Survoler une case allume la sienne et éteint la
+     posée. Tout se joue en `:has()` — un état React aurait fait de tout ce
+     contenu du code client pour un résultat qui ne change jamais après le
+     premier rendu.
+
+     Calée en bas et non centrée : sa base s'aligne alors sur celle des trois
+     panneaux, et les fiches courtes comme les hautes gardent le même pied. */
+  .rpg-lp-forge-fiche {
+    @apply pointer-events-none absolute bottom-0 right-0 block origin-bottom-right;
+    transition: opacity 180ms ease;
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.85));
+  }
+  .rpg-lp-forge-fiche.is-survol {
+    @apply opacity-0;
+  }
+  .rpg-lp-chaine-case:hover .rpg-lp-forge-fiche.is-survol,
+  .rpg-lp-chaine-case:focus-within .rpg-lp-forge-fiche.is-survol {
+    @apply opacity-100;
+  }
+  .rpg-lp-forge.is-chaine:has(.rpg-lp-chaine-case:hover) .rpg-lp-forge-fiche.is-defaut,
+  .rpg-lp-forge.is-chaine:has(.rpg-lp-chaine-case:focus-within) .rpg-lp-forge-fiche.is-defaut {
+    @apply opacity-0;
+  }
+
+  /* ── L'infobulle du jeu, au survol ────────────────────────────────────── */
+  /* Une capture, pas une reconstitution : le composant du jeu tire quinze
+     modules — `@rpg/shared`, les gemmes, les raretés, les panoplies — et la
+     vitrine ne dépend de rien, c'est ce qui lui permettra de partir dans son
+     propre dépôt. Produite par `pnpm captures`, à double densité : son texte
+     de neuf pixels bavait à densité 1.
+
+     **Elle est ancrée au bord de la scène, pas à l'objet survolé.** Attachée à
+     l'objet, elle ne pouvait pas grandir : plus haute que large dans un rapport
+     de un à un et demi, elle venait couvrir le paragraphe du bas dès qu'on lui
+     donnait de quoi se lire. Rangée à gauche, elle dispose de toute la hauteur
+     de la scène et de l'espace que la rangée centrée laisse libre.
+
+     Le survol se joue en CSS, avec `:has()`. Un état React et un écouteur
+     auraient refait, moins bien, ce que le sélecteur fait — et il aurait fallu
+     les monter huit fois, une par métier. */
+  .rpg-lp-tip {
+    @apply pointer-events-none absolute left-0 z-10 block opacity-0;
+    /* Centrée dans sa colonne. Elle a été calée en haut un temps, pour qu'une
+       fiche mythique — cinq statistiques, trois gemmes, leurs primes, quatre
+       paliers, un poinçon — ne sorte pas par le haut ; c'est l'échelle qui
+       règle cela maintenant, colonne par colonne, et le centrage se lit mieux
+       qu'un alignement haut dans une moitié d'écran vide. */
+    /* L'échelle vient de la scène — voir `.rpg-lp-scene`. Rendue en HTML, la
+       fiche se met à l'échelle sans perdre un pixel, ce qu'une capture ne
+       savait pas faire. */
+    top: 50%;
+    transform-origin: left center;
+    transform: translate(-10px, -50%) scale(calc(var(--fiche-echelle) * 0.97));
+    transition:
+      opacity 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.85));
+  }
+  .rpg-lp-fiche:hover .rpg-lp-tip,
+  .rpg-lp-fiche:focus-within .rpg-lp-tip {
+    @apply opacity-100;
+    transform: translate(0, -50%) scale(var(--fiche-echelle));
+  }
+  @media (hover: none) {
+    /* Sur un écran tactile il n'y a pas de survol : une infobulle qui ne
+       s'ouvre qu'ainsi ne s'ouvrirait jamais. Les fiches **posées** — celle
+       des métiers, celle de la forge — restent : elles ne demandent rien. */
+    .rpg-lp-tip,
+    .rpg-lp-repere-row li.is-survol {
+      display: none;
+    }
+    /* Et son voisin de gauche ferme alors la rangée : c'est lui qui porte le
+       dernier filet, celui qui ne sépare plus rien. */
+    .rpg-lp-repere-row li:has(+ .is-survol) {
+      padding-right: 0;
+      border-right: 0;
+    }
+  }
+  /* Ce qui se survole ou se clique dans une surimpression reprend la souris.
+     Le cadre de la scène est en `pointer-events: none` — il couvre la moitié
+     de l'écran et intercepterait tout ce qui passe dessous —, et ni `:hover`
+     ni un clic ne se déclenchent sur ce qui ne reçoit pas la souris.
+
+     La règle est générale, et elle l'est par expérience : elle a d'abord été
+     écrite au cas par cas, et chaque élément interactif ajouté ensuite est
+     arrivé mort — les boutons de la cité de guilde les derniers. Seule la
+     couche visible la reprend ; les autres restent inertes, sinon un bouton
+     caché resterait atteignable au clavier. */
+  .rpg-lp-stage-layer.is-on button,
+  .rpg-lp-stage-layer.is-on a,
+  .rpg-lp-stage-layer.is-on [tabindex] {
+    @apply pointer-events-auto;
+  }
+  .rpg-lp-flow-step.has-tip,
+  .rpg-lp-fiche.has-tip {
+    cursor: help;
+    outline: none;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     LA ROTATION DE COMBAT
+
+     Quatre coups en cercle, et le panneau de la tactique à droite. La scène
+     montrait deux colonnes de deux : on y lisait « en voici quatre », jamais
+     comment ils s'enchaînent. Le cercle dit l'ordre, les pointes disent le
+     sens, et les recharges écrites sous chaque nom disent pourquoi cet ordre
+     n'est pas libre.
+     ══════════════════════════════════════════════════════════════════════════ */
+  .rpg-lp-combat {
+    @apply flex h-full w-full items-center justify-between;
+    gap: clamp(1.5rem, 3vw, 3rem);
+  }
+
+  /* ── Le cercle ──────────────────────────────────────────────────────────── */
+  /* La boîte est carrée et ne contient que l'anneau et les quatre emblèmes ;
+     les légendes en débordent. Trois d'entre elles partent à droite et une
+     seule à gauche, d'où la marge : sans elle l'ensemble se centrerait sur
+     l'anneau, et le regard verrait un cercle décalé à gauche de son propre
+     texte. C'est le débord qu'on centre, pas le cercle. */
+  .rpg-lp-rotation {
+    @apply relative shrink-0;
+    /* Bornée par la **hauteur** et non par la largeur : la scène est large et
+       courte, et c'est toujours le haut ou le bas du cercle qui touche en
+       premier. Quarante-six pour cent de la hauteur d'écran, c'est la scène
+       moins les deux emblèmes qui la débordent. */
+    width: min(27rem, 46vh);
+    aspect-ratio: 1;
+    /* Les légendes débordent de part et d'autre, et de la même longueur : trois
+       à droite, une à gauche, mais toutes de vingt et un rem moins l'emblème.
+       La boîte se centre donc sur elle-même sans correction. */
+    margin-inline: auto;
+    --emblème: clamp(4.4rem, 6.6vw, 6.4rem);
+  }
+  .rpg-lp-rotation-anneau {
+    @apply pointer-events-none absolute;
+    inset: calc(var(--emblème) / 2);
+  }
+  .rpg-lp-rotation-anneau circle {
+    fill: none;
+    stroke: rgba(221, 178, 73, 0.42);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+    vector-effect: non-scaling-stroke;
+  }
+  .rpg-lp-rotation-anneau path {
+    fill: var(--color-gold-400);
+    stroke: none;
+    opacity: 0.8;
+  }
+
+  /* ── Le cœur : deux lames croisées, et le nom de la chaîne ──────────────── */
+  .rpg-lp-rotation-coeur {
+    @apply absolute left-1/2 top-1/2 flex flex-col items-center;
+    gap: 0.5rem;
+    transform: translate(-50%, -50%);
+  }
+  /* Le jeu n'a pas d'emblème de lames croisées : il a une lame. Deux, penchées
+     l'une contre l'autre, en font un — et c'est une image de moins à dessiner
+     pour une page qui n'en manque pas. */
+  /* Une seule image, à sa proportion. Le cœur portait deux copies d'une même
+     épée pivotées de vingt-six degrés : à l'écran, deux lames identiques se
+     chevauchaient en gardant chacune son reflet du même côté, ce qui ne
+     ressemble à rien qu'on ait déjà vu croisé. L'emblème du jeu les croise
+     pour de bon. */
+  .rpg-lp-rotation-lames {
+    @apply relative flex items-center justify-center;
+    height: 3.1rem;
+    opacity: 0.9;
+  }
+  .rpg-lp-rotation-lames img {
+    @apply h-full w-auto object-contain;
+  }
+  .rpg-lp-rotation-chaine {
+    @apply font-heading whitespace-nowrap uppercase;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    color: rgba(233, 205, 133, 0.62);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 1);
+  }
+
+  /* ── Les quatre coups ───────────────────────────────────────────────────── */
+  /* Le point d'ancrage est l'**emblème**, pas la boîte : c'est lui qui doit
+     tomber sur l'anneau, et sa légende n'a qu'à suivre. D'où les décalages
+     d'une demi-largeur d'emblème, et le nœud de gauche qui s'accroche par la
+     droite pour que son texte parte du bon côté. */
+  .rpg-lp-rota-coup {
+    @apply absolute flex items-center;
+    gap: 0.85rem;
+    width: 21rem;
+  }
+  .rpg-lp-rota-coup.is-haut {
+    top: 0;
+    left: calc(50% - var(--emblème) / 2);
+  }
+  .rpg-lp-rota-coup.is-droite {
+    top: calc(50% - var(--emblème) / 2);
+    left: calc(100% - var(--emblème));
+  }
+  .rpg-lp-rota-coup.is-bas {
+    top: calc(100% - var(--emblème));
+    left: calc(50% - var(--emblème) / 2);
+  }
+  .rpg-lp-rota-coup.is-gauche {
+    @apply flex-row-reverse text-right;
+    top: calc(50% - var(--emblème) / 2);
+    right: calc(100% - var(--emblème));
+  }
+  .rpg-lp-rota-art {
+    @apply relative block shrink-0;
+    width: var(--emblème);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.8));
+    transition: filter 260ms ease, transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-rota-tour {
+    @apply font-heading flex items-center uppercase;
+    gap: 0.45rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold-400);
+    text-shadow: 0 1px 8px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-rota-coup.is-gauche .rpg-lp-rota-tour {
+    @apply justify-end;
+  }
+  /* Le point entre le tour et la recharge : deux données de nature différente
+     sur une même ligne, et rien d'autre pour les séparer. */
+  .rpg-lp-rota-tour i {
+    @apply block shrink-0 rounded-full;
+    width: 3px;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .rpg-lp-rota-texte b {
+    @apply font-heading mt-1 block font-bold;
+    font-size: clamp(1rem, 1.3vw, 1.3rem);
+    line-height: 1.15;
+    color: var(--color-parchment-50);
+    text-shadow: 0 1px 12px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-rota-effet {
+    @apply mt-1 block;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: rgba(243, 226, 179, 0.68);
+    text-shadow: 0 1px 10px rgba(2, 3, 4, 1);
+  }
+  /* Survoler un coup l'allume et éteint les trois autres : la rotation compte
+     quatre temps distincts, et sans cet écart on n'en voit qu'un halo. */
+  .rpg-lp-rotation:has(.rpg-lp-rota-coup:hover) .rpg-lp-rota-coup:not(:hover) {
+    opacity: 0.45;
+  }
+  .rpg-lp-rota-coup {
+    transition: opacity 260ms ease;
+  }
+  .rpg-lp-rota-coup:hover .rpg-lp-rota-art {
+    transform: scale(1.06);
+    filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.8)) brightness(1.12);
+  }
+
+  /* ── Le panneau de la tactique ──────────────────────────────────────────── */
+  /* Le bandeau du haut est la planche de la tactique, celle que le jeu dessine
+     pour la choisir. Elle était déclarée dans les données et affichée nulle
+     part depuis quatre versions ; fondue par les bords, elle fait la
+     décoration légère que le panneau réclamait, sans qu'on ait rien à peindre.
+     Fondue et non cadrée : un rectangle net au sommet d'un panneau de verre en
+     ferait une carte à jouer. */
+  .rpg-lp-rota-panneau {
+    @apply pointer-events-auto relative shrink-0 overflow-hidden rounded-sm;
+    width: min(21rem, 25%);
+    padding: 1.6rem 1.5rem 1.4rem;
+    border: 1px solid rgba(210, 169, 68, 0.32);
+    background: rgba(5, 9, 12, 0.72);
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .rpg-lp-rota-panneau {
+      background: rgba(5, 9, 12, 0.5);
+      backdrop-filter: blur(10px) saturate(1.05);
+    }
+  }
+  .rpg-lp-rota-bandeau {
+    @apply pointer-events-none absolute inset-x-0 top-0 block;
+    height: 6.5rem;
+    opacity: 0.5;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+  }
+  .rpg-lp-rota-panneau h3 {
+    @apply font-heading relative m-0 font-bold uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.18em;
+    color: var(--color-parchment-50);
+    text-shadow: 0 2px 12px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-rota-panneau h3::after {
+    content: "";
+    @apply mt-3 block h-px w-full;
+    background: linear-gradient(90deg, var(--color-gold-600), transparent);
+  }
+  .rpg-lp-rota-panneau ul {
+    @apply relative m-0 flex list-none flex-col p-0;
+    margin-top: 1rem;
+    gap: 0.7rem;
+  }
+  .rpg-lp-rota-panneau li {
+    @apply flex items-center;
+    gap: 0.7rem;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: rgba(243, 226, 179, 0.86);
+  }
+  .rpg-lp-rota-ico {
+    @apply relative block shrink-0;
+    width: 1.5rem;
+    aspect-ratio: 1;
+  }
+  .rpg-lp-rota-panneau p {
+    @apply relative m-0;
+    margin-top: 1.1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--border-gold-faint);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: rgba(243, 226, 179, 0.56);
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     LA ROUTE DU VOYAGEUR
+
+     La seule scène qui n'obéit pas au gabarit : elle reprend la disposition de
+     l'écran de campagne du jeu — titre en haut à gauche, rangée de chapitres
+     en bas, panneau de détail à droite. Montrer un écran de jeu dans sa propre
+     disposition en dit plus qu'un texte qui le décrirait dans une autre.
+     ══════════════════════════════════════════════════════════════════════════ */
+  .rpg-lp-route {
+    @apply absolute left-0;
+    top: 13%;
+    max-width: 32rem;
+  }
+  .rpg-lp-route .rpg-lp-desc {
+    margin-top: 1.4rem;
+    max-width: 28rem;
+  }
+  .rpg-lp-route-chiffres {
+    @apply m-0 flex list-none p-0;
+    margin-top: 1.6rem;
+    gap: 0;
+  }
+  .rpg-lp-route-chiffres li {
+    @apply flex flex-col;
+    padding: 0.5rem 1.6rem 0.5rem 0;
+    margin-right: 1.6rem;
+    border-right: 1px solid var(--border-gold-faint);
+  }
+  .rpg-lp-route-chiffres li:last-child {
+    border-right: 0;
+  }
+  .rpg-lp-route-chiffres b {
+    @apply font-heading tabular-nums font-bold;
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-route-chiffres span {
+    @apply font-heading uppercase;
+    margin-top: 0.35rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    color: rgba(233, 205, 133, 0.5);
+  }
+
+  /* ── Le panneau de droite ───────────────────────────────────────────────── */
+  /* Le seul panneau encadré de la page avec la capture du marché. Il l'est
+     parce qu'il *est* un panneau dans le jeu : lui retirer son cadre ici
+     reviendrait à montrer autre chose que ce qu'on annonce. */
+  .rpg-lp-boss-swap {
+    @apply absolute right-0;
+    top: 11%;
+    width: min(25rem, 32vw);
+    animation: rpg-lp-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .rpg-lp-boss {
+    @apply overflow-hidden rounded-sm;
+    border: 1px solid var(--border-gold-soft);
+    /* Bien plus opaque que les autres panneaux : celui-ci se pose sur un
+       village en plein jour, pas sur une salle sombre. */
+    background: rgba(6, 9, 13, 0.9);
+    box-shadow: 0 36px 80px rgba(0, 0, 0, 0.62);
+  }
+  @supports (backdrop-filter: blur(1px)) {
+    .rpg-lp-boss {
+      background: rgba(6, 9, 13, 0.82);
+      backdrop-filter: blur(16px) saturate(1.05);
+    }
+  }
+  /* Le portrait en grand, comme la fiche de créature du jeu le pose. Une
+     version antérieure le réduisait à un médaillon de trois centimètres, pour
+     l'empêcher de montrer son rectangle — le remède coûtait plus que le mal.
+     Ici le rectangle disparaît autrement : l'image se fond par le bas dans le
+     panneau, qui la porte au lieu de la subir. */
+  .rpg-lp-boss-scene {
+    @apply relative block;
+    aspect-ratio: 4 / 3;
+  }
+  .rpg-lp-boss-art {
+    object-position: center 22%;
+  }
+  .rpg-lp-boss-fondu {
+    @apply pointer-events-none absolute inset-0;
+    background: linear-gradient(
+      180deg,
+      rgba(6, 9, 13, 0.35) 0%,
+      transparent 22%,
+      rgba(6, 9, 13, 0.55) 74%,
+      rgba(6, 9, 13, 0.97) 100%
+    );
+  }
+  .rpg-lp-boss-chip {
+    @apply font-heading absolute rounded-sm uppercase;
+    left: 0.9rem;
+    bottom: 0.9rem;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    border: 1px solid rgba(179, 67, 47, 0.6);
+    background: rgba(40, 12, 8, 0.75);
+    color: #e8a08c;
+  }
+  .rpg-lp-boss-corps {
+    padding: 0 1.2rem 1.3rem;
+  }
+  .rpg-lp-boss-nom {
+    @apply font-heading m-0 font-bold;
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    line-height: 1.1;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-boss-zone {
+    @apply font-heading m-0 uppercase;
+    margin-top: 0.3rem;
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+    color: rgba(233, 205, 133, 0.55);
+  }
+  /* Les particularités portent ce qu'elles font. Un simple jeton nommé
+     « Cuirassé » n'apprend rien à qui n'a pas joué — et c'est exactement le
+     visiteur qu'on a en face. */
+  .rpg-lp-boss-traits {
+    @apply m-0 flex list-none flex-col p-0;
+    margin-top: 0.9rem;
+    gap: 0.4rem;
+  }
+  /* Le nom sur sa ligne, l'effet dessous. Tout tenait sur une seule ligne en
+     onze pixels, nom compris : c'est ce qui dit comment la bête se bat, et
+     c'était la plus petite chose du panneau. */
+  .rpg-lp-boss-traits li {
+    @apply flex items-start;
+    gap: 0.6rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: rgba(243, 226, 179, 0.72);
+  }
+  .rpg-lp-boss-traits img {
+    @apply relative top-0.5 shrink-0 object-contain;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .rpg-lp-boss-traits b {
+    @apply font-heading block font-bold;
+    font-size: 0.9375rem;
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-boss-chiffres {
+    @apply m-0 grid list-none p-0;
+    margin-top: 1.1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+  .rpg-lp-boss-chiffres li {
+    @apply flex flex-col items-center rounded-sm;
+    padding: 0.5rem 0.3rem;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .rpg-lp-boss-chiffres li.is-large {
+    grid-column: span 2;
+  }
+  .rpg-lp-boss-chiffres b {
+    @apply font-heading tabular-nums font-bold;
+    font-size: 1.05rem;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-boss-chiffres b.is-vie {
+    color: #d97b6c;
+  }
+  .rpg-lp-boss-chiffres b.is-xp {
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-boss-chiffres span {
+    @apply font-heading uppercase;
+    margin-top: 0.2rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+    color: rgba(233, 205, 133, 0.62);
+  }
+
+  /* ── La rangée de chapitres ─────────────────────────────────────────────── */
+  /* Au dessin des cartes de créature du jeu : le portrait remplit la carte, un
+     losange doré porte le niveau à cheval sur le bord bas, le nom se lit
+     dessous. C'est la troisième tentative — posés en surimpression les
+     portraits montraient leur rectangle, retirés la scène était vide. Dans une
+     carte, le rectangle cesse d'être un défaut : il devient le cadre, et le
+     fond peint devient le décor du portrait. */
+  .rpg-lp-chapitres {
+    @apply absolute m-0 flex list-none p-0;
+    left: 0;
+    bottom: 3rem;
+    gap: clamp(0.7rem, 1.4vw, 1.2rem);
+  }
+  .rpg-lp-chapitre {
+    @apply flex cursor-pointer flex-col items-center border-0 bg-transparent p-0 text-center;
+    gap: 0.85rem;
+    width: clamp(6.5rem, 11.5vw, 10rem);
+    opacity: 0.62;
+    transition:
+      opacity 300ms ease,
+      transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-chapitre:hover {
+    opacity: 0.88;
+  }
+  .rpg-lp-chapitre.is-on {
+    opacity: 1;
+    transform: translateY(-6px);
+  }
+  .rpg-lp-chapitre-art {
+    @apply relative block w-full overflow-visible rounded-sm;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--border-gold-faint);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.6);
+    transition: border-color 300ms ease;
+  }
+  .rpg-lp-chapitre-art img {
+    @apply rounded-sm;
+  }
+  .rpg-lp-chapitre.is-on .rpg-lp-chapitre-art {
+    border-color: var(--color-gold-400);
+    box-shadow:
+      0 18px 34px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(238, 193, 88, 0.28);
+  }
+  /* Le losange du niveau, à cheval sur le bord bas — la signature de la bande
+     de créatures du jeu. */
+  /* Le losange tourne, son chiffre non : c'est le fond qui pivote, dans un
+     pseudo-élément, et le texte reste d'aplomb. Faire tourner la boîte entière
+     aurait couché le nombre à quarante-cinq degrés — l'erreur est facile et se
+     voit tout de suite. */
+  .rpg-lp-chapitre-niv {
+    @apply font-heading absolute grid place-items-center font-bold isolate;
+    left: 50%;
+    bottom: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-left: -0.875rem;
+    margin-bottom: -0.875rem;
+    font-size: 0.6875rem;
+    line-height: 1;
+    color: var(--color-gold-300);
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-chapitre-niv::before {
+    content: "";
+    @apply absolute inset-0 -z-10 rotate-45;
+    border: 1px solid var(--color-gold-500);
+    background: rgba(10, 8, 5, 0.94);
+    transition:
+      border-color 300ms ease,
+      box-shadow 300ms ease;
+  }
+  .rpg-lp-chapitre.is-on .rpg-lp-chapitre-niv::before {
+    border-color: var(--color-gold-300);
+    box-shadow: 0 0 14px rgba(238, 193, 88, 0.4);
+  }
+  /* Deux lignes réservées, toujours. « Sombrefer, la Fournaise » se replie et
+     « Malachar l'Ombre » non : sans hauteur fixe, les cinq mentions de
+     chapitre se retrouvaient à trois hauteurs différentes. */
+  .rpg-lp-chapitre-nom {
+    @apply font-heading flex items-start justify-center font-bold;
+    min-height: 2.1rem;
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    color: var(--color-parchment-50);
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-chapitre-zone {
+    @apply font-heading uppercase;
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+    color: rgba(233, 205, 133, 0.55);
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+
+  /* ── Les fiches de la forge ─────────────────────────────────────────────── */
+  /* En colonne, à droite, l'infobulle à gauche. Une rangée horizontale ne
+     laissait pas la place d'écrire à côté de chaque objet ce qu'il fait — et
+     c'était précisément le reproche : on voyait de belles pièces sans savoir
+     si elles étaient bonnes. Une vitrine de jeu d'équipement qui n'affiche
+     aucune statistique n'annonce rien. */
+  .rpg-lp-fiches {
+    @apply m-0 flex list-none flex-col p-0;
+    gap: clamp(0.4rem, 1.4vh, 1rem);
+    width: min(40rem, 56%);
+    margin-left: auto;
+  }
+  .rpg-lp-fiche {
+    @apply flex items-center rounded-sm;
+    gap: 0.9rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid transparent;
+    transition:
+      border-color 260ms ease,
+      background 260ms ease;
+  }
+  .rpg-lp-fiche.has-tip:hover,
+  .rpg-lp-fiche.has-tip:focus-within {
+    border-color: var(--border-gold-faint);
+    background: rgba(246, 217, 137, 0.05);
+  }
+  .rpg-lp-fiche-art {
+    @apply relative block shrink-0;
+    width: clamp(4rem, 6.6vw, 6.2rem);
+    aspect-ratio: 1;
+    filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.72));
+  }
+  .rpg-lp-fiche-texte {
+    @apply block min-w-0;
+  }
+  .rpg-lp-fiche-nom {
+    @apply font-heading block font-bold;
+    font-size: clamp(1rem, 1.4vw, 1.4rem);
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(2, 3, 4, 1);
+  }
+  .rpg-lp-fiche-gain {
+    @apply font-heading mt-1 block font-bold;
+    font-size: 0.9rem;
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-fiche-role {
+    @apply mt-1 block;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgba(243, 226, 179, 0.6);
+  }
+  /* Les cinq crans d'une pierre. Cinq losanges valent mieux que cinq lignes :
+     on voit qu'il y a une échelle avant d'avoir lu ce qu'elle donne. */
+  .rpg-lp-rangs {
+    @apply mt-1.5 flex flex-wrap items-center;
+    gap: 0.3rem;
+  }
+  .rpg-lp-rangs i {
+    @apply block rotate-45;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--color-gold-400);
+  }
+  .rpg-lp-rangs i:nth-child(1) {
+    opacity: 0.4;
+  }
+  .rpg-lp-rangs i:nth-child(2) {
+    opacity: 0.55;
+  }
+  .rpg-lp-rangs i:nth-child(3) {
+    opacity: 0.7;
+  }
+  .rpg-lp-rangs i:nth-child(4) {
+    opacity: 0.85;
+  }
+  .rpg-lp-rangs em {
+    @apply ml-1 not-italic;
+    font-size: 0.75rem;
+    color: rgba(233, 205, 133, 0.66);
+  }
+
+  /* L'échelle de raretés du jeu, recopiée. Le mythique ne prend pas une
+     sixième teinte mais une matière — l'or coulé sur l'acier noir — parce que
+     l'échelle grise → verte → bleue → violette → orange est pleine et que les
+     couleurs qui restent se confondent avec l'orange. */
+  .rpg-lp-fiche-nom.is-uncommon {
+    color: var(--color-success-500);
+  }
+  .rpg-lp-fiche-nom.is-rare {
+    color: #6fa8dc;
+  }
+  .rpg-lp-fiche-nom.is-epic {
+    color: #b48ce8;
+  }
+  .rpg-lp-fiche-nom.is-legendary {
+    color: #ff8a3d;
+  }
+  .rpg-lp-fiche-nom.is-mythic {
+    background-image: linear-gradient(
+      100deg,
+      #c9781f 0%,
+      #ffb547 22%,
+      #fff3c4 38%,
+      #ffb547 54%,
+      #c9781f 76%,
+      #ffb547 100%
+    );
+    background-size: 280% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    animation: rpg-lp-mythique 5.5s linear infinite;
+  }
+
+  /* ── Une capture du jeu ─────────────────────────────────────────────────── */
+  /* La seule surimpression de la page qui porte un filet. Ailleurs un cadre
+     serait une bordure de trop ; ici l'image *est* un écran, et sans une ligne
+     pour en marquer le bord elle se dissoudrait dans le décor du marché, qui
+     est lui-même une salle sombre aux mêmes tons. */
+  .rpg-lp-capture {
+    @apply m-0 flex h-full w-full items-center justify-center;
+  }
+  /* Les bords se dissolvent au lieu d'être tranchés par un filet.
+     Un cadre disait « voici une image de l'interface » ; le fondu dit « voici
+     l'interface », et laisse la salle du marché se poursuivre autour. L'ombre
+     suit le masque — `drop-shadow` travaille sur l'alpha, pas sur la boîte —,
+     ce qui donne une lueur diffuse plutôt qu'un rectangle porté. */
+  .rpg-lp-capture-img {
+    @apply h-auto w-auto object-contain;
+    max-width: 100%;
+    max-height: 100%;
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, #000 6%, #000 94%, transparent 100%),
+      linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(180deg, transparent 0%, #000 6%, #000 94%, transparent 100%),
+      linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+    mask-composite: intersect;
+    filter: drop-shadow(0 30px 70px rgba(0, 0, 0, 0.85));
+  }
+}
+@layer components {
+  /* ── La barre du haut ───────────────────────────────────────────────────── */
+  /* Celle du jeu, matière comprise : le grain de `bg-texture.webp` multiplié
+     sous un voile presque opaque, le filet d'or en pied, et l'ombre portée.
+     Elle était transparente puis se posait sur du verre au défilement — une
+     barre de site, pas une barre de jeu. La vitrine annonce un jeu ; la
+     première chose qu'un visiteur voit doit déjà en être une.
+     `--topnav-h` n'existe pas ici : c'est `--lp-nav-h` qui porte la hauteur. */
+  .rpg-lp-nav {
+    @apply fixed inset-x-0 top-0 z-[80] flex items-center;
+    height: var(--lp-nav-h);
+    border-bottom: 1px solid var(--border-gold-strong);
+    background-image:
+      linear-gradient(180deg, rgba(6, 10, 14, 0.94) 0%, rgba(6, 10, 14, 0.98) 100%),
+      url("/game/UI/textures/bg-texture.webp");
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  }
+  .rpg-lp-nav-inner {
+    @apply mx-auto flex w-full items-center justify-between;
+    max-width: min(var(--lp-max), calc(100% - 4rem));
+  }
+  /* La marque, c'est l'emblème seul, comme dans le jeu : le nom complet se lit
+     en grand sur l'ouverture, et la barre récupère la largeur pour ses liens. */
+  .rpg-lp-nav-brand {
+    @apply font-heading flex items-center font-bold uppercase;
+    gap: 0.65rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.16em;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-nav-emblem {
+    @apply h-11 w-11 select-none object-contain transition;
+  }
+  .rpg-lp-nav-brand:hover .rpg-lp-nav-emblem {
+    filter: brightness(1.1);
+  }
+  /* Le nom attend d'avoir quitté l'ouverture. Sur le premier écran il se
+     serait posé à cent pixels au-dessus du même nom en capitales de sept
+     centimètres — deux fois la même marque, dont une de trop. */
+  .rpg-lp-nav-brand span {
+    @apply inline-block opacity-0;
+    transform: translateX(-6px);
+    transition:
+      opacity 420ms ease,
+      transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  :root[data-scrolled] .rpg-lp-nav-brand span {
+    @apply opacity-100;
+    transform: none;
+  }
+  /* Les entrées : Cinzel, capitales, or à soixante-dix pour cent — la fonte et
+     la couleur exactes des liens du jeu. Chacune est un pavé de même hauteur
+     et de même rembourrage plutôt qu'un texte nu : le soulignement se cale
+     alors sur une boîte régulière, pas sur la largeur variable des glyphes. */
+  .rpg-lp-nav-links {
+    @apply flex items-center;
+    gap: 0.25rem;
+  }
+  .rpg-lp-nav-links a {
+    @apply font-heading relative flex cursor-pointer items-center whitespace-nowrap rounded-sm font-bold uppercase;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    color: color-mix(in srgb, var(--color-gold-400) 72%, transparent);
+    transition: color 200ms ease;
+  }
+  .rpg-lp-nav-links a::after {
+    content: "";
+    @apply absolute bottom-1 left-1/2 h-px w-0;
+    background: var(--color-gold-400);
+    transform: translateX(-50%);
+    transition: width 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-nav-links a:hover {
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-nav-links a:hover::after {
+    @apply w-[calc(100%-1.8rem)];
+  }
+  /* L'or battu du jeu, comme les deux boutons d'appel. Il était en verre
+     doré, c'est-à-dire en creux : le seul geste que la barre propose ne
+     pouvait pas être le plus discret de l'écran. */
+  .rpg-lp-nav-play {
+    @apply font-heading rounded-sm font-bold uppercase;
+    padding: 0.8rem 1.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    border: 1px solid var(--color-gold-400);
+    background: var(--btn-fill-gold);
+    color: var(--color-night-950);
+    text-shadow: 0 1px 0 rgba(255, 246, 214, 0.35);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+    transition:
+      filter 220ms ease,
+      box-shadow 220ms ease;
+  }
+  .rpg-lp-nav-play:hover {
+    filter: brightness(1.09);
+    box-shadow: 0 10px 26px rgba(217, 164, 65, 0.3);
+  }
+  /* En `scaleX` et non en largeur : repeindre une largeur à chaque image
+     relance la mise en page du document entier, une transformation ne touche
+     que la composition. */
+  .rpg-lp-progress {
+    @apply pointer-events-none fixed left-0 top-0 z-[90] w-full origin-left;
+    height: 2px;
+    transform: scaleX(0);
+    background: linear-gradient(90deg, var(--color-gold-700), var(--color-gold-300));
+  }
+
+  /* ── Les boutons ────────────────────────────────────────────────────────── */
+  /* L'or battu du jeu, et non un dégradé.
+     `--btn-fill-gold` est la matière des seize familles de boutons du jeu :
+     un voile qui fait le relief, la planche d'or martelé, puis un dégradé de
+     repli si le webp manque. La vitrine annonce un jeu ; ses deux boutons
+     doivent être ceux du jeu, sans quoi le premier clic est aussi la première
+     rupture de ton. */
+  .rpg-lp-btn {
+    @apply font-heading inline-flex items-center justify-center rounded-sm font-bold uppercase;
+    min-height: 3.2rem;
+    padding: 0 1.5rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.13em;
+    border: 1px solid var(--color-gold-400);
+    background: var(--btn-fill-gold);
+    color: var(--color-night-950);
+    text-shadow: 0 1px 0 rgba(255, 246, 214, 0.35);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.4);
+    transition:
+      transform 240ms ease,
+      box-shadow 240ms ease,
+      filter 240ms ease;
+  }
+  .rpg-lp-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.09);
+    box-shadow: 0 18px 40px rgba(217, 164, 65, 0.3);
+  }
+  .rpg-lp-btn.is-ghost {
+    border-color: var(--border-gold-soft);
+    background: rgba(5, 12, 15, 0.36);
+    color: var(--color-parchment-100);
+    text-shadow: none;
+    box-shadow: none;
+  }
+  .rpg-lp-btn.is-ghost:hover {
+    filter: none;
+    border-color: var(--border-gold-strong);
+    background: rgba(246, 217, 137, 0.1);
+  }
+  .rpg-lp-actions {
+    @apply flex flex-wrap items-center;
+    gap: 0.75rem;
+  }
+
+  /* ── L'ouverture ────────────────────────────────────────────────────────── */
+  /* Elle seule met son texte au milieu de l'écran. Les huit autres scènes ont
+     quelque chose à montrer et rendent donc le centre ; ici il n'y a que le
+     monde derrière, et le titre a le droit de s'y installer. */
+  .rpg-lp-scene.is-hero .rpg-lp-backdrop-art {
+    /* Une lente respiration, seize secondes : trop lente pour qu'on la
+       surprenne en train de bouger, assez présente pour que le monde n'ait pas
+       l'air d'une photographie. */
+    animation: rpg-lp-breathe 16s ease-in-out infinite alternate;
+  }
+  .rpg-lp-hero-body {
+    @apply absolute left-0;
+    top: 50%;
+    transform: translateY(-48%);
+    max-width: 62rem;
+  }
+  .rpg-lp-hero-mark {
+    @apply m-0 flex items-center;
+    gap: 0.85rem;
+    margin-bottom: 1.2rem;
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .rpg-lp-hero-emblem {
+    @apply h-auto select-none;
+    width: clamp(2.5rem, 4vw, 3.4rem);
+    filter: drop-shadow(0 4px 22px rgba(0, 0, 0, 0.85));
+  }
+  .rpg-lp-hero-nom {
+    @apply font-heading font-black uppercase;
+    font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+    letter-spacing: 0.2em;
+    color: var(--color-gold-300);
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.9);
+  }
+  .rpg-lp-hero-kicker {
+    @apply font-heading m-0 uppercase;
+    /* Un rem et demi, pas un : le titre est en interligne 0,86, et les
+       capitales de sa première ligne débordent par le haut de leur propre
+       boîte. Mesuré au bord des glyphes, pas au bord des boîtes. */
+    margin-bottom: 1.5rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: rgba(233, 205, 133, 0.62);
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+  }
+  .rpg-lp-hero-title {
+    @apply font-heading m-0 font-bold uppercase;
+    /* Ramené de sept rem : l'ouverture a gagné un paragraphe — ce que le jeu
+       est, avant ce qui le distingue — et trois lignes de cent douze pixels
+       poussaient la marque sous la barre du haut. */
+    font-size: clamp(2.8rem, 6vw, 5.4rem);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    color: var(--color-parchment-50);
+    text-shadow: 0 4px 26px rgba(0, 0, 0, 0.85);
+  }
+  .rpg-lp-hero-title span {
+    @apply block;
+  }
+  .rpg-lp-hero-title span:nth-child(1) {
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  }
+  .rpg-lp-hero-title span:nth-child(2) {
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 300ms both;
+  }
+  .rpg-lp-hero-title span:nth-child(3) {
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
+  }
+  .rpg-lp-hero-lede {
+    @apply m-0;
+    max-width: 42rem;
+    margin-top: 1.4rem;
+    font-size: 1.05rem;
+    line-height: 1.68;
+    color: rgba(243, 226, 179, 0.8);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.9);
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 540ms both;
+  }
+  .rpg-lp-hero-lede p {
+    @apply m-0;
+  }
+  .rpg-lp-hero-lede p + p {
+    margin-top: 0.85rem;
+  }
+  .rpg-lp-hero-body .rpg-lp-actions {
+    margin-top: 2rem;
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 660ms both;
+  }
+  /* Les six chiffres au pied de l'ouverture, sur une ligne. Pas de bandeau de
+     compteurs : un encadré aurait fait une carte, et une carte est exactement
+     ce que cette page refuse d'être. */
+  .rpg-lp-hero-foot {
+    @apply absolute inset-x-0 flex flex-wrap items-center justify-between;
+    bottom: 2.4rem;
+    gap: 1rem;
+    animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 800ms both;
+  }
+  .rpg-lp-counts {
+    @apply m-0 flex list-none flex-wrap p-0;
+    gap: clamp(0.9rem, 2vw, 1.9rem);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: rgba(233, 205, 133, 0.5);
+  }
+  .rpg-lp-counts b {
+    @apply font-heading tabular-nums font-bold;
+    font-size: 0.875rem;
+    color: var(--color-gold-300);
+  }
+  .rpg-lp-hero-hint {
+    @apply flex items-center uppercase;
+    gap: 0.6rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    color: rgba(233, 205, 133, 0.4);
+  }
+  .rpg-lp-hero-hint::before {
+    content: "";
+    @apply block h-px;
+    width: 2.2rem;
+    background: linear-gradient(90deg, var(--color-gold-400), transparent);
+    animation: rpg-lp-drip 2.6s ease-in-out infinite;
+  }
+
+  /* ── Et encore : la seule grille de la page ─────────────────────────────── */
+  /* Un filet d'or en haut de chaque colonne, et rien d'autre. Pas de fond, pas
+     de bordure sur les côtés, pas d'ombre : ce sont des colonnes de journal,
+     pas des tuiles à cliquer. */
+  .rpg-lp-others {
+    @apply absolute inset-x-0 m-0 grid list-none p-0;
+    top: 19%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.2rem 1.6rem;
+  }
+  /* L'icône et le titre sur une ligne, la phrase dessous. L'icône tenait sa
+     propre ligne, avec deux centimètres de vide sous elle : trois étages pour
+     deux informations, et la phrase — la seule qui apprenne quelque chose —
+     se retrouvait la plus petite des trois. */
+  .rpg-lp-others li {
+    padding: 1.1rem 1.4rem 1.1rem 0;
+    border-top: 1px solid var(--border-gold-faint);
+    transition:
+      border-top-color 280ms ease,
+      background 280ms ease;
+  }
+  .rpg-lp-others li:hover {
+    border-top-color: var(--border-gold-strong);
+    background: linear-gradient(180deg, rgba(246, 217, 137, 0.05), transparent 70%);
+  }
+  .rpg-lp-others-tete {
+    @apply flex items-center;
+    gap: 0.7rem;
+    margin-bottom: 0.7rem;
+  }
+  .rpg-lp-others-ico {
+    @apply h-10 w-10 shrink-0 object-contain;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.7));
+    transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-others li:hover .rpg-lp-others-ico {
+    transform: scale(1.08);
+  }
+  .rpg-lp-others h3 {
+    @apply font-heading m-0 font-bold;
+    font-size: 1.3rem;
+    line-height: 1.15;
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-others p {
+    @apply m-0;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: rgba(243, 226, 179, 0.7);
+  }
+
+  /* ── La clôture ─────────────────────────────────────────────────────────── */
+  /* Même gabarit que les autres : titre en bas à gauche, texte en bas à
+     droite. Elle a d'abord été centrée, comme l'ouverture — mais l'ouverture
+     peut se le permettre, elle n'a rien derrière elle. Une clôture centrée,
+     arrivant après sept scènes bâties sur la même ligne, se lisait comme la
+     page d'un autre site.
+     Les deux boutons se rangent au-dessus du bas de scène, dans la colonne de
+     droite : c'est le seul endroit où ils ne coupent ni le titre ni le texte. */
+  .rpg-lp-final-actions {
+    @apply absolute flex flex-wrap items-center;
+    right: 0;
+    bottom: 14rem;
+    gap: 0.75rem;
+  }
+  .rpg-lp-foot {
+    @apply absolute inset-x-0 flex flex-wrap items-center justify-between uppercase;
+    bottom: 1.4rem;
+    gap: 1rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    color: rgba(233, 205, 133, 0.38);
+  }
+
+  /* ── L'apparition au défilement ─────────────────────────────────────────── */
+  .rpg-lp-reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 850ms ease,
+      transform 850ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .rpg-lp-reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+  /* ══════════════════════════════════════════════════════════════════════════
+     L'INFOBULLE D'OBJET — reprise du jeu, à l'identique.
+
+     Ce bloc est **copié de `apps/web`**, règle pour règle. C'est la seule
+     duplication assumée de toute la vitrine, et elle remplace quelque chose de
+     pire : des captures d'écran. Une image ne monte pas en taille — au double
+     elle bavait, et c'est précisément la fiche qu'on veut pouvoir agrandir,
+     puisque c'est là qu'on lit ce qu'une pièce vaut.
+
+     Rendue en HTML, elle se met à l'échelle sans perdre un pixel, et pèse
+     quelques centaines d'octets au lieu de huit kilos par objet.
+
+     Le prix est connu : si la fiche du jeu change de dessin, ce bloc ne le
+     saura pas. Il est accepté pour la même raison que le reste de la vitrine —
+     cette app part vivre dans son propre dépôt, où le lien sera de toute façon
+     coupé. Voir `item-fiche.tsx` pour les données, qui elles sont relevées
+     dans la base.
+     ══════════════════════════════════════════════════════════════════════════ */
+  .rpg-tooltip {
+    --slot-edge: rgba(168, 172, 182, 0.45);
+    /* 19 rem plutôt que 18 : cinq pour cent de plus, de quoi laisser respirer
+       les paliers d'ensemble sans que l'infobulle ne devienne un panneau. */
+    /* `relative` et non `fixed` : dans le jeu, l'infobulle est projetée sur
+       `<body>` et placée en coordonnées de fenêtre. Ici elle vit dans la
+       scène, et c'est son conteneur qui décide où. Le reste est intact. */
+    @apply pointer-events-none relative flex w-76 flex-col overflow-hidden rounded-sm;
+    /* La bordure reste sobre sur tout le pourtour ; c'est le halo du haut,
+       ci-dessous, qui porte la rareté. Un liseré orange sur quatre côtés
+       transformait la pièce légendaire en enseigne, et la couleur perdait son
+       sens à force d'être partout. */
+    border: 1px solid color-mix(in srgb, var(--slot-edge) 55%, rgba(140, 144, 154, 0.4));
+    background: #05080c;
+    box-shadow:
+      0 18px 44px rgba(0, 0, 0, 0.78),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .rpg-tooltip::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 z-10 h-px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--slot-edge) 22%,
+      var(--slot-edge) 78%,
+      transparent 100%
+    );
+  }
+
+  /* ── 1. Identité ─────────────────────────────────────────────────────── */
+  .rpg-tooltip-head {
+    @apply relative flex shrink-0 items-center gap-3 overflow-hidden px-3 py-2.5;
+  }
+  .rpg-tooltip-head-veil {
+    @apply pointer-events-none absolute inset-0;
+    background: linear-gradient(180deg, rgba(3, 5, 8, 0.38) 0%, rgba(3, 5, 8, 0.74) 100%);
+  }
+  .rpg-tooltip-thumb {
+    @apply relative block h-16 w-16 shrink-0;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.85));
+  }
+  .rpg-tooltip-thumb-fallback {
+    @apply flex h-full w-full items-center justify-center text-4xl leading-none;
+  }
+  .rpg-tooltip-ident {
+    @apply relative flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .rpg-tooltip-name {
+    @apply font-heading text-[15px] font-bold leading-tight tracking-[0.02em];
+  }
+  .rpg-tooltip-sub {
+    @apply truncate text-[11px] font-semibold leading-tight;
+  }
+  .rpg-tooltip-sub-sep {
+    @apply text-parchment-300/45;
+  }
+  .rpg-tooltip-ident-foot {
+    @apply flex min-h-4 items-center justify-between gap-2;
+  }
+  .rpg-tooltip-meta {
+    @apply truncate text-[11px] uppercase tracking-[0.1em] text-parchment-300/60;
+  }
+  .rpg-tooltip-gate-on {
+    @apply font-semibold;
+    color: var(--color-gold-300);
+  }
+  .rpg-tooltip-gate-off {
+    @apply font-semibold;
+    color: var(--color-danger-500);
+  }
+  .rpg-tooltip-body {
+    @apply relative flex flex-col gap-3 px-3 pt-2 pb-3;
+  }
+  .rpg-tooltip-hero {
+    @apply flex items-center gap-3 rounded-sm px-2.5 py-2;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.045) 0%,
+      rgba(255, 255, 255, 0.015) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .rpg-tooltip-hero-value {
+    @apply font-heading text-[2rem] font-bold leading-none tabular-nums text-parchment-50;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+  .rpg-tooltip-hero-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.2em] text-parchment-300/70;
+  }
+  .rpg-tooltip-gem {
+    @apply flex items-center gap-2.5 rounded-sm px-2.5 py-2;
+    background: linear-gradient(
+      180deg,
+      rgba(238, 193, 88, 0.08) 0%,
+      rgba(238, 193, 88, 0.02) 100%
+    );
+    border: 1px solid rgba(238, 193, 88, 0.16);
+  }
+  .rpg-tooltip-gem-pip {
+    @apply relative h-7 w-7 shrink-0;
+  }
+  .rpg-tooltip-gem-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-300/70;
+  }
+  .rpg-tooltip-gem-value {
+    @apply text-[13px] font-semibold leading-snug text-parchment-50;
+  }
+  .rpg-tooltip-stats {
+    @apply flex flex-col gap-1;
+  }
+  .rpg-tooltip-stat {
+    @apply flex items-center gap-2 text-[13px] font-semibold text-parchment-100;
+  }
+  .rpg-tooltip-stat-label {
+    @apply min-w-0 flex-1 truncate font-normal text-parchment-200;
+  }
+  .rpg-tooltip-stat-value {
+    @apply w-16 shrink-0 text-right tabular-nums;
+  }
+  .rpg-tooltip-delta-col {
+    @apply w-11 shrink-0 text-right;
+  }
+  /* La durabilité intacte s'efface d'un ton ; entamée, elle reprend le sien. */
+  .rpg-tooltip-stat.is-muted {
+    @apply text-parchment-300/60;
+  }
+  .rpg-tooltip-stat.is-muted .rpg-tooltip-stat-label {
+    @apply text-parchment-300/60;
+  }
+  .rpg-tooltip-stat.is-alert .rpg-tooltip-stat-label {
+    color: var(--color-danger-500);
+  }
+  .rpg-tooltip-delta {
+    @apply shrink-0 text-[11px] font-bold tabular-nums;
+  }
+  .rpg-tooltip-delta.is-better {
+    color: var(--color-success-500);
+  }
+  .rpg-tooltip-delta.is-worse {
+    color: var(--color-danger-500);
+  }
+  .rpg-tooltip-block {
+    @apply flex flex-col gap-1.5 pt-3;
+    border-top: 1px solid var(--border-gold-faint);
+  }
+  .rpg-tooltip-title {
+    @apply font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-gold-300;
+  }
+  .rpg-tooltip-set-head {
+    @apply flex items-center justify-between gap-2;
+  }
+  .rpg-tooltip-set-badge {
+    @apply font-heading shrink-0 rounded-sm px-1.5 py-0.5 text-[11px] font-bold tabular-nums leading-none;
+    color: var(--color-gold-300);
+    border: 1px solid rgba(238, 193, 88, 0.42);
+    background: rgba(238, 193, 88, 0.1);
+  }
+  .rpg-tooltip-set-name {
+    @apply truncate text-xs font-semibold leading-tight;
+  }
+  .rpg-set-tier {
+    @apply font-heading flex items-baseline gap-1.5 py-0.5 text-[13px] leading-snug tracking-[0.02em];
+  }
+  .rpg-set-tier-mark {
+    @apply w-3 shrink-0 text-[11px];
+  }
+  /* Acquis : allumé, c'est un gain qu'on possède. */
+  .rpg-set-tier-acquis {
+    @apply text-[14px] font-bold;
+    color: var(--color-success-500);
+  }
+  /* Le prochain : pleine lisibilité et flèche, c'est l'objectif du moment. */
+  .rpg-set-tier-prochain {
+    @apply font-semibold;
+    color: var(--color-gold-300);
+  }
+  /* Les lointains : présents, discrets, sans prétendre à l'attention. */
+  .rpg-set-tier-lointain {
+    color: rgba(233, 205, 133, 0.26);
+  }
+  .rpg-set-tier-count {
+    @apply w-7 shrink-0 text-right tabular-nums;
+  }
+  .rpg-set-tier-label {
+    @apply min-w-0 flex-1 truncate;
+  }
+  .rpg-set-tier-value {
+    @apply shrink-0 tabular-nums;
+  }
+
+  .rpg-tooltip-flavour {
+    @apply text-xs italic leading-snug text-parchment-300/75;
+  }
+  .rpg-tooltip-foot {
+    @apply flex shrink-0 items-center justify-between gap-3 px-3 py-2 text-[10px] uppercase tracking-[0.12em] text-parchment-300/55;
+    border-top: 1px solid var(--border-gold-faint);
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .rpg-rarity-common {
+    color: var(--color-parchment-300);
+  }
+  .rpg-rarity-uncommon {
+    color: var(--color-success-500);
+  }
+  .rpg-rarity-rare {
+    color: #6fa8dc;
+  }
+  .rpg-rarity-epic {
+    color: #b48ce8;
+  }
+  .rpg-rarity-legendary {
+    color: #ff8a3d;
+  }
+  .rpg-rarity-mythic {
+    background-image: linear-gradient(100deg, #c9781f 0%, #ffb547 22%, #fff3c4 38%, #ffb547 54%, #c9781f 76%, #ffb547 100%);
+    background-size: 280% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: mythic-sweep 5.5s linear infinite;
+  }
+
+  .rpg-rarity-border-common {
+    border-color: var(--color-parchment-300);
+    box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-parchment-300) 45%, transparent);
+  }
+  .rpg-rarity-border-uncommon {
+    border-color: var(--color-success-500);
+    box-shadow: 0 0 8px 1px color-mix(in srgb, var(--color-success-500) 55%, transparent);
+  }
+  .rpg-rarity-border-rare {
+    border-color: #6fa8dc;
+    box-shadow: 0 0 8px 1px color-mix(in srgb, #6fa8dc 55%, transparent);
+  }
+  .rpg-rarity-border-epic {
+    border-color: #b48ce8;
+    box-shadow: 0 0 10px 2px color-mix(in srgb, #b48ce8 60%, transparent);
+  }
+  .rpg-rarity-border-mythic {
+    border-color: #ffcf6b;
+    background-color: rgba(8, 6, 4, 0.65);
+    box-shadow:
+      0 0 0 1px rgba(255, 181, 71, 0.35),
+      0 0 10px 1px rgba(255, 149, 41, 0.55),
+      inset 0 0 14px rgba(201, 120, 31, 0.45);
+  }
+  .rpg-rarity-border-legendary {
+    border-color: #ff8a3d;
+    box-shadow:
+      0 0 12px 3px color-mix(in srgb, #ff8a3d 65%, transparent),
+      0 0 4px 1px color-mix(in srgb, #ff3d3d 40%, transparent);
+  }
+  .rpg-socket-pips {
+    @apply flex shrink-0 items-center gap-1.5 pl-1;
+  }
+  .rpg-socket-pip {
+    @apply block h-2 w-2 rounded-full;
+    border: 1px solid rgba(201, 162, 39, 0.5);
+    background: rgba(6, 5, 3, 0.7);
+  }
+  .rpg-socket-pip {
+    @apply relative block h-4 w-4 shrink-0 rounded-full;
+    border: 1px solid rgba(201, 162, 39, 0.45);
+    background: rgba(6, 5, 3, 0.7);
+  }
+  .rpg-socket-pip-on {
+    border-color: rgba(232, 205, 128, 0.7);
+    background: rgba(6, 5, 3, 0.3);
+    box-shadow:
+      0 0 0 1px rgba(232, 205, 128, 0.12),
+      0 0 7px rgba(232, 205, 128, 0.3);
+  }
+  .rpg-tooltip-gems {
+    @apply flex flex-col gap-1;
+  }
+  .rpg-tooltip-gems li {
+    @apply flex items-center gap-2 text-[0.78rem];
+  }
+  .rpg-tooltip-gem-icon {
+    @apply relative h-5 w-5 shrink-0;
+  }
+  .rpg-tooltip-gem-name {
+    @apply min-w-0 flex-1 truncate text-[0.72rem];
+    color: var(--color-parchment-400);
+  }
+  /* L'effet à droite, en pleine lumière : c'est lui qu'on vient lire. */
+  .rpg-tooltip-gem-stat {
+    @apply shrink-0 font-semibold tabular-nums;
+    color: var(--color-parchment-100);
+  }
+  .rpg-tooltip-gem-bonuses {
+    @apply mt-1 flex flex-col gap-0.5 rounded-sm px-2 py-1.5 text-[0.72rem];
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(201, 162, 39, 0.12);
+    color: var(--color-parchment-400);
+  }
+  .rpg-tooltip-gem-bonuses li {
+    @apply flex items-baseline justify-between gap-2;
+  }
+  .rpg-tooltip-gem-on {
+    color: var(--color-gold-300);
+  }
+
+  /* Les châsses dans l'infobulle : sur la ligne de pied de l'identité. */
+  .rpg-tooltip-sockets {
+    @apply relative flex shrink-0 items-center gap-1;
+  }
+  .rpg-tooltip-stamp {
+    @apply mt-2 pt-2 text-[10.5px] uppercase tracking-[0.1em];
+    border-top: 1px solid var(--border-gold-faint);
+    color: color-mix(in srgb, var(--color-gold-300) 68%, transparent);
+  }
+  .rpg-tooltip-stamp b {
+    color: var(--color-gold-200);
+  }
+  .rpg-tooltip-stat.is-master .rpg-tooltip-stat-value {
+    color: var(--color-gold-300);
+  }
+}
+
+@keyframes rpg-lp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Quatre pour cent et non sept : au sommet de sa respiration, l'ouverture
+   agrandissait son décor de sept pour cent de plus, sur une image qui est déjà
+   servie au-delà de sa taille native. Le mouvement reste perceptible ; la
+   perte de définition, non. */
+@keyframes rpg-lp-breathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes rpg-lp-voile {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rpg-lp-mythique {
+  from {
+    background-position: 280% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes rpg-lp-drip {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Les écrans étroits ─────────────────────────────────────────────────────
+   Le gabarit tient jusqu'à la tablette ; en dessous, les deux colonnes du bas
+   se replient l'une sous l'autre et la surimpression cède la place. */
+@media (max-width: 1080px) {
+  .rpg-lp-inner,
+  .rpg-lp-nav-inner {
+    max-width: calc(100% - 2.2rem);
+  }
+  .rpg-lp-nav-links {
+    display: none;
+  }
+  /* Huit onglets ne tiennent pas sur une tablette : la rangée défile
+     latéralement. Le dégradé au bord droit est ce qui le fait savoir — sans
+     lui, la moitié des métiers n'existe tout simplement pas pour qui ne pense
+     pas à balayer. */
+  .rpg-lp-tabs {
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+  }
+  .rpg-lp-caption {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.1rem;
+    bottom: 2.2rem;
+  }
+  .rpg-lp-desc {
+    max-width: 44rem;
+  }
+  .rpg-lp-tabs {
+    top: 6rem;
+  }
+  .rpg-lp-stage,
+  .rpg-lp-scene.is-captures .rpg-lp-stage {
+    top: 20%;
+    left: 6%;
+    right: 0;
+    bottom: 44%;
+  }
+  /* Les fiches de la forge se resserrent. Quatre d'entre elles, à leur taille
+     de bureau, sont plus hautes que la scène ne l'est en dessous de la
+     tablette : elles débordaient dans le titre. La ligne de rôle part la
+     première — c'est la seule des trois qui n'annonce aucun chiffre. */
+  .rpg-lp-fiches {
+    width: 100%;
+    margin-left: 0;
+    gap: 0.3rem;
+  }
+  /* La fiche est masquée sur tactile, mais une fenêtre étroite avec une souris
+     existe aussi : à sa taille de bureau elle y serait plus large que l'écran. */
+  /* La forge redéclare la sienne sans condition : il faut la reprendre ici
+     aussi, sans quoi sa fiche resterait à un et un dixième sur une fenêtre
+     étroite, où elle serait plus large que la colonne qui la porte. */
+  .rpg-lp-scene,
+  .rpg-lp-forge {
+    --fiche-echelle: 0.8;
+  }
+  .rpg-lp-fiche {
+    padding: 0.35rem 0.5rem;
+    gap: 0.7rem;
+  }
+  .rpg-lp-fiche-art {
+    width: 2.8rem;
+  }
+  .rpg-lp-fiche-nom {
+    font-size: 0.875rem;
+  }
+  .rpg-lp-fiche-role {
+    display: none;
+  }
+  .rpg-lp-rangs em {
+    font-size: 0.5625rem;
+  }
+  .rpg-lp-others {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* La Route perd ses trois colonnes : le texte en haut, le panneau dessous,
+     les chapitres en bas. Les garder côte à côte aurait donné un panneau de
+     deux cents pixels, c'est-à-dire illisible — et c'est lui qu'on est venu
+     voir. */
+  .rpg-lp-lieu-nom {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ── Les captures du jeu, sur écran étroit ──────────────────────────────────
+   Une capture d'interface se montre entière ou ne se montre pas : elle est
+   servie en `contain`, dans une boîte qu'on lui réserve. Cette boîte gardait
+   ses marges de bureau — douze pour cent de chaque côté — et une hauteur de
+   deux tiers d'écran. Sur un téléphone tenu droit, cela donnait une image de
+   deux cent quatre-vingt-seize pixels de large **contenue dans une boîte
+   presque carrée** : un rectangle de trois mille deux cents pixels réduit à
+   cent cinquante de haut, perdu au milieu de son propre cadre.
+
+   La boîte prend donc toute la largeur et **exactement le rapport de la
+   capture** — plus de marge intérieure, plus de bandes noires : ce que la
+   boîte mesure est ce que l'image occupe. Soixante-treize pour cent de surface
+   gagnés, et c'est le maximum possible sans rogner l'écran, ce qu'on refuse :
+   rognée sur les côtés, c'est la colonne des catégories qui part la première.
+   ════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop {
+    top: 22%;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    aspect-ratio: 3200 / 1653;
+  }
+  /* Le voile s'éteint. Il assombrissait le bas de la boîte à quatre-vingt-dix
+     pour cent pour que le titre puisse s'y poser ; le titre est maintenant en
+     dessous, sur le noir de la scène, et ce même voile ne mangeait plus que le
+     tiers inférieur de la capture. */
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop-veil {
+    background: none;
+  }
+  /* Et un filet apparaît. Sur le décor sombre du bureau, la capture se
+     détachait seule ; posée sur le noir plein de la scène, elle s'y dissout —
+     c'est un écran, et un écran a un bord. */
+  .rpg-lp-scene.is-captures .rpg-lp-backdrop-art {
+    border: 1px solid var(--border-gold-faint);
+    border-radius: var(--rpg-radius);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LE DÉPLIAGE DES TROIS SCÈNES À DIAGRAMME
+
+   Métiers, forge et combat quittent ici le gabarit à bandes — onglets en haut,
+   démonstration au milieu, titre en bas — pour se dérouler en colonne.
+
+   **La condition porte sur la hauteur autant que sur la largeur.** C'est le
+   point qu'on manque en pensant « responsive = largeur ». Une bande est une
+   part d'une hauteur d'écran : la démonstration en prend un peu plus de la
+   moitié, la légende un tiers. Le contenu, lui, ne rétrécit pas quand la
+   fenêtre raccourcit — une fiche d'objet fait quatre cent quatre-vingts
+   pixels, un titre de trois lignes en fait deux cents. Sous neuf cents pixels
+   de haut, les deux se rencontrent — et cela arrive sur un écran de portable
+   parfaitement large. Le seuil est mesuré et non estimé : à neuf cents, la
+   démonstration dispose de quatre cent quarante-quatre pixels pour quatre cent
+   trente-deux de contenu, et la légende passe dix pixels sous elle. À huit
+   cent quatre-vingts, les deux se chevauchent.
+
+   **Ce que le dépliage change, et ce qu'il ne change pas.** La scène garde sa
+   hauteur d'écran minimale, son décor plein cadre et son voile : tant que le
+   contenu tient, rien ne bouge. Ce qui change est qu'elle peut désormais
+   grandir. C'est le seul moyen de ne rien cacher — et la version qui ne savait
+   pas grandir cachait les quatre voisins d'un métier, les trois aperçus de la
+   forge, le panneau de rotation et trois repères sur cinq, c'est-à-dire
+   exactement ce que la refonte avait ajouté.
+
+   Trois états, donc, et non deux. Déplié **large**, la démonstration garde sa
+   colonne de droite : la fiche reste à côté de la chaîne, le panneau à côté de
+   la rotation, la légende sur deux colonnes. C'est le gabarit de la référence,
+   à ceci près qu'il n'est plus enfermé dans une hauteur d'écran. Déplié
+   **étroit**, sous neuf cents pixels, tout passe l'un sous l'autre.
+
+   L'ordre de la colonne est celui du document de référence : navigation,
+   visuel, informations, fiche, titre, texte, chiffres. Il tombe tout seul —
+   c'est déjà l'ordre du balisage.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1080px), (max-height: 899px) {
+  .rpg-lp-scene.is-pliable .rpg-lp-inner {
+    @apply flex flex-col justify-center;
+    gap: clamp(1.25rem, 3.5vh, 2.25rem);
+    /* La barre du haut est fixe et sa hauteur change avec l'écran : la déduire,
+       plutôt que de recopier ses deux valeurs, est ce qui évite que la rangée
+       d'onglets passe dessous le jour où elle maigrit. */
+    padding-block: calc(var(--lp-nav-h) + 2.25rem) 3rem;
+  }
+  /* Les trois bandes rejoignent le flux. Elles gardent leur dessin — la rangée
+     d'onglets défile toujours, la légende garde ses deux tailles de texte —,
+     elles cessent seulement d'être posées à des pourcentages de la scène. */
+  .rpg-lp-scene.is-pliable .rpg-lp-tabs,
+  .rpg-lp-scene.is-pliable .rpg-lp-stage,
+  .rpg-lp-scene.is-pliable .rpg-lp-caption,
+  .rpg-lp-scene.is-pliable .rpg-lp-route,
+  .rpg-lp-scene.is-pliable .rpg-lp-boss-swap,
+  .rpg-lp-scene.is-pliable .rpg-lp-chapitres,
+  .rpg-lp-scene.is-pliable .rpg-lp-others,
+  .rpg-lp-scene.is-pliable .rpg-lp-final-actions,
+  .rpg-lp-scene.is-pliable .rpg-lp-foot {
+    @apply static;
+    inset: auto;
+  }
+  .rpg-lp-scene.is-pliable .rpg-lp-tabs {
+    @apply shrink-0;
+  }
+  /* Les surimpressions restent **toutes montées** — c'est ce qui permet au
+     changement d'onglet d'être un fondu et non un vide suivi d'une apparition.
+     Empilées dans une seule case de grille, elles se superposent sans sortir du
+     flux : la scène prend la hauteur de la plus haute des quatre, et changer
+     d'onglet ne fait plus sauter la page. Les rendre absolues aurait donné une
+     scène de hauteur nulle ; ne garder que l'active aurait rendu le fondu
+     impossible. */
+  .rpg-lp-scene.is-pliable .rpg-lp-stage {
+    @apply grid;
+  }
+  .rpg-lp-scene.is-pliable .rpg-lp-stage-layer {
+    @apply static;
+    grid-area: 1 / 1;
+  }
+  .rpg-lp-scene.is-pliable .rpg-lp-metier,
+  .rpg-lp-scene.is-pliable .rpg-lp-forge,
+  .rpg-lp-scene.is-pliable .rpg-lp-combat {
+    @apply h-auto;
+  }
+  /* L'infobulle du jeu fait dix-neuf rem, en dur, parce que c'est la largeur
+     qu'elle a dans le jeu. Un téléphone de trois cent vingt pixels n'en a que
+     dix-sept une fois les gouttières retirées : elle y débordait par la droite,
+     et le décor avec elle. */
+  .rpg-lp-scene.is-pliable .rpg-tooltip {
+    width: min(19rem, 100%);
+  }
+
+  /* ── Les métiers ────────────────────────────────────────────────────────── */
+  /* Le réseau perd ses fils et garde tout le reste. Les fils sont ce qui ne se
+     réduit pas : quatre courbes qui relient un centre à quatre coins n'ont plus
+     de sens dès que les nœuds passent sous le centre au lieu de l'entourer. Les
+     nœuds, eux, portent le propos — qui travaille avec qui — et se lisent aussi
+     bien en rangée. */
+  .rpg-lp-metier {
+    @apply grid items-center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vh, 1.75rem) clamp(1.5rem, 3vw, 3rem);
+  }
+  .rpg-lp-reseau,
+  .rpg-lp-metier-boucle,
+  .rpg-lp-metier-fiche {
+    @apply static;
+    width: auto;
+    height: auto;
+    transform: none;
+  }
+  /* Borné, et centré. Étalés sur toute la largeur d'un portable, les quatre
+     voisins s'éloignaient du cercle jusqu'à cesser d'avoir l'air de lui
+     appartenir — c'est un réseau, et un réseau se tient serré. */
+  .rpg-lp-reseau {
+    @apply mx-auto grid w-full;
+    grid-column: 1 / -1;
+    max-width: 62rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vh, 1.25rem) clamp(0.5rem, 1.6vw, 1.2rem);
+  }
+  .rpg-lp-reseau-fils {
+    display: none;
+  }
+  .rpg-lp-reseau-centre {
+    @apply relative left-auto top-auto;
+    grid-column: 1 / -1;
+    width: auto;
+    transform: none;
+  }
+  .rpg-lp-reseau-portrait,
+  .rpg-lp-reseau-anneau {
+    width: 8.5rem;
+  }
+  .rpg-lp-reseau-anneau {
+    top: 4.25rem;
+  }
+  .rpg-lp-reseau-nom {
+    font-size: 1.35rem;
+  }
+  /* Les quatre voisins reprennent tous la même forme : emblème à gauche, texte
+     à droite. Les coins n'existent plus, donc le miroir du côté gauche non plus
+     — il ne servait qu'à faire pointer les emblèmes vers le centre. */
+  .rpg-lp-noeud,
+  .rpg-lp-noeud.is-hg,
+  .rpg-lp-noeud.is-bg,
+  .rpg-lp-noeud.is-hd,
+  .rpg-lp-noeud.is-bd {
+    @apply static flex-row text-left;
+    width: auto;
+    gap: 0.6rem;
+  }
+  .rpg-lp-noeud-art {
+    width: 2.6rem;
+  }
+  .rpg-lp-noeud-texte b {
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+  }
+  .rpg-lp-noeud-texte span {
+    font-size: 0.6875rem;
+  }
+  /* La boucle passe de la file à la grille. En file, chaque case était bornée à
+     onze et demi pour cent de la largeur — une part réservée du temps où la
+     fiche tenait l'autre moitié de la scène. Les quatre cases se partagent
+     maintenant leur colonne, et leurs légendes cessent de se plier en deux. */
+  .rpg-lp-metier-boucle {
+    @apply block;
+    grid-column: 1;
+  }
+  .rpg-lp-flow {
+    @apply grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 clamp(0.5rem, 1.6vw, 1.4rem);
+  }
+  .rpg-lp-flow-step {
+    width: auto;
+  }
+  .rpg-lp-flow-art {
+    width: clamp(3.4rem, 9vw, 5.5rem);
+  }
+  .rpg-lp-flow-step:not(:last-child)::after {
+    top: calc(50% - 2.2rem);
+  }
+  /* La fiche garde la colonne de droite tant qu'il y a de la largeur. Elle
+     était masquée sous mille quatre-vingts pixels : elle est pourtant la
+     quatrième étape de la lecture verticale que demande le document de
+     référence, et la seule chose de la scène qui réponde à « et ça donne
+     quoi ». Ce qui la chassait était la place, pas l'utilité. */
+  .rpg-lp-metier-fiche {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  /* ── La forge ───────────────────────────────────────────────────────────── */
+  .rpg-lp-forge.is-chaine {
+    @apply grid items-center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(1rem, 3vh, 1.75rem) clamp(1.5rem, 3vw, 3rem);
+  }
+  .rpg-lp-chaine,
+  .rpg-lp-apercus {
+    width: 100%;
+    grid-column: 1;
+  }
+  .rpg-lp-chaine {
+    gap: 0.9rem;
+  }
+  .rpg-lp-chaine-art {
+    width: clamp(4rem, 11vw, 7rem);
+  }
+  .rpg-lp-apercus {
+    gap: 0.6rem;
+    max-width: none;
+  }
+  .rpg-lp-apercus li {
+    padding: 0.55rem 0.7rem;
+    gap: 0.6rem;
+  }
+  .rpg-lp-apercu-art {
+    width: 2.1rem;
+  }
+  /* L'enclume sort. Elle est décorative, et sa place — derrière le centre de la
+     chaîne — n'existe plus dans une grille où la chaîne n'occupe qu'une
+     colonne. */
+  .rpg-lp-forge-enclume {
+    display: none;
+  }
+  /* Une seule fiche, celle de la pièce finie. Les quatre qui s'ouvraient au
+     survol se posaient toutes au même endroit, en absolu ; dans le flux elles
+     s'empileraient. Et sur la moitié de ces écrans il n'y a pas de survol. */
+  .rpg-lp-forge-fiche.is-survol {
+    display: none;
+  }
+  .rpg-lp-forge-fiche.is-defaut {
+    @apply static;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    transform: none;
+  }
+
+  /* ── Le combat ──────────────────────────────────────────────────────────── */
+  /* Le cercle reste, plus petit, et ses légendes se resserrent : il lui faut
+     deux fois son rayon plus deux légendes en largeur, et c'est ce calcul — et
+     non la taille du cercle seul — qui décide s'il tient. */
+  .rpg-lp-rotation {
+    width: min(24rem, 40vh);
+    margin-inline: auto;
+  }
+  .rpg-lp-rota-coup {
+    width: 17rem;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     LE DÉPLIÉ ÉTROIT — sous neuf cents pixels
+
+     La colonne de droite tombe. Le cercle de la rotation avec elle : il lui
+     faut deux fois son rayon plus deux légendes, quatre cent quarante plus
+     trois cent quarante, et la somme dépasse la colonne. Le serrer davantage
+     donnerait quatre légendes de cent pixels autour d'un anneau devenu
+     médaillon — quatre colonnes de mots coupés.
+     ══════════════════════════════════════════════════════════════════════════ */
+  @media (max-width: 899px) {
+    .rpg-lp-metier,
+    .rpg-lp-forge.is-chaine {
+      @apply flex flex-col;
+      gap: clamp(1rem, 3vh, 1.75rem);
+    }
+    /* Les deux onglets sans chaîne — traitements, gemmes — lâchent enfin la
+       colonne qu'ils réservaient à l'infobulle, et leur explication rejoint le
+       flux : elle y était centrée par une translation, c'est-à-dire hors flux.
+       Ils la gardent au-dessus de neuf cents, et c'est ce qui évite que la
+       pile de surimpressions prenne la hauteur d'un « Sertir » déplié — deux
+       cents pixels de vide sous chacun des trois autres onglets. */
+    .rpg-lp-forge {
+      @apply flex-col items-stretch;
+      gap: 1.25rem;
+    }
+    .rpg-lp-explique {
+      @apply static;
+      max-width: none;
+      padding-right: 0;
+      transform: none;
+    }
+    .rpg-lp-fiches {
+      width: 100%;
+      margin-left: 0;
+    }
+    .rpg-lp-metier-fiche,
+    .rpg-lp-forge-fiche.is-defaut {
+      @apply mx-auto w-fit;
+    }
+    .rpg-lp-combat {
+      @apply flex-col items-stretch justify-center;
+      gap: clamp(1rem, 3vh, 1.75rem);
+    }
+    .rpg-lp-rotation {
+      @apply grid w-full;
+      aspect-ratio: auto;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(0.9rem, 2.5vh, 1.4rem) clamp(1rem, 3vw, 2rem);
+      margin-inline: 0;
+    }
+    .rpg-lp-rotation-anneau,
+    .rpg-lp-rotation-coeur {
+      display: none;
+    }
+    .rpg-lp-rota-coup,
+    .rpg-lp-rota-coup.is-haut,
+    .rpg-lp-rota-coup.is-droite,
+    .rpg-lp-rota-coup.is-bas,
+    .rpg-lp-rota-coup.is-gauche {
+      @apply static flex-row text-left;
+      width: auto;
+    }
+    .rpg-lp-rota-coup.is-gauche .rpg-lp-rota-tour {
+      @apply justify-start;
+    }
+    .rpg-lp-rota-panneau {
+      width: 100%;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LES SCÈNES QUI NE CASSENT QU'EN LARGEUR
+
+   Route du Voyageur, guildes, « et encore », clôture. Elles se déplient comme
+   les trois scènes à diagramme, mais **sur la largeur seule** : leurs blocs
+   sont plus plats — une rangée de cartes, une grille de vignettes, deux
+   boutons — et tiennent encore dans une fenêtre large et courte. Les déplier
+   là ferait perdre à la Route la disposition qu'elle imite, celle de l'écran
+   de campagne du jeu, sur un portable où elle tenait très bien.
+
+   La coquille est donc recopiée ici, et c'est la seule duplication de la
+   feuille. Elle a une raison : une même règle ne peut pas porter deux
+   conditions d'écran selon la classe qu'elle vise.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1080px) {
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-inner {
+    @apply flex flex-col justify-center;
+    gap: clamp(1.25rem, 3.5vh, 2.25rem);
+    padding-block: calc(var(--lp-nav-h) + 2.25rem) 3rem;
+  }
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-tabs,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-stage,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-caption,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-route,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-boss-swap,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-chapitres,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-others,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-final-actions,
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-foot {
+    @apply static;
+    inset: auto;
+  }
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-tabs {
+    @apply shrink-0;
+  }
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-stage {
+    @apply grid;
+  }
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-stage-layer {
+    @apply static;
+    grid-area: 1 / 1;
+  }
+  .rpg-lp-scene.is-pliable-etroit .rpg-lp-caption {
+    @apply flex flex-col items-stretch;
+    gap: 1.1rem;
+  }
+
+  /* ── La Route du Voyageur ───────────────────────────────────────────────── */
+  /* Elle imite l'écran de campagne du jeu : titre à gauche, panneau à droite,
+     chapitres en bas. C'est une disposition d'écran large, et sous mille
+     quatre-vingts elle se repliait sur elle-même — le panneau du boss posé sur
+     le titre, sa base contre les cartes de créatures. Dépliée, elle se lit dans
+     son ordre : la route, le boss choisi, les chapitres.
+
+     Le texte et les trois chiffres reviennent. Ils étaient masqués faute de
+     place ; la place existe maintenant, et une scène de campagne qui n'annonce
+     ni huit zones ni cent vingt créatures n'annonce rien. */
+  .rpg-lp-route {
+    max-width: none;
+  }
+  .rpg-lp-route .rpg-lp-desc,
+  .rpg-lp-route-chiffres {
+    @apply flex;
+  }
+  .rpg-lp-route .rpg-lp-desc {
+    @apply block;
+    max-width: 44rem;
+  }
+  /* Le panneau se borne et se centre : à toute la largeur d'une tablette, un
+     portrait de boss de mille pixels de haut aurait pris la scène entière. */
+  .rpg-lp-boss-swap {
+    @apply mx-auto;
+    width: min(26rem, 100%);
+  }
+  /* La rangée de chapitres défile latéralement — huit cartes ne tiennent pas
+     dans une largeur de téléphone, et les réduire jusqu'à ce qu'elles tiennent
+     rendrait les portraits illisibles. Le dégradé au bord droit est ce qui le
+     fait savoir. */
+  .rpg-lp-chapitres {
+    @apply w-full overflow-x-auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 88%, transparent 100%);
+  }
+  .rpg-lp-chapitres::-webkit-scrollbar {
+    display: none;
+  }
+  .rpg-lp-chapitre {
+    width: clamp(7rem, 22vw, 10rem);
+  }
+
+  /* ── La cité et les expéditions ─────────────────────────────────────────── */
+  /* Des tableaux peints, et c'est la seule section de la page où une image
+     mérite qu'on s'arrête dessus. En rangée qui se replie, ils tombaient à cent
+     pixels de large : on y devinait un lieu sans le voir, ce qui est exactement
+     ce que la section refuse. En grille, ils reprennent leur surface. */
+  /* La fiche de la carte prend toute la largeur disponible : à 34 rem sur un
+     téléphone, elle débordait par les deux côtés. */
+  .rpg-lp-carte-fiche {
+    width: 100%;
+  }
+
+  .rpg-lp-lieux {
+    @apply grid w-full;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+  /* Les huit expéditions sont deux fois plus nombreuses que les quatre
+     bâtiments : elles prennent deux fois plus de colonnes, sans quoi la
+     scène ferait quatre écrans de haut sur un téléphone. */
+  .rpg-lp-lieux.is-longue {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .rpg-lp-lieu {
+    width: 100%;
+  }
+
+  /* ── Et encore ──────────────────────────────────────────────────────────── */
+  /* La phrase revient. C'est la seule des trois lignes qui apprenne quelque
+     chose — elle était masquée pour que huit entrées tiennent dans une bande de
+     hauteur fixe, et il n'y a plus de bande. */
+  .rpg-lp-others {
+    @apply w-full;
+    gap: 0.4rem 1.6rem;
+  }
+  .rpg-lp-others p {
+    @apply block;
+  }
+
+  /* ── La clôture ─────────────────────────────────────────────────────────── */
+  /* Les deux boutons rejoignent le flux, à leur place dans le balisage : après
+     le texte, avant le pied de page. Posés en absolu, ils tombaient en travers
+     du titre dès que la légende grandissait. */
+  .rpg-lp-final-actions {
+    @apply w-full justify-start;
+  }
+  .rpg-lp-foot {
+    @apply w-full;
+    margin-top: 1rem;
+  }
+}
+
+/* ── Deux colonnes partout ──────────────────────────────────────────────────
+   Le seuil du téléphone. Quatre cases en rangée demandent quatre-vingts pixels
+   chacune sur un écran de trois cent soixante : un nom de pièce y passe sur
+   quatre lignes, et l'illustration devient une vignette. À deux par rang, tout
+   reprend sa taille — et rien ne disparaît, ce qui est le point : la version
+   précédente cachait les voisins d'un métier, les aperçus de la forge et trois
+   repères sur cinq pour tenir dans une hauteur d'écran qu'on ne s'impose
+   plus. */
+@media (max-width: 640px) {
+  .rpg-lp-reseau,
+  .rpg-lp-chaine,
+  .rpg-lp-flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* La boucle du jeu était une file en `flex` : à deux par rang elle devient
+     une grille, sans quoi ses quatre cases se répartiraient l'espace au lieu
+     de s'aligner. */
+  .rpg-lp-flow {
+    @apply grid;
+    gap: clamp(0.9rem, 3vh, 1.4rem) 1rem;
+  }
+  .rpg-lp-flow-step {
+    width: auto;
+  }
+  /* Les chevrons sortent : à deux par rang, celui de la deuxième case pointe
+     vers le bord de l'écran, et celui de la quatrième vers rien. */
+  .rpg-lp-flow-step:not(:last-child)::after,
+  .rpg-lp-chaine-case:not(:last-child) .rpg-lp-chaine-art::after {
+    display: none;
+  }
+  /* Les illustrations reprennent la largeur de leur case. À deux par rang, une
+     case fait cent soixante pixels et l'objet n'en occupait que soixante-dix :
+     le reste était de la marge, sur la seule chose que la rangée sert à
+     montrer. */
+  .rpg-lp-flow-art {
+    width: clamp(4.5rem, 26vw, 7rem);
+  }
+  .rpg-lp-chaine-art {
+    width: clamp(5rem, 28vw, 8rem);
+  }
+  .rpg-lp-apercus {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Les bâtiments de la cité prennent toute la largeur, et les expéditions
+     deux colonnes. Ce sont des tableaux peints : à cent pixels de large on
+     devine un lieu sans le voir, ce qui est exactement ce que cette section
+     refuse — c'est la seule de la page où une image mérite qu'on s'arrête
+     dessus, et le clic l'ouvre en grand. */
+  .rpg-lp-lieux {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rpg-lp-lieux.is-longue {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* « Et encore » passe sur une colonne. À deux, l'emblème et le titre se
+     partageaient cent soixante pixels : « Compétences » débordait sur
+     l'emblème de son voisin, et « Commandes » sortait par le bord droit. */
+  .rpg-lp-others {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Les coups passent sur une colonne, et eux seuls. Un coup est une ligne —
+     emblème, tour, recharge, nom, effet — là où une pièce ou un voisin est une
+     vignette : à deux par rang, il restait quatre-vingt-dix pixels au texte,
+     et « armure trouée · 3 tours » y descendait sur quatre lignes pendant que
+     la case d'à côté en tenait deux. Sur une colonne, les quatre lignes
+     reprennent la même hauteur et la rotation se relit d'un coup. */
+  .rpg-lp-rotation {
+    grid-template-columns: minmax(0, 1fr);
+    --emblème: 3.6rem;
+  }
+  .rpg-lp-reseau-portrait,
+  .rpg-lp-reseau-anneau {
+    width: 7rem;
+  }
+  .rpg-lp-reseau-anneau {
+    top: 3.5rem;
+  }
+  .rpg-lp-reseau-nom {
+    font-size: 1.15rem;
+  }
+  /* Les repères passent en grille et perdent leurs filets. Un filet vertical
+     ne sépare que deux voisins d'une même ligne ; dès que la rangée se replie,
+     il pend au bout du premier rang et ne sépare plus rien. Deux colonnes les
+     rendent tous lisibles — cinq compris, pour le combat. */
+  .rpg-lp-repere-row {
+    @apply grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1rem;
+  }
+  .rpg-lp-repere-row li {
+    padding-right: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --lp-nav-h: 4.25rem;
+  }
+  .rpg-lp-nav-play {
+    display: none;
+  }
+  .rpg-lp-tabs {
+    top: 5rem;
+  }
+  .rpg-lp-hero-body {
+    top: 46%;
+  }
+  .rpg-lp-hero-lede {
+    font-size: 0.9375rem;
+  }
+  .rpg-lp-desc {
+    font-size: 0.8125rem;
+  }
+  .rpg-lp-stage,
+  .rpg-lp-scene.is-captures .rpg-lp-stage {
+    left: 0;
+    top: 18%;
+    bottom: 47%;
+  }
+  .rpg-lp-row {
+    gap: 0.6rem;
+  }
+  .rpg-lp-row-item,
+  .rpg-lp-row.is-grande .rpg-lp-row-item {
+    width: 4.4rem;
+  }
+  .rpg-lp-route .rpg-lp-title {
+    font-size: 2.2rem;
+  }
+  .rpg-lp-chapitre-nom {
+    min-height: 1.8rem;
+    font-size: 0.625rem;
+  }
+  .rpg-lp-fiche-art {
+    width: 2.3rem;
+  }
+  .rpg-lp-fiche-nom {
+    font-size: 0.8125rem;
+  }
+  .rpg-lp-fiche-gain {
+    font-size: 0.6875rem;
+  }
+  .rpg-lp-lieu-nom {
+    font-size: 0.6875rem;
+  }
+  .rpg-lp-loupe-cadre figcaption {
+    font-size: 0.75rem;
+    padding: 2rem 0.9rem 0.8rem;
+  }
+  .rpg-lp-others {
+    gap: 0.4rem 1.2rem;
+  }
+  .rpg-lp-foot span:last-child {
+    display: none;
+  }
+}
+
+/* Qui a demandé moins de mouvement n'en reçoit aucun : ni respiration du
+   monde, ni entrée en scène, ni parallaxe. Les fondus d'onglet restent — sans
+   eux le contenu changerait d'un coup sec, ce qui est plus brutal, pas moins.
+   Le défilement automatique de la campagne, lui, ne démarre pas du tout : voir
+   `TabbedScene`. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rpg-lp-backdrop {
+    transform: none;
+  }
+  .rpg-lp-backdrop-art,
+  .rpg-lp-hero-mark,
+  .rpg-lp-hero-kicker,
+  .rpg-lp-hero-title span,
+  .rpg-lp-hero-lede,
+  .rpg-lp-hero-body .rpg-lp-actions,
+  .rpg-lp-hero-foot,
+  .rpg-lp-hero-hint::before {
+    animation: none;
+  }
+  .rpg-lp-btn:hover,
+  .rpg-lp-others li:hover {
+    transform: none;
+  }
+  .rpg-lp-fiche-nom.is-mythic {
+    animation: none;
+    background-position: 40% 0;
+  }
+  /* Le bloc naît à sa place : sans cela, l'apparition neutralisée le laisserait
+     à l'opacité zéro tant que l'observateur ne l'a pas croisé. */
+  .rpg-lp-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
