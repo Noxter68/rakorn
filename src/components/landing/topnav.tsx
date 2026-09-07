@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { EMBLEME, NAVIGATION } from "@/lib/landing/page";
 import { BetaTrigger } from "./beta-trigger";
+import { NavBrand } from "./nav-brand";
 
 /**
  * La barre du haut, et la jauge qui court sous elle.
@@ -20,10 +21,10 @@ export function Topnav() {
       <span id="rpg-lp-progress" className="rpg-lp-progress" aria-hidden />
       <nav className="rpg-lp-nav">
         <div className="rpg-lp-nav-inner">
-          <a href="#hero" className="rpg-lp-nav-brand">
+          <NavBrand>
             <Image src={EMBLEME} alt="" width={1254} height={1254} className="rpg-lp-nav-emblem" />
             <span>Rakorn</span>
-          </a>
+          </NavBrand>
           <div className="rpg-lp-nav-links">
             {NAVIGATION.map((lien) => (
               <a key={lien.href} href={lien.href}>
