@@ -165,19 +165,31 @@ export async function POST(requete: Request) {
     return repondre("erreur", 502);
   }
 
-  try {
-    await resend.emails.send({
-      from: process.env.RESEND_FROM!,
-      to: adresse,
-      replyTo: process.env.RESEND_REPLY_TO || undefined,
-      subject: "Votre place dans la bêta de Rakorn",
-      text: ACCUSE_TEXTE,
-      html: ACCUSE_HTML,
-    });
-  } catch (souci) {
+  /* Le SDK ne lève pas quand l'API refuse : il rend `{ data, error }`, comme
+     `contacts.create` juste au-dessus. Un `try/catch` seul n'attrape donc que
+     la panne de réseau et laisse passer sans un mot le cas fréquent — domaine
+     pas encore vérifié, quota du jour épuisé, expéditeur absent. C'est ainsi
+     qu'on se retrouve avec des inscrits, aucun accusé reçu, et rien dans les
+     logs pour le dire. */
+  const expediteur = process.env.RESEND_FROM;
+  if (!expediteur) {
+    console.error("[beta] accusé non envoyé : RESEND_FROM absente");
+  } else {
+    const envoi = await resend.emails
+      .send({
+        from: expediteur,
+        to: adresse,
+        replyTo: process.env.RESEND_REPLY_TO || undefined,
+        subject: "Votre place dans la bêta de Rakorn",
+        text: ACCUSE_TEXTE,
+        html: ACCUSE_HTML,
+      })
+      /* Le réseau, lui, lève pour de bon. */
+      .catch((souci: unknown) => ({ error: souci }));
+
     /* Le quota du jour, une coupure, un domaine pas encore vérifié : rien de
        tout cela ne défait l'inscription, qui est déjà faite. */
-    console.error("[beta] accusé non envoyé", souci);
+    if (envoi.error) console.error("[beta] accusé non envoyé", envoi.error);
   }
 
   return repondre("inscrit");

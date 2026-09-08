@@ -30,7 +30,7 @@ type Etat =
   | "erreur";
 
 const MESSAGES: Record<Exclude<Etat, "repos" | "envoi" | "faute">, string> = {
-  inscrit: "C'est noté. Un message vient de partir vers votre boîte.",
+  inscrit: "C'est noté. Votre adresse est sur la liste d'attente.",
   deja: "Votre adresse y était déjà — vous ne serez pas prévenu deux fois.",
   format: "Cette adresse ne ressemble pas encore à une adresse.",
   jetable: "Une boîte jetable n'existera plus le jour de l'ouverture.",
