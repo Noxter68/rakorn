@@ -1,5 +1,6 @@
-import { FINAL } from "@/lib/landing/page";
+import { DISCORD, FINAL } from "@/lib/landing/page";
 import { BetaTrigger } from "./beta-trigger";
+import { DiscordLink } from "./discord-link";
 import { Reveal } from "./reveal";
 import { Scene } from "./scene";
 import { SceneBackdrop } from "./scene-backdrop";
@@ -41,9 +42,16 @@ export function FinalScene() {
           <BetaTrigger className="rpg-lp-btn">{FINAL.action}</BetaTrigger>
         </Reveal>
 
+        {/* Trois blocs : la marque, la devise, le serveur. La devise s'efface
+            sur téléphone, où elle ne tiendrait pas ; le lien, lui, reste — au
+            bout d'une page qu'on vient de lire, c'est le seul geste possible
+            en dehors du formulaire. */}
         <footer className="rpg-lp-foot">
           <span>Rakorn</span>
-          <span>Récolter, forger, vendre — et recommencer.</span>
+          <span className="rpg-lp-foot-devise">Récolter, forger, vendre — et recommencer.</span>
+          <DiscordLink className="rpg-lp-foot-discord">
+            <span>{DISCORD.libelle}</span>
+          </DiscordLink>
         </footer>
       </div>
     </Scene>

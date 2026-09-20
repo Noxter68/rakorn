@@ -2281,6 +2281,33 @@ body {
     filter: brightness(1.09);
     box-shadow: 0 10px 26px rgba(217, 164, 65, 0.3);
   }
+  /* Le serveur, à gauche du bouton : la marque de Discord dans l'or éteint
+     des liens, parchemin au survol, sur un carré de la hauteur du bouton pour
+     que le doigt ait où se poser. Pas de bleu Discord — la barre est celle du
+     jeu, et une seule couleur étrangère y ferait un bouton de plus. Il reste
+     sur téléphone, où le bouton s'efface : c'est alors le seul geste que la
+     barre propose, et il n'y coûte qu'un carré. */
+  .rpg-lp-nav-actions {
+    @apply flex items-center;
+    gap: 0.5rem;
+  }
+  .rpg-lp-nav-discord {
+    @apply flex items-center justify-center rounded-sm;
+    width: 2.6rem;
+    height: 2.6rem;
+    color: color-mix(in srgb, var(--color-gold-400) 72%, transparent);
+    transition:
+      color 200ms ease,
+      background-color 200ms ease;
+  }
+  .rpg-lp-nav-discord:hover {
+    color: var(--color-parchment-50);
+    background: rgba(246, 217, 137, 0.08);
+  }
+  .rpg-lp-nav-discord svg {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
   /* En `scaleX` et non en largeur : repeindre une largeur à chaque image
      relance la mise en page du document entier, une transformation ne touche
      que la composition. */
@@ -2755,6 +2782,21 @@ body {
     font-size: 0.625rem;
     letter-spacing: 0.18em;
     color: rgba(233, 205, 133, 0.38);
+  }
+  /* Le lien du serveur hérite la couleur éteinte du pied et ne s'allume qu'au
+     survol : il ferme la page, il ne la relance pas. */
+  .rpg-lp-foot-discord {
+    @apply inline-flex items-center;
+    gap: 0.45rem;
+    color: inherit;
+    transition: color 200ms ease;
+  }
+  .rpg-lp-foot-discord:hover {
+    color: var(--color-parchment-50);
+  }
+  .rpg-lp-foot-discord svg {
+    width: 1rem;
+    height: 1rem;
   }
 
   /* ── L'apparition au défilement ─────────────────────────────────────────── */
@@ -3904,7 +3946,7 @@ body {
   .rpg-lp-others {
     gap: 0.4rem 1.2rem;
   }
-  .rpg-lp-foot span:last-child {
+  .rpg-lp-foot-devise {
     display: none;
   }
 }

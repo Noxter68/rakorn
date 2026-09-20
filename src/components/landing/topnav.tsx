@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { EMBLEME, NAVIGATION } from "@/lib/landing/page";
 import { BetaTrigger } from "./beta-trigger";
+import { DiscordLink } from "./discord-link";
 import { NavBrand } from "./nav-brand";
 
 /**
@@ -38,8 +39,17 @@ export function Topnav() {
               problème — il promettait une partie, et on n'a qu'un champ à
               offrir. « S'inscrire » plutôt que le « Rejoindre la bêta » des
               deux autres appels : la barre porte déjà sept liens, et c'est le
-              seul endroit de la page où trois mots en coûteraient un. */}
-          <BetaTrigger className="rpg-lp-nav-play">S&apos;inscrire</BetaTrigger>
+              seul endroit de la page où trois mots en coûteraient un.
+
+              Le serveur Discord le précède, en icône seule, pour la même
+              raison : un mot de plus n'y tiendrait pas, et cette marque-là se
+              reconnaît sans lui. Les deux sont groupés pour que la barre
+              garde ses trois blocs — marque, liens, gestes — et que le
+              `justify-between` ne se mette pas à répartir quatre enfants. */}
+          <div className="rpg-lp-nav-actions">
+            <DiscordLink className="rpg-lp-nav-discord" />
+            <BetaTrigger className="rpg-lp-nav-play">S&apos;inscrire</BetaTrigger>
+          </div>
         </div>
       </nav>
     </>

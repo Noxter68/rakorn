@@ -18,6 +18,21 @@
 /** L'emblème, muet — les deux planches gravées portent l'ancien nom du jeu. */
 export const EMBLEME = "/game/UI/icons/logo/rakorn-logo.avif";
 
+/**
+ * Le serveur Discord : la seule porte qui soit déjà ouverte.
+ *
+ * C'est aussi le seul lien sortant de la page, et il vaut donc une exception
+ * à la règle ci-dessus — il ne promet pas une partie, il offre un endroit où
+ * attendre l'ouverture avec les autres. Il paraît deux fois, dans la barre et
+ * au pied, comme le bouton d'inscription.
+ */
+export const DISCORD = {
+  href: "https://discord.gg/kGN4ChMKgC",
+  libelle: "Discord",
+  /** Le libellé complet, pour qui n'a que l'icône sous les yeux. */
+  titre: "Rejoindre le serveur Discord",
+};
+
 /** Les ancres de la barre du haut, dans l'ordre où la page les déroule. */
 export const NAVIGATION = [
   { href: "#metiers", libelle: "Métiers" },
