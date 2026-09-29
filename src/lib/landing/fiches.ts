@@ -55,24 +55,43 @@ export interface Fiche {
   poincon?: string;
 }
 
-/** Les quatre paliers de l'Ensemble du Roi sous la Montagne. */
+/**
+ * Les quatre paliers de l'Ensemble du Roi sous la Montagne.
+ *
+ * Relevés dans `ItemSetBonus` le 29 septembre 2026. Les chiffres d'avant
+ * dataient d'un barème que le jeu a quitté — soixante-cinq d'armure au
+ * troisième palier, quand la base en donne dix-neuf : la vitrine promettait
+ * trois fois ce qu'une pièce ramassée tiendrait.
+ */
 const ROI: Palier[] = [
-  { pieces: 3, label: "Armure", valeur: "+65" },
-  { pieces: 6, label: "Attaque", valeur: "+65" },
+  { pieces: 3, label: "Armure", valeur: "+19" },
+  { pieces: 6, label: "Attaque", valeur: "+19" },
   { pieces: 9, label: "Parade", valeur: "+10 %" },
-  { pieces: 12, label: "Vie max", valeur: "+550" },
+  { pieces: 12, label: "Vie max", valeur: "+116" },
+];
+
+/** Ceux de l'Ensemble des Sylves Éternelles. */
+const SYLVES: Palier[] = [
+  { pieces: 3, label: "Critique", valeur: "+7 %" },
+  { pieces: 6, label: "Attaque", valeur: "+15" },
+  { pieces: 9, label: "Armure", valeur: "+15" },
+  { pieces: 12, label: "Vie max", valeur: "+88" },
 ];
 
 /** Ceux de l'Ensemble du Serment. */
 const SERMENT: Palier[] = [
-  { pieces: 3, label: "Attaque", valeur: "+85" },
-  { pieces: 6, label: "Armure", valeur: "+85" },
-  { pieces: 9, label: "Critique", valeur: "+12 %" },
-  { pieces: 12, label: "Vie max", valeur: "+750" },
+  { pieces: 3, label: "Attaque", valeur: "+22" },
+  { pieces: 6, label: "Armure", valeur: "+22" },
+  { pieces: 9, label: "Critique", valeur: "+11 %" },
+  { pieces: 12, label: "Vie max", valeur: "+130" },
 ];
 
 export const FICHES: Record<string, Fiche> = {
-  // ── Les pièces d'exception, une par métier ──────────────────────────────
+  // ── La quatrième marche de chaque métier ────────────────────────────────
+  // Cinq métiers fabriquent des pièces d'ensemble — mineur, bûcheron,
+  // forgeron, couturier, joaillier — et leur quatrième marche en montre une,
+  // paliers compris : c'est ce que « Complétez l'ensemble » promet. Les trois
+  // autres n'en font aucune, et leur marche montre leur pièce d'exception.
   couronne_du_roi_sous_la_montagne: {
     nom: "Couronne du Roi sous la Montagne",
     rarete: "legendary",
@@ -91,66 +110,68 @@ export const FICHES: Record<string, Fiche> = {
     durabilite: [119, 120],
     ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
   },
-  totem_de_la_foret_eternelle: {
-    nom: "Totem de la forêt éternelle",
-    rarete: "legendary",
-    nature: "Amulette",
-    metier: "Bûcheron niv. 55",
-    niveau: 55,
-    art: "/game/ressources/wood/totem_de_la_foret_eternelle.avif",
-    chasses: 2,
-    principale: { stat: "attack", valeur: 18 },
-    secondaires: [
-      { stat: "defense", valeur: 5 },
-      { stat: "crit", valeur: 8 },
-      { stat: "hp", valeur: 43 },
-    ],
-    durabilite: [119, 120],
-  },
-  epee_du_magma_eternel: {
-    nom: "Épée du magma éternel",
+  arc_des_sylves_eternelles: {
+    nom: "Arc des Sylves Éternelles",
     rarete: "epic",
+    nature: "Main gauche",
+    metier: "Bûcheron niv. 48",
+    niveau: 48,
+    art: "/game/ressources/armors/set-sylves_eternelles/arc_des_sylves_eternelles.avif",
+    chasses: 2,
+    principale: { stat: "attack", valeur: 20 },
+    secondaires: [
+      { stat: "defense", valeur: 7 },
+      { stat: "crit", valeur: 4 },
+      { stat: "hp", valeur: 17 },
+    ],
+    durabilite: [100, 100],
+    ensemble: { nom: "Ensemble des Sylves Éternelles", portees: 4, paliers: SYLVES },
+  },
+  masse_du_roi_sous_la_montagne: {
+    nom: "Masse du Roi sous la Montagne",
+    rarete: "legendary",
     nature: "Arme",
     metier: "Forgeron niv. 55",
     niveau: 55,
-    art: "/game/ressources/forge/epee_du_magma_eternel.avif",
-    chasses: 2,
-    principale: { stat: "attack", valeur: 31 },
+    art: "/game/ressources/armors/set-roi_sous_la_montagne/masse_du_roi_sous_la_montagne.avif",
+    chasses: 3,
+    principale: { stat: "attack", valeur: 33 },
     secondaires: [
-      { stat: "crit", valeur: 5 },
-      { stat: "hp", valeur: 30 },
+      { stat: "crit", valeur: 4 },
+      { stat: "hp", valeur: 24 },
     ],
-    durabilite: [119, 120],
+    durabilite: [120, 120],
+    ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
   },
-  manteau_du_tisseur_d_etoiles: {
-    nom: "Manteau du tisseur d'étoiles",
+  cape_du_roi_sous_la_montagne: {
+    nom: "Cape du Roi sous la Montagne",
     rarete: "legendary",
     nature: "Cape",
-    metier: "Couturier niv. 55",
-    niveau: 55,
-    art: "/game/ressources/suing/manteau-du-tisseur-etoile.avif",
-    principale: { stat: "defense", valeur: 20 },
+    metier: "Couturier niv. 59",
+    niveau: 59,
+    art: "/game/ressources/armors/set-roi_sous_la_montagne/cape_du_roi_sous_la_montagne.avif",
+    principale: { stat: "defense", valeur: 21 },
     secondaires: [
-      { stat: "parade", valeur: 6 },
-      { stat: "hp", valeur: 50 },
+      { stat: "parade", valeur: 9 },
+      { stat: "hp", valeur: 63 },
     ],
-    durabilite: [119, 120],
+    durabilite: [120, 120],
+    ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
   },
-  parure_de_l_etoile_du_matin: {
-    nom: "Parure de l'étoile du matin",
-    rarete: "epic",
-    nature: "Amulette",
-    metier: "Joaillier niv. 55",
-    niveau: 55,
-    art: "/game/ressources/jewelery/craft/parrure-de-etoile-du-matin.avif",
-    chasses: 2,
-    principale: { stat: "attack", valeur: 18 },
+  anneau_du_roi_sous_la_montagne: {
+    nom: "Anneau du Roi sous la Montagne",
+    rarete: "legendary",
+    nature: "Anneau",
+    metier: "Joaillier niv. 58",
+    niveau: 58,
+    art: "/game/ressources/armors/set-roi_sous_la_montagne/anneau_du_roi_sous_la_montagne.avif",
+    principale: { stat: "attack", valeur: 23 },
     secondaires: [
-      { stat: "defense", valeur: 5 },
-      { stat: "crit", valeur: 7 },
-      { stat: "hp", valeur: 47 },
+      { stat: "defense", valeur: 10 },
+      { stat: "crit", valeur: 10 },
     ],
-    durabilite: [119, 120],
+    durabilite: [120, 120],
+    ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
   },
   elixir_de_regeneration_ancienne: {
     nom: "Élixir de régénération ancienne",
@@ -164,15 +185,15 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Cœur d'architecte runique",
     rarete: "legendary",
     nature: "Cape",
-    metier: "Ingénieur niv. 55",
-    niveau: 55,
+    metier: "Ingénieur niv. 60",
+    niveau: 60,
     art: "/game/ressources/enginering/coeur-architecte-runique.avif",
-    principale: { stat: "defense", valeur: 21 },
+    principale: { stat: "defense", valeur: 27 },
     secondaires: [
-      { stat: "parade", valeur: 7 },
-      { stat: "hp", valeur: 52 },
+      { stat: "parade", valeur: 9 },
+      { stat: "hp", valeur: 65 },
     ],
-    durabilite: [119, 120],
+    durabilite: [120, 120],
   },
   sceau_des_routes_franches: {
     nom: "Sceau des routes franches",
@@ -185,7 +206,15 @@ export const FICHES: Record<string, Fiche> = {
       "Le cachet que reconnaissent les vingt-deux péages entre la Mine et les Marais. Il ne s'achète pas : il se mérite convoi après convoi, et il ouvre ce que l'or ne rouvre plus.",
   },
 
-  // ── Ce qui sort de la forge ─────────────────────────────────────────────
+  // ── De la mine à l'armure ───────────────────────────────────────────────
+  fer: {
+    nom: "Fer",
+    rarete: "uncommon",
+    nature: "Ressource",
+    metier: "Mineur niv. 3",
+    niveau: 0,
+    art: "/game/ressources/mining/veins/filon-de-fer.avif",
+  },
   lingot_de_fer: {
     nom: "Lingot de fer",
     rarete: "uncommon",
@@ -206,29 +235,29 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Plastron du sentinelle",
     rarete: "rare",
     nature: "Plastron",
-    metier: "Forgeron niv. 30",
-    niveau: 30,
+    metier: "Forgeron niv. 28",
+    niveau: 28,
     art: "/game/ressources/forge/plastron_du_sentinelle.avif",
     chasses: 1,
     principale: { stat: "defense", valeur: 19 },
     secondaires: [
       { stat: "parade", valeur: 2 },
-      { stat: "hp", valeur: 41 },
+      { stat: "hp", valeur: 40 },
     ],
-    durabilite: [100, 100],
+    durabilite: [80, 80],
   },
   bouclier_du_bastion: {
     nom: "Bouclier du bastion",
     rarete: "rare",
     nature: "Main gauche",
-    metier: "Forgeron niv. 30",
-    niveau: 30,
+    metier: "Forgeron niv. 37",
+    niveau: 37,
     art: "/game/ressources/forge/bouclier-du-bastion.avif",
     chasses: 1,
-    principale: { stat: "defense", valeur: 18 },
+    principale: { stat: "defense", valeur: 20 },
     secondaires: [
       { stat: "parade", valeur: 5 },
-      { stat: "hp", valeur: 15 },
+      { stat: "hp", valeur: 16 },
     ],
     durabilite: [100, 100],
   },

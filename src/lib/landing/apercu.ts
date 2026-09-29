@@ -26,7 +26,7 @@ export const ECRANS: Ecran[] = [
     titre: "Voilà à quoi",
     accent: "ça ressemble.",
     texte:
-      "Le rail des huit métiers en haut, la récolte ou l'artisanat au centre, et la fiche de ce qu'on prépare à droite : durée, énergie, expérience, et ce qu'il faut avoir en main pour lancer.",
+      "Vos métiers en haut, la récolte ou l'établi au centre, et la fiche de ce qu'on prépare à droite : durée, énergie, expérience, ce que la pièce apporte — et dessous, ce qu'il faut avoir en main pour la lancer.",
     reperes: ["8 MÉTIERS", "RÉCOLTE ET ARTISANAT", "NIVEAU 60"],
   },
   {
@@ -37,7 +37,7 @@ export const ECRANS: Ecran[] = [
     titre: "Tout est écrit",
     accent: "quelque part.",
     texte:
-      "Quatre cent cinquante-cinq fiches, et chacune répond aux deux mêmes questions : d'où vient cette matière, et dans quoi entre-t-elle. Les recettes qui l'emploient sont listées dessous, avec leur métier et leur palier.",
+      "Des centaines de fiches, et chacune répond aux mêmes questions : d'où vient cette pièce, ce qu'elle vaut, et ce qu'il faut pour la faire. Ses matériaux sont posés dessous, chacun avec sa provenance.",
     reperes: ["461 FICHES", "BESTIAIRE", "ENSEMBLES"],
   },
   {
@@ -45,22 +45,22 @@ export const ECRANS: Ecran[] = [
     onglet: "Contrats",
     fond: "/captures/jeu-contrats.avif",
     surtitre: "10 — Aperçu · Les contrats",
-    titre: "Ce qu'un autre",
+    titre: "Ce que la Couronne",
     accent: "attend de vous.",
     texte:
-      "Les commandes d'artisanat prises en charge : ce qu'il faut livrer, ce que ça rapporte, et ce qu'on a déjà en main pour la remplir.",
-    reperes: ["COMMANDES PRISES", "MATIÈRES À FOURNIR", "LIVRAISON"],
+      "Cinq livraisons par jour, tirées à votre niveau, et les contrats de la semaine : ce qu'il faut livrer, ce que ça rapporte en or et en réputation d'artisan, et ce qu'on a déjà dans le sac pour le remplir.",
+    reperes: ["5 PAR JOUR", "JOURNALIERS ET HEBDOMADAIRES", "RÉPUTATION D'ARTISAN"],
   },
   {
     cle: "competences",
     onglet: "Compétences",
     fond: "/captures/jeu-competences.avif",
     surtitre: "10 — Aperçu · Les compétences",
-    titre: "Trois branches,",
-    accent: "et des points à placer.",
+    titre: "Trois arbres,",
+    accent: "et des choix à faire.",
     texte:
-      "Douze compétences sur trois branches — combat, artisanat, récolte —, cinq rangs chacune, et trente points à distribuer au niveau soixante. Il en manquera toujours.",
-    reperes: ["12 COMPÉTENCES", "3 BRANCHES", "5 RANGS"],
+      "Récolte, combat, artisanat : chaque arbre a sa source de points — votre métier, votre niveau, ce que vous avez fabriqué. Sept lignes qui s'ouvrent l'une après l'autre, des talents qui s'excluent, et une clé de voûte au sommet.",
+    reperes: ["3 ARBRES", "20 POINTS PAR ARBRE", "3 CLÉS DE VOÛTE"],
   },
   {
     cle: "personnage",
@@ -81,8 +81,8 @@ export const ECRANS: Ecran[] = [
     titre: "Quinze places",
     accent: "au départ.",
     texte:
-      "Le sac, par rayons : ressources, armes, armures, potions, divers. Les places suivantes se fabriquent — c'est l'ingénieur et le couturier qui décident de ce qu'on peut rapporter.",
-    reperes: ["RAYONS PAR NATURE", "SACS À FABRIQUER", "RECYCLAGE"],
+      "Le sac en cases, par rayons — un par métier, plus les armes, les armures et le reste —, et la fiche de ce qu'on tient à côté. Les places suivantes se fabriquent : c'est l'ingénieur et le couturier qui décident de ce qu'on peut rapporter.",
+    reperes: ["RAYONS PAR MÉTIER", "SACS À FABRIQUER", "RECYCLAGE"],
   },
   {
     cle: "campagne",
@@ -92,8 +92,8 @@ export const ECRANS: Ecran[] = [
     titre: "Huit chapitres",
     accent: "sur une carte.",
     texte:
-      "La créature suivante est annoncée à droite avec ses trois chiffres et ce qu'elle rapporte, et la bande du bas déroule les quinze paliers de la zone en cours.",
-    reperes: ["8 ZONES", "120 CRÉATURES", "15 PALIERS PAR ZONE"],
+      "La bande du bas déroule les huit terres, et la créature suivante est annoncée à droite avec ses trois chiffres et ce qu'elle rapporte. Quinze combats par terre, et la suivante s'ouvre.",
+    reperes: ["8 TERRES", "120 CRÉATURES", "15 COMBATS PAR TERRE"],
   },
   {
     cle: "forge",

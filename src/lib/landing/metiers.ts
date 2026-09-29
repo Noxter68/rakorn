@@ -3,6 +3,12 @@ import type { Onglet, Piece, Repere } from "./types";
 /**
  * Les huit métiers, et la boucle du jeu montrée huit fois.
  *
+ * **La scène ne montre plus que la boucle.** Elle portait aussi un réseau —
+ * le métier au centre d'un cercle, quatre voisins reliés par des fils — et ce
+ * réseau, joli, disait une seconde chose au moment où l'on n'en avait compris
+ * aucune. Il ne reste que les quatre marches, en grand et au centre, et la
+ * fiche de la dernière à droite : c'est tout ce qu'un visiteur doit emporter.
+ *
  * Un seul décor pour les huit — celui de la page Métiers du jeu. La première
  * version en faisait défiler huit, un par métier : c'était spectaculaire et
  * illisible, parce que les quatre objets posés par-dessus devaient tenir à
@@ -15,10 +21,6 @@ import type { Onglet, Piece, Repere } from "./types";
  * avec ses propres objets. Voir `ETAPES_METIER`. Avant, les paliers portaient
  * le vocabulaire de chaque métier (« Fondu », « Distillé », « Tissé ») : joli,
  * mais on lisait huit vocabulaires et jamais la règle commune qui les relie.
- *
- * Les natures mortes du dossier `profession` servent de portrait, posé
- * au-dessus. Elles sont peintes sur fond noir : superbes en gros plan,
- * illisibles étirées sur un écran, parfaites en surimpression.
  */
 
 /**
@@ -43,11 +45,29 @@ export const FOND_METIERS = "/game/house-master/background/background-master-hou
  * la même chose et personne ne l'aurait lue.
  */
 export const ETAPES_METIER = [
-  { numero: "01", titre: "Récoltez la matière" },
-  { numero: "02", titre: "Craftez la recette" },
-  { numero: "03", titre: "Vendez ou commandez" },
-  { numero: "04", titre: "Complétez l'ensemble" },
+  "Récoltez la matière",
+  "Craftez la recette",
+  "Vendez ou commandez",
 ] as const;
+
+/**
+ * La quatrième marche, qui dépend du métier.
+ *
+ * Seuls cinq métiers fabriquent des pièces d'ensemble — mineur, bûcheron,
+ * forgeron, couturier, joaillier, relevés dans les recettes dont la pièce
+ * appartient à un `ItemSet`. Écrire « Complétez l'ensemble » sous un élixir
+ * ou un sceau de route promettait une panoplie que l'alchimiste ne fabriquera
+ * jamais. Les trois autres visent leur pièce d'exception.
+ */
+export const FINALES = {
+  ensemble: "Complétez l'ensemble",
+  legendaire: "Visez le légendaire",
+} as const;
+
+/** Les quatre marches d'un métier, dans l'ordre où elles se lisent. */
+export function etapesDe(metier: Metier): string[] {
+  return [...ETAPES_METIER, FINALES[metier.finale]];
+}
 
 /**
  * Ce que les huit métiers pèsent ensemble, sous le texte de droite.
@@ -64,49 +84,13 @@ export const CHIFFRES_METIERS: Repere[] = [
   { art: "/game/UI/market/auction.avif", valeur: "Économie", quoi: "de joueurs" },
 ];
 
-/** L'emblème du marché : le maillet de la criée, celui de la salle des ventes. */
-const MARCHE = "/game/UI/market/auction.avif";
-
-/**
- * Un voisin dans l'économie, et ce qu'il fait de ce métier.
- *
- * **Ces liens ne sont pas décoratifs : ils sont dans les recettes.** Le
- * forgeron trempe dans l'huile de l'alchimiste, le mineur monte des gemmes que
- * le joaillier a taillées, le logisticien bâche ses caisses de la toile du
- * couturier — voir `prisma/seed/recipes`, où chaque atelier consomme ce que
- * deux ou trois autres produisent. Inventer ces flèches aurait donné un joli
- * schéma qu'aucune partie ne confirmerait ; les relever rend la scène vraie.
- *
- * Quatre voisins par métier, et leur ordre décide de leur place autour du
- * cercle : haut-gauche, bas-gauche, haut-droite, bas-droite. La gauche est ce
- * qui lui arrive, la droite ce qui en repart, et le marché tient toujours le
- * bas-gauche — c'est la constante du monde, pas une relation de métier.
- */
-export interface Lien {
-  art: string;
-  nom: string;
-  /** Ce qu'il fait de sa production, en deux ou trois mots. */
-  role: string;
-}
-
 export interface Metier extends Onglet {
-  /** La nature morte du métier, posée en grand, au centre du cercle. */
-  portrait: string;
-  /**
-   * Les trois lignes sous le nom, au pied du cercle — son socle.
-   *
-   * Ce sont les repères qui vivaient en bas de scène. Ils y étaient une ligne
-   * de mots gris sous un paragraphe ; sous le nom du métier, dans le cercle,
-   * ils deviennent sa fiche d'identité et se lisent enfin.
-   */
-  socle: string[];
-  /** Les quatre voisins, dans l'ordre où ils se posent autour du cercle. */
-  liens: Lien[];
-  /** Quatre pièces : la matière, la transformation, la pièce, l'exception. */
+  /** Quatre pièces : la matière, la transformation, la pièce, la dernière marche. */
   chaine: Piece[];
+  /** Ce que vise la quatrième marche — voir `FINALES`. */
+  finale: keyof typeof FINALES;
   /**
-   * La clé de la fiche montrée au survol de la pièce d'exception — voir
-   * `fiches.ts`.
+   * La clé de la fiche de la dernière marche — voir `fiches.ts`.
    *
    * C'est la seule chose de la vitrine qui répond à « et qu'est-ce que ça
    * donne, concrètement ». Une pièce légendaire porte une statistique
@@ -120,22 +104,15 @@ export const METIERS: Metier[] = [
   {
     cle: "mineur",
     fiche: "couronne_du_roi_sous_la_montagne",
+    finale: "ensemble",
     onglet: "Mineur",
     fond: FOND_METIERS,
-    portrait: "/game/profession/minage-work.avif",
-    liens: [
-      { art: "/game/profession/joallier-work.avif", nom: "Joaillier", role: "taille ses gemmes" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/forge-work.avif", nom: "Forgeron", role: "forge ses lingots" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "convoie le minerai" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Tout ce qui se forge",
     accent: "commence par vous.",
     texte:
       "Cent onze filons vous attendent, du banc de pierre au gisement d'obsidienne. Fondez ce que vous en tirez, vendez-le au forgeron qui l'attend : votre lingot devient son épée, et son épée vous rapporte. Sept autres métiers ont besoin du vôtre.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["111 FILONS", "22 LINGOTS", "NIVEAU 60"],
     chaine: [
       { art: "/game/ressources/mining/veins/filon-de-fer.avif", nom: "Filon de fer", palier: "Extrait" },
       { art: "/game/ressources/mining/lingo/lingo-de-fer.avif", nom: "Lingot de fer", palier: "Fondu" },
@@ -149,143 +126,108 @@ export const METIERS: Metier[] = [
   },
   {
     cle: "bucheron",
-    fiche: "totem_de_la_foret_eternelle",
+    fiche: "arc_des_sylves_eternelles",
+    finale: "ensemble",
     onglet: "Bûcheron",
     fond: FOND_METIERS,
-    portrait: "/game/profession/wood-work.avif",
-    liens: [
-      { art: "/game/profession/forge-work.avif", nom: "Forgeron", role: "livre l'acier des lames" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/engineer-work.avif", nom: "Ingénieur", role: "monte ses planches" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "caisse ses convois" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Quinze essences,",
     accent: "et tout le reste tient debout.",
     texte:
       "Du pin des lisières au bois-fer des forêts profondes. Vos planches deviennent des arcs, des pavois, des caisses de convoi : il n'y a pas un chantier du royaume qui se passe de vous, et vous fixez votre prix.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["15 ESSENCES", "12 PLANCHES", "NIVEAU 60"],
     chaine: [
       { art: "/game/ressources/wood/chene.avif", nom: "Chêne", palier: "Abattu" },
       { art: "/game/ressources/wood/planche-chene.avif", nom: "Planche de chêne", palier: "Refendue" },
       { art: "/game/ressources/wood/arc-de-chasse.avif", nom: "Arc de chasse", palier: "Fabriqué" },
       {
-        art: "/game/ressources/wood/totem_de_la_foret_eternelle.avif",
-        nom: "Totem de la forêt éternelle",
-        palier: "Légendaire",
+        art: "/game/ressources/armors/set-sylves_eternelles/arc_des_sylves_eternelles.avif",
+        nom: "Arc des Sylves Éternelles",
+        palier: "Ensemble",
       },
     ],
   },
   {
     cle: "forgeron",
-    fiche: "epee_du_magma_eternel",
+    fiche: "masse_du_roi_sous_la_montagne",
+    finale: "ensemble",
     onglet: "Forgeron",
     fond: FOND_METIERS,
-    portrait: "/game/profession/forge-work.avif",
-    liens: [
-      { art: "/game/profession/minage-work.avif", nom: "Mineur", role: "fournit le minerai" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/joallier-work.avif", nom: "Joaillier", role: "sertit" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "transporte" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Ce que vous forgez,",
     accent: "d'autres le porteront.",
     texte:
       "Du plastron de mailles à la panoplie de douze pièces. Votre acier part au combat sur les épaules d'un autre, garde les châsses qu'un joaillier viendra remplir, et revient chez vous quand il faut le réparer. Le métier le plus demandé du royaume.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["ARMES & ARMURES", "PANOPLIES DE 12", "CHÂSSES À SERTIR"],
     chaine: [
       { art: "/game/ressources/forge/cendre-de-forge.avif", nom: "Cendre de forge", palier: "Récupérée" },
       { art: "/game/ressources/forge/lingot-de-machefer.avif", nom: "Lingot de mâchefer", palier: "Coulé" },
       { art: "/game/ressources/forge/epee-du-mercenaire.avif", nom: "Épée du mercenaire", palier: "Forgée" },
       {
-        art: "/game/ressources/forge/epee_du_magma_eternel.avif",
-        nom: "Épée du magma éternel",
-        palier: "Légendaire",
+        art: "/game/ressources/armors/set-roi_sous_la_montagne/masse_du_roi_sous_la_montagne.avif",
+        nom: "Masse du Roi sous la Montagne",
+        palier: "Ensemble",
       },
     ],
   },
   {
     cle: "couturier",
-    fiche: "manteau_du_tisseur_d_etoiles",
+    fiche: "cape_du_roi_sous_la_montagne",
+    finale: "ensemble",
     onglet: "Couturier",
     fond: FOND_METIERS,
-    portrait: "/game/profession/couture-work.avif",
-    liens: [
-      { art: "/game/profession/wood-work.avif", nom: "Bûcheron", role: "refend les planches" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/forge-work.avif", nom: "Forgeron", role: "matelasse ses armures" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "bâche ses caisses" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Plus de place au sac,",
     accent: "plus de chemin dans la journée.",
     texte:
       "Capes, sacoches et bottes légères. Vous décidez de ce que les autres peuvent rapporter d'une expédition et de la vitesse à laquelle ils rentrent — deux choses dont personne ne se passe, et qu'on rachète à chaque palier.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["CAPES & SACOCHES", "CUIRS LÉGERS", "EMPLACEMENTS DE SAC"],
     chaine: [
       { art: "/game/ressources/suing/laine-brut.avif", nom: "Laine brute", palier: "Récoltée" },
       { art: "/game/ressources/suing/toile-de-laine-cadree.avif", nom: "Toile de laine cardée", palier: "Tissée" },
       { art: "/game/ressources/suing/cape-doublee.avif", nom: "Cape doublée", palier: "Cousue" },
       {
-        art: "/game/ressources/suing/manteau-du-tisseur-etoile.avif",
-        nom: "Manteau du tisseur d'étoiles",
-        palier: "Légendaire",
+        art: "/game/ressources/armors/set-roi_sous_la_montagne/cape_du_roi_sous_la_montagne.avif",
+        nom: "Cape du Roi sous la Montagne",
+        palier: "Ensemble",
       },
     ],
   },
   {
     cle: "joaillier",
-    fiche: "parure_de_l_etoile_du_matin",
+    fiche: "anneau_du_roi_sous_la_montagne",
+    finale: "ensemble",
     onglet: "Joaillier",
     fond: FOND_METIERS,
-    portrait: "/game/profession/joallier-work.avif",
-    liens: [
-      { art: "/game/profession/minage-work.avif", nom: "Mineur", role: "ouvre les filons" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/forge-work.avif", nom: "Forgeron", role: "perce les châsses" },
-      { art: "/game/profession/alchimist-work.avif", nom: "Alchimiste", role: "fond ses diamants" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Vos pierres finissent",
     accent: "sur l'équipement de tous.",
     texte:
       "Seize gemmes à extraire, cinq rangs de taille, et toutes les châsses du royaume à remplir. Trois pierres de même couleur sur une pièce accordent leur harmonie et ajoutent leur prime : c'est vous qui décidez de la couleur d'un personnage.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["16 GEMMES", "5 NIVEAUX DE TAILLE", "HARMONIE DE COULEUR"],
     chaine: [
       { art: "/game/ressources/jewelery/filon/filon-de-rubis-brut.avif", nom: "Filon de rubis", palier: "Brut" },
       { art: "/game/ressources/jewelery/craft/gemme-taillee.avif", nom: "Gemme taillée", palier: "Taillée" },
       { art: "/game/ressources/jewelery/craft/anneau-serti.avif", nom: "Anneau serti", palier: "Serti" },
       {
-        art: "/game/ressources/jewelery/craft/parrure-de-etoile-du-matin.avif",
-        nom: "Parure de l'étoile du matin",
-        palier: "Légendaire",
+        art: "/game/ressources/armors/set-roi_sous_la_montagne/anneau_du_roi_sous_la_montagne.avif",
+        nom: "Anneau du Roi sous la Montagne",
+        palier: "Ensemble",
       },
     ],
   },
   {
     cle: "alchimiste",
     fiche: "elixir_de_regeneration_ancienne",
+    finale: "legendaire",
     onglet: "Alchimiste",
     fond: FOND_METIERS,
-    portrait: "/game/profession/alchimist-work.avif",
-    liens: [
-      { art: "/game/profession/joallier-work.avif", nom: "Joaillier", role: "taille ses pierres" },
-      { art: MARCHE, nom: "Marché", role: "écoule les fioles" },
-      { art: "/game/profession/forge-work.avif", nom: "Forgeron", role: "trempe à son huile" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "livre les caisses" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Le seul métier",
     accent: "dont la clientèle revient.",
     texte:
       "Plantes, mousses et rosées deviennent extraits ; les extraits deviennent potions. Ce que vous vendez se boit et disparaît : vos clients reviennent avant le prochain boss, et ils reviendront toujours.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["PLANTES & ROSÉES", "EXTRAITS", "POTIONS & ÉLIXIRS"],
     chaine: [
       { art: "/game/ressources/alchimist/racine-rouge.avif", nom: "Racine rouge", palier: "Cueillie" },
       { art: "/game/ressources/alchimist/extrait-de-valeriane.avif", nom: "Extrait de valériane", palier: "Distillé" },
@@ -300,22 +242,15 @@ export const METIERS: Metier[] = [
   {
     cle: "ingenieur",
     fiche: "coeur_d_architecte_runique",
+    finale: "legendaire",
     onglet: "Ingénieur",
     fond: FOND_METIERS,
-    portrait: "/game/profession/engineer-work.avif",
-    liens: [
-      { art: "/game/profession/wood-work.avif", nom: "Bûcheron", role: "fournit les planches" },
-      { art: MARCHE, nom: "Marché", role: "fixe la valeur" },
-      { art: "/game/profession/joallier-work.avif", nom: "Joaillier", role: "taille ses lentilles" },
-      { art: "/game/profession/logistician-work.avif", nom: "Logisticien", role: "monte ses pièces" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Repoussez la limite",
     accent: "que tout le monde subit.",
     texte:
       "Engrenages, noyaux, lentilles. Vous relevez des pièces usées et vous en faites des mécanismes de précision — dont les sacs. Chaque emplacement que vous ajoutez, c'est une récolte de plus pour celui qui l'achète.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["PIÈCES DE PRÉCISION", "REMISE EN ÉTAT", "SACS ÉTENDUS"],
     chaine: [
       { art: "/game/ressources/enginering/engrenage-use.avif", nom: "Engrenage usé", palier: "Récupéré" },
       { art: "/game/ressources/enginering/engrenage-calibre.avif", nom: "Engrenage calibré", palier: "Rectifié" },
@@ -330,22 +265,15 @@ export const METIERS: Metier[] = [
   {
     cle: "logisticien",
     fiche: "sceau_des_routes_franches",
+    finale: "legendaire",
     onglet: "Logisticien",
     fond: FOND_METIERS,
-    portrait: "/game/profession/logistician-work.avif",
-    liens: [
-      { art: "/game/profession/minage-work.avif", nom: "Mineur", role: "confie son minerai" },
-      { art: MARCHE, nom: "Marché", role: "ouvre les routes" },
-      { art: "/game/profession/engineer-work.avif", nom: "Ingénieur", role: "scelle ses bordereaux" },
-      { art: "/game/profession/couture-work.avif", nom: "Couturier", role: "timbre ses ballots" },
-    ],
     surtitre: "02 — Les métiers",
     titre: "Faites circuler",
     accent: "ce que les autres produisent.",
     texte:
       "Caravanes, convois et sceaux de route. Vous achetez où c'est abondant, vous vendez où c'est rare, et la marge est à vous. Le seul métier qui gagne sur la géographie plutôt que sur l'établi.",
     chiffres: CHIFFRES_METIERS,
-    socle: ["CARAVANES", "CONVOIS ESCORTÉS", "SCEAUX DE ROUTE"],
     chaine: [
       { art: "/game/ressources/logistician/cordage-tresse.avif", nom: "Cordage tressé", palier: "Tressé" },
       { art: "/game/ressources/logistician/caisse-de-transport.avif", nom: "Caisse de transport", palier: "Assemblée" },

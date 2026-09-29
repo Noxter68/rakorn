@@ -15,6 +15,27 @@
  * ligne par bouton.
  */
 
+/**
+ * L'ouverture de la bêta : le 24 octobre, à dix-huit heures, heure de Paris.
+ * Écrite avec son décalage plutôt qu'en UTC : c'est l'heure qu'on annonce, et
+ * c'est elle qu'on doit pouvoir relire ici. Encore l'heure d'été (+02:00) —
+ * la France passe à l'heure d'hiver le lendemain, dans la nuit du 24 au 25 ;
+ * une date déplacée après le 25 devra passer à +01:00.
+ *
+ * Le compte à rebours et les deux textes qui citent la date la lisent tous
+ * trois : on la déplace ici, et la page entière suit.
+ */
+export const OUVERTURE_BETA = "2026-10-24T18:00:00+02:00";
+
+/** La date, telle qu'on l'écrit dans une phrase : « 13 octobre à 18 h ». */
+export const DATE_BETA = (() => {
+  const jour = new Date(OUVERTURE_BETA);
+  const paris = { timeZone: "Europe/Paris" } as const;
+  const date = new Intl.DateTimeFormat("fr-FR", { ...paris, day: "numeric", month: "long" }).format(jour);
+  const heure = new Intl.DateTimeFormat("fr-FR", { ...paris, hour: "numeric" }).format(jour);
+  return `${date} à ${heure}`;
+})();
+
 /** L'emblème, muet — les deux planches gravées portent l'ancien nom du jeu. */
 export const EMBLEME = "/game/UI/icons/logo/rakorn-logo.avif";
 
@@ -40,36 +61,41 @@ export const NAVIGATION = [
   { href: "#equipement", libelle: "Équipement" },
   { href: "#combat", libelle: "Combat" },
   { href: "#campagne", libelle: "Campagne" },
-  { href: "#carte", libelle: "Carte" },
+  { href: "#conquete", libelle: "Conquête" },
   { href: "#guilde", libelle: "Guilde" },
 ];
 
 export const HERO = {
-  /* Le décor de l'accueil du jeu, version jour : la première image de la
-     vitrine est celle qu'on retrouvera en se connectant. */
-  fond: "/game/UI/pages/home/home-v2.avif",
+  /* Le fond de la page des Compétences : une nuit bleue qui s'éclaire au
+     centre, juste derrière la vitrine. La vallée de l'accueil a tenu cette
+     place tant que l'ouverture n'avait que du texte à porter ; devant une
+     interface, ses couleurs lui disputaient l'œil. */
+  fond: "/game/UI/pages/competences/background-skill.avif",
+  /**
+   * Le Marché, en vitrine sous le texte — prise par `pnpm captures marche`,
+   * à 2 560 pixels : c'est la plus grande image de la page, et la première.
+   */
+  capture: "/captures/ouverture-marche.avif",
+  captureAlt:
+    "Le Marché de Rakorn : les objets en vente avec leur prix moyen, et la fiche de l'objet choisi.",
   surtitre: "Jeu de rôle · artisanat et commerce · dans le navigateur",
   /** Trois mots, trois lignes. Le deuxième est en or. */
   titre: ["Récoltez.", "Forgez.", "Vendez."] as const,
   /**
-   * Deux paragraphes, dans cet ordre : ce que c'est, puis ce qui le distingue.
+   * Une phrase, dans cet ordre : ce qu'on y fait, puis ce qui le distingue.
    *
-   * L'ouverture n'annonçait que le second. « Aucun marchand ne décide à votre
-   * place » est une bonne accroche pour qui sait déjà de quel genre de jeu on
-   * parle, et n'apprend rien à qui arrive : ni qu'on y monte des métiers, ni
-   * qu'on s'y bat au tour par tour, ni qu'il n'y a rien à installer. On dit
-   * d'abord de quoi il s'agit ; l'argument vient après.
+   * « Aucun marchand ne décide à votre place » est une bonne accroche pour
+   * qui sait déjà de quel genre de jeu on parle, et n'apprend rien à qui
+   * arrive : on dit d'abord de quoi il s'agit, l'argument vient après. Le
+   * genre, lui, est dans le surtitre — la phrase le répétait mot pour mot.
    *
-   * Deux phrases, pas deux paragraphes. La première version disait la même
-   * chose en deux fois plus de mots — huit chapitres, on récolte, on fabrique,
-   * on revend, et chaque prix décidé par celui qui vend — et une ouverture
-   * qu'on lit en entier avant de voir le monde derrière n'est plus une
-   * ouverture.
+   * Elle faisait deux paragraphes, posés à gauche sur six lignes. Centrée
+   * au-dessus de la vitrine, chaque ligne de texte repousse l'écran d'autant
+   * sous le pli ; et l'écran du Marché, juste dessous, montre mieux qu'une
+   * phrase que les prix sont ceux des joueurs.
    */
-  texte: [
-    "Un jeu de rôle d'artisanat et de commerce, dans votre navigateur, sans rien à installer. Huit métiers à monter, cent vingt créatures à vaincre au tour par tour, une cité à bâtir avec votre guilde.",
-    "Et une économie qui vous appartient : chaque matière a été extraite par un joueur, chaque pièce forgée par un autre, et c'est vous qui fixez vos prix.",
-  ],
+  texte:
+    "Huit métiers à monter, cent vingt créatures à vaincre au tour par tour, une cité à bâtir en guilde — et une économie qui vous appartient : chaque prix du Marché, c'est un joueur qui l'a fixé.",
   action: "Rejoindre la bêta",
   actionSecondaire: "Découvrir",
 };
@@ -118,7 +144,7 @@ export const AUTRES = {
     {
       art: "/game/UI/navigation/competences.avif",
       nom: "Compétences",
-      texte: "Douze compétences, trois branches, cinq rangs — et une manière de jouer par arbre.",
+      texte: "Trois arbres de talents, trois sources de points, et une clé de voûte au sommet de chacun.",
     },
     {
       art: "/game/UI/navigation/contrats.avif",
@@ -149,16 +175,16 @@ export const AUTRES = {
 };
 
 export const FINAL = {
-  /* La même vallée qu'à l'ouverture, mais de nuit — le jeu en fait autant
-     passé dix-huit heures. La page s'ouvre au couchant et se ferme à la nuit
-     tombée : c'est le seul rappel visuel entre son premier écran et son
-     dernier, et il ne coûte rien qu'un autre fichier. */
+  /* La vallée de l'accueil du jeu, de nuit — celle qu'on retrouve en se
+     connectant passé dix-huit heures. L'ouverture a quitté la vallée pour la
+     vitrine du Marché : la page commence par ce qu'on fera, et finit par
+     l'endroit où l'on arrivera. */
   fond: "/game/UI/pages/home/home-night.avif",
   surtitre: "Votre place vous attend",
   titre: "Commencez avec presque rien.",
   accent: "Bâtissez tout le reste.",
   texte:
-    "Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre bientôt en bêta : laissez votre adresse, et vous serez prévenu le jour où la vallée s'ouvre.",
+    `Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre sa bêta le ${DATE_BETA} : laissez votre adresse, et vous serez prévenu à l'heure où la vallée s'ouvre.`,
   action: "Rejoindre la bêta",
 };
 
@@ -173,7 +199,7 @@ export const FINAL = {
 export const BETA = {
   titre: "Rejoindre la bêta",
   texte:
-    "Rakorn ouvre bientôt ses portes à un premier groupe de joueurs. Laissez votre adresse : vous serez prévenu le jour où la vallée s'ouvre.",
+    `Rakorn ouvre ses portes à un premier groupe de joueurs le ${DATE_BETA}. Laissez votre adresse : vous serez prévenu à l'heure où la vallée s'ouvre.`,
   action: "Je m'inscris",
   /* Sous le champ, en permanence. Dire ce qu'on fera de l'adresse coûte une
      ligne et lève la seule question que se pose quelqu'un qui hésite à la

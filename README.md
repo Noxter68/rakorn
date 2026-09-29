@@ -40,7 +40,10 @@ construit que ce qu'il reçoit. Ce ne sont pas les fichiers du jeu pour autant
 montre, ce qui ramène le dossier de vingt-huit mégaoctets à dix.
 
 Il n'y a donc rien à lancer pour construire. Le script ne ressert que le jour
-où une illustration change chez le jeu, et il faut alors lui dire où il est :
+où une illustration change chez le jeu, ou qu'une scène en cite une nouvelle,
+et il faut alors lui dire où il est. Un décor plein cadre se reconnaît à sa clef
+`fond:` ou à une constante `FOND…` : il part à 1 920 pixels, le reste au budget
+de sa famille.
 
 ```bash
 RPG_WEB_PUBLIC=../rpg-game/apps/web/public pnpm assets
@@ -91,19 +94,38 @@ et les huit expéditions sortent tous du contenu du jeu, et les chiffres —
 455 objets, 111 filons, 1 001 hauts faits — de la base.
 
 La scène des métiers ne raconte pas huit chaînes de fabrication mais **une
-seule boucle, montrée huit fois** : récolter, fabriquer, échanger, compléter.
-Les verbes sont les mêmes pour tout le monde, seuls les objets changent — c'est
-ce qui fait comprendre que la règle est commune et que le métier n'est qu'une
-manière de l'habiter.
+seule boucle, montrée huit fois** : récolter, fabriquer, échanger, et une
+quatrième marche qui dépend du métier. Les verbes sont les mêmes pour tout le
+monde, seuls les objets changent — c'est ce qui fait comprendre que la règle
+est commune et que le métier n'est qu'une manière de l'habiter. La quatrième
+marche dit « Complétez l'ensemble » pour les cinq métiers qui fabriquent des
+pièces d'ensemble (mineur, bûcheron, forgeron, couturier, joaillier) et montre
+l'une d'elles ; « Visez le légendaire » pour les trois autres, qui n'en font
+aucune.
+
+Les métiers et la forge ont une **colonne de fiche** (`is-fiche`) : la fiche
+du jeu tient la droite de la scène sur toute sa hauteur, déborde dans la marge
+quand l'écran en a une, et tout le reste se lit à sa gauche, dans le flux.
+L'onglet « Fabriquer » de la forge montre trois postes — récoltez, transformez,
+forgez — et la recette qui passe de l'un à l'autre, relevée dans la base.
 
 ## Les captures du jeu
 
-Deux séries, prises sur le jeu qui tourne : les quatre salles du Marché, et les
-infobulles des huit pièces d'exception.
+Trois séries, prises sur le jeu qui tourne : les salles du Marché, les pages de
+la galerie d'aperçu, et la carte de la conquête dans cinq états.
 
 ```bash
-pnpm --filter landing-preview captures
+pnpm captures              # les trois
+pnpm captures conquete     # une seule : marche, galerie ou conquete
 ```
+
+La conquête passe par le **banc d'essai** du jeu, qui n'existe qu'en
+développement : un royaume de développement est au repos, et vingt-cinq
+territoires libres ne montrent rien de ce qui fait le jeu. Le script choisit un
+état — tenus, en siège, places prises —, puis cache le ruban et l'indicateur de
+Next avant la prise de vue. Le panneau de droite, lui, lit toujours le serveur :
+les deux vues de guilde n'ouvrent donc aucune fiche, qui dirait « libre » à côté
+d'un sol peint aux couleurs d'une maison.
 
 Il faut pour cela que la pile locale soit debout : Postgres et Redis
 (`docker compose up -d`, ports 5433 et 6380), l'API sur 3001, le jeu sur 3000.

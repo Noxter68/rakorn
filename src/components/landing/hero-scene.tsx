@@ -1,30 +1,30 @@
 import Image from "next/image";
 import { CHIFFRES, EMBLEME, HERO } from "@/lib/landing/page";
 import { BetaTrigger } from "./beta-trigger";
+import { CompteARebours } from "./compte-a-rebours";
 import { Scene } from "./scene";
 import { SceneBackdrop } from "./scene-backdrop";
 
 /**
  * L'ouverture.
  *
- * Elle ne suit pas le gabarit des autres scènes, et c'est délibéré : ici le
- * titre est au centre gauche et non en bas, parce qu'il n'y a rien d'autre à
- * regarder que lui et le monde derrière. Les scènes suivantes ont quelque
- * chose à montrer — elles rendent donc le milieu de l'écran.
+ * Elle ne suit pas le gabarit des autres scènes, et c'est délibéré : le
+ * texte au centre, en haut, et sous lui **le jeu** — le Marché, en vitrine,
+ * comme on montre un produit. On lisait une promesse sur un paysage, et la
+ * première capture n'arrivait qu'à la troisième scène : on pouvait décider de
+ * s'inscrire sans avoir vu à quoi le jeu ressemble.
  *
- * Les six chiffres passent en pied de page plutôt qu'en bandeau de compteurs.
+ * Le Marché plutôt qu'un autre écran, parce que c'est lui qui prouve la
+ * phrase du dessus : une liste de prix posés par des joueurs.
+ *
+ * Les six chiffres passent sous la vitrine plutôt qu'en bandeau de compteurs.
  * Un encadré aurait fait une carte, et une carte est exactement ce que cette
  * page refuse d'être.
- *
- * Deux paragraphes, dans cet ordre : ce que le jeu **est**, puis ce qui le
- * distingue. L'ouverture n'annonçait que le second — une bonne accroche pour
- * qui sait déjà de quel genre de jeu on parle, et rien du tout pour qui
- * arrive.
  */
 export function HeroScene() {
   return (
     <Scene id="hero" className="is-hero">
-      <SceneBackdrop sources={[HERO.fond]} cadrage="center 38%" priority />
+      <SceneBackdrop sources={[HERO.fond]} cadrage="center 42%" priority />
 
       <div className="rpg-lp-inner">
         <div className="rpg-lp-hero-body">
@@ -50,11 +50,11 @@ export function HeroScene() {
             ))}
           </h1>
 
-          <div className="rpg-lp-hero-lede">
-            {HERO.texte.map((phrase) => (
-              <p key={phrase.slice(0, 24)}>{phrase}</p>
-            ))}
-          </div>
+          <p className="rpg-lp-hero-lede">{HERO.texte}</p>
+
+          {/* Juste au-dessus des boutons : c'est la réponse à la question que
+              le premier pose — rejoindre, oui, mais pour quand ? */}
+          <CompteARebours />
 
           <div className="rpg-lp-actions">
             <BetaTrigger className="rpg-lp-btn">{HERO.action}</BetaTrigger>
@@ -64,6 +64,23 @@ export function HeroScene() {
           </div>
         </div>
 
+        <figure className="rpg-lp-hero-vitrine">
+          <span className="rpg-lp-hero-ecran">
+            {/* Servie telle quelle, comme les décors : c'est déjà un AVIF à
+                la taille voulue, et un second encodage avec perte sur du
+                texte d'interface ne rendrait rien de plus net. */}
+            <Image
+              src={HERO.capture}
+              alt={HERO.captureAlt}
+              width={2560}
+              height={1323}
+              priority
+              unoptimized
+              draggable={false}
+            />
+          </span>
+        </figure>
+
         <div className="rpg-lp-hero-foot">
           <ul className="rpg-lp-counts">
             {CHIFFRES.map((chiffre) => (
@@ -72,7 +89,6 @@ export function HeroScene() {
               </li>
             ))}
           </ul>
-          <span className="rpg-lp-hero-hint">Faites défiler</span>
         </div>
       </div>
     </Scene>

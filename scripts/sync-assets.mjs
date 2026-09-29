@@ -71,8 +71,18 @@ const CIBLE = join(APP, "public");
 const SOURCES_LUES = /\.(tsx?|mts|mjs|css)$/;
 /** Un chemin d'asset tel qu'il s'écrit dans le code, entre guillemets ou dans un `url()`. */
 const CHEMIN = /\/game\/[A-Za-z0-9._/-]+\.(?:avif|webp|png|jpe?g|svg|mp4|webm)/g;
-/** Un décor de scène, tel que les fichiers de `src/lib/landing` le déclarent. */
+/**
+ * Un décor de scène, tel que les fichiers de `src/lib/landing` le déclarent.
+ *
+ * Deux écritures, et il faut lire les deux. Une scène dont les onglets
+ * partagent leur décor le nomme une fois — `const FOND = "/game/…"` — puis
+ * écrit `fond: FOND` quatre fois : le relevé ne voyait que la seconde forme,
+ * qui ne porte aucun chemin, et le décor tombait au budget de sa famille. Le
+ * fond du combat est ainsi parti à deux cent cinquante-six pixels de large,
+ * étiré sur un écran entier.
+ */
 const FOND = /\bfond:\s*["'](\/game\/[^"']+)["']/g;
+const FOND_NOMME = /\bFOND\w*\s*=\s*["'](\/game\/[^"']+)["']/g;
 
 /** Largeur d'un décor plein cadre, et la qualité qu'un grand format demande. */
 const PLEIN_CADRE = 1920;
@@ -97,7 +107,6 @@ const BUDGETS = [
   [/^\/game\/ressources\//, 384],
   [/^\/game\/house-master\//, 320],
   [/^\/game\/UI\/(?:combat|market|icons|navigation)\//, 256],
-  [/^\/game\/interactive-map\//, 256],
 ];
 const BUDGET_DEFAUT = 768;
 
@@ -118,6 +127,7 @@ for (const fichier of await fichiers(join(APP, "src"))) {
   const texte = await readFile(fichier, "utf8");
   for (const trouve of texte.matchAll(CHEMIN)) cites.add(trouve[0]);
   for (const trouve of texte.matchAll(FOND)) decors.add(trouve[1]);
+  for (const trouve of texte.matchAll(FOND_NOMME)) decors.add(trouve[1]);
 }
 
 /** Ce qu'une image a le droit de peser en pixels, et à quelle qualité. */

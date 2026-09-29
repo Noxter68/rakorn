@@ -3,8 +3,8 @@ import { ApercuScene } from "@/components/landing/apercu-scene";
 import { AutresScene } from "@/components/landing/autres-scene";
 import { BetaModale } from "@/components/landing/beta-modal";
 import { CampagneScene } from "@/components/landing/campagne-scene";
-import { CarteScene } from "@/components/landing/carte-scene";
 import { CombatScene } from "@/components/landing/combat-scene";
+import { ConqueteScene } from "@/components/landing/conquete-scene";
 import { EquipementScene } from "@/components/landing/equipement-scene";
 import { FinalScene } from "@/components/landing/final-scene";
 import { GuildeScene } from "@/components/landing/guilde-scene";
@@ -45,7 +45,7 @@ export default function LandingPage() {
         <EquipementScene />
         <CombatScene />
         <CampagneScene />
-        <CarteScene />
+        <ConqueteScene />
         <GuildeScene />
         <AutresScene />
         <ApercuScene />

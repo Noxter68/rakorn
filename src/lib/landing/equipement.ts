@@ -51,8 +51,42 @@ export interface Gemme {
   fiche: string;
 }
 
+/**
+ * Un poste de l'atelier : où l'on se tient, et ce qui en sort.
+ *
+ * L'onglet « Fabriquer » ne montre plus quatre pièces en file mais **trois
+ * postes** — la mine, l'établi, la forge. Quatre illustrations numérotées de
+ * un à quatre se lisaient comme quatre objets du même genre ; trois postes
+ * nommés d'un verbe se lisent comme un trajet, et c'est ce qu'un visiteur doit
+ * comprendre avant tout le reste : on récolte, on transforme, on forge.
+ */
+export interface Poste {
+  /** Ce qu'on y fait, à l'impératif — « Récoltez ». */
+  verbe: string;
+  /** Où, en quelques mots. */
+  lieu: string;
+  pieces: PieceForge[];
+}
+
 export interface EtapeForge extends Onglet {
   pieces?: PieceForge[];
+  postes?: Poste[];
+  /**
+   * Ce qui passe d'un poste au suivant, un de moins que de postes.
+   *
+   * Relevé dans les recettes : cinq fers par lingot (`lingot_de_fer`), douze
+   * lingots et deux aciers trempés par plastron (`plastron_du_sentinelle`).
+   * Le plastron demande aussi des scories et de la fonte : « par plastron »
+   * dit ce qu'il en coûte de ces deux-là, pas que la liste est close — « font
+   * un plastron » l'aurait prétendu.
+   */
+  passages?: string[];
+  /**
+   * La fiche posée tant qu'on ne survole rien. Par défaut, celle de la
+   * dernière pièce ; l'atelier montre plutôt le plastron, parce que c'est
+   * l'armure qu'il promet.
+   */
+  defaut?: string;
   traitements?: Traitement[];
   gemmes?: Gemme[];
   /**
@@ -68,12 +102,15 @@ export interface EtapeForge extends Onglet {
   /** Les trois systèmes que la recette n'épuise pas — voir `APERCUS`. */
   apercus?: Apercu[];
   /**
-   * Trois formes, une par nature de contenu.
+   * Quatre formes, une par nature de contenu.
    *
-   * `chaine` étale les quatre pièces en une progression numérotée, chevrons
-   * compris, et réserve la colonne de droite à leur fiche : c'est la seule
-   * disposition qui fasse voir qu'une pièce **vient** de la précédente, et
-   * c'est ce que les deux onglets de pièces ont à dire.
+   * `atelier` pose trois postes — récolter, transformer, forger — et la
+   * recette qui passe de l'un à l'autre : c'est la seule disposition qui fasse
+   * voir qu'une armure **vient** d'un filon, et c'est ce que le premier onglet
+   * a à dire à qui arrive.
+   *
+   * `chaine` étale les quatre pièces d'une panoplie en une rangée numérotée ;
+   * la fiche de la dernière tient la colonne de droite.
    *
    * `rangee` étale les quatre en largeur sans les enchaîner — les traitements
    * ne se suivent pas, ils s'appliquent.
@@ -82,7 +119,7 @@ export interface EtapeForge extends Onglet {
    * échelle de cinq crans et deux chiffres : en rangée, cela ferait quatre
    * colonnes de texte trop étroites pour leur contenu.
    */
-  disposition?: "colonne" | "rangee" | "chaine";
+  disposition?: "colonne" | "rangee" | "chaine" | "atelier";
 }
 
 const FOND = "/game/house-master/background/background-master-house.avif";
@@ -165,7 +202,7 @@ const GEMMES: Gemme[] = [
 /**
  * Ce qu'une recette ne dit pas encore, en trois lignes.
  *
- * Elles se posent sous la chaîne de fabrication, et c'est tout leur propos :
+ * Elles se posent sous l'atelier, et c'est tout leur propos :
  * la pièce qui sort de l'enclume n'est pas finie. Elle part chez un Maître,
  * elle revient sertie, et l'outil qui l'a faite s'améliore lui aussi. Sans ces
  * trois lignes, l'onglet « Fabriquer » se lit comme la totalité du système
@@ -211,49 +248,76 @@ export const APERCUS: Apercu[] = [
 export const ETAPES_FORGE: EtapeForge[] = [
   {
     cle: "fabriquer",
-    disposition: "chaine",
+    disposition: "atelier",
     apercus: APERCUS,
     onglet: "Fabriquer",
     fond: FOND,
     surtitre: SURTITRE,
-    titre: "Forgez un équipement",
-    accent: "réellement à vous.",
+    titre: "Récoltez, transformez,",
+    accent: "forgez votre armure.",
     texte:
-      "Trois cent treize recettes vous attendent, et un outil qui progresse avec vous : cinq crans à gagner à la forge, avec ce que vous avez extrait vous-même. Au dernier, vous fabriquez un cinquième plus vite que tout le monde.",
+      "Tout part d'un filon. Le fer que vous en tirez devient lingot à l'établi, le lingot devient plastron à la forge — et chaque marche est un métier : le vôtre, ou celui d'un joueur à qui vous l'achetez. Trois cent treize recettes relient ainsi la matière brute à ce que vous porterez.",
     chiffres: [
       { art: "/game/UI/navigation/codex.avif", valeur: "313", quoi: "recettes" },
       { art: "/game/UI/navigation/forge.avif", valeur: "5", quoi: "crans d'outil" },
       { art: "/game/UI/pages/inventaire/sections/sertissage.avif", valeur: "3", quoi: "châsses" },
       { art: "/game/UI/navigation/competences.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
     ],
-    pieces: [
+    defaut: "plastron_du_sentinelle",
+    passages: ["5 fers par lingot", "12 lingots et 2 aciers par plastron"],
+    postes: [
       {
-        art: "/game/ressources/mining/lingo/lingo-de-fer.avif",
-        nom: "Lingot de fer",
-        rarete: "uncommon",
-        role: "La matière — fondue par un mineur",
-        fiche: "lingot_de_fer",
+        verbe: "Récoltez",
+        lieu: "Au filon, dans la Mine",
+        pieces: [
+          {
+            art: "/game/ressources/mining/veins/filon-de-fer.avif",
+            nom: "Fer",
+            rarete: "uncommon",
+            role: "La matière brute",
+            fiche: "fer",
+          },
+        ],
       },
       {
-        art: "/game/ressources/forge/acier-trempe.avif",
-        nom: "Acier trempé",
-        rarete: "uncommon",
-        role: "L'alliage — l'étape que personne ne voit",
-        fiche: "acier_trempe",
+        verbe: "Transformez",
+        lieu: "À l'établi",
+        pieces: [
+          {
+            art: "/game/ressources/mining/lingo/lingo-de-fer.avif",
+            nom: "Lingot de fer",
+            rarete: "uncommon",
+            role: "Fondu par un mineur",
+            fiche: "lingot_de_fer",
+          },
+          {
+            art: "/game/ressources/forge/acier-trempe.avif",
+            nom: "Acier trempé",
+            rarete: "uncommon",
+            role: "Allié par un forgeron",
+            fiche: "acier_trempe",
+          },
+        ],
       },
       {
-        art: "/game/ressources/forge/plastron_du_sentinelle.avif",
-        nom: "Plastron du sentinelle",
-        rarete: "rare",
-        role: "La pièce — trois châsses à remplir",
-        fiche: "plastron_du_sentinelle",
-      },
-      {
-        art: "/game/ressources/forge/bouclier-du-bastion.avif",
-        nom: "Bouclier du bastion",
-        rarete: "rare",
-        role: "La pièce — de quoi tenir un tour de plus",
-        fiche: "bouclier_du_bastion",
+        verbe: "Forgez",
+        lieu: "À la forge",
+        pieces: [
+          {
+            art: "/game/ressources/forge/plastron_du_sentinelle.avif",
+            nom: "Plastron du sentinelle",
+            rarete: "rare",
+            role: "Torse — une châsse",
+            fiche: "plastron_du_sentinelle",
+          },
+          {
+            art: "/game/ressources/forge/bouclier-du-bastion.avif",
+            nom: "Bouclier du bastion",
+            rarete: "rare",
+            role: "Main gauche — une châsse",
+            fiche: "bouclier_du_bastion",
+          },
+        ],
       },
     ],
   },
