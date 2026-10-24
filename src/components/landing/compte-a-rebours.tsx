@@ -1,7 +1,7 @@
 "use client";
 
 import { BETA_OUVERTE, DATE_BETA, OUVERTURE_BETA } from "@/lib/landing/page";
-import { URL_DU_JEU, useMaintenant } from "@/lib/landing/ouverture";
+import { useMaintenant } from "@/lib/landing/ouverture";
 
 const SECONDE = 1000;
 const MINUTE = 60 * SECONDE;
@@ -47,11 +47,10 @@ function decompte(maintenant: number): number[] | null {
  *
  * ── À l'heure dite, le bouton ─────────────────────────────────────────────
  *
- * La bêta ouverte (`BETA_OUVERTE`), la place qu'il tenait — juste au-dessus des
- * boutons, là où l'on demandait « pour quand ? » — revient au seul geste qui
- * compte désormais : entrer dans le jeu. Le bouton d'inscription du héros
- * s'efface en même temps (`BetaTrigger masquerOuvert`), pour ne pas faire
- * deux appels côte à côte.
+ * La bêta ouverte (`BETA_OUVERTE`), le décompte n'a plus de question à
+ * répondre : il ne garde que son titre, en plus grand, au-dessus de la rangée
+ * où le bouton d'inscription est devenu « Entrer dans Rakorn », à côté de
+ * « Découvrir ».
  */
 export function CompteARebours() {
   const maintenant = useMaintenant();
@@ -61,9 +60,6 @@ export function CompteARebours() {
     return (
       <div className="rpg-lp-decompte is-ouverte">
         <p className="rpg-lp-decompte-titre">La bêta est ouverte · cinquante places titrées</p>
-        <a href={URL_DU_JEU} className="rpg-lp-btn is-entree">
-          Entrer dans Rakorn
-        </a>
       </div>
     );
   }

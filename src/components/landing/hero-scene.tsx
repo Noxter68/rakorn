@@ -57,7 +57,7 @@ export function HeroScene() {
           <CompteARebours />
 
           <div className="rpg-lp-actions">
-            <BetaTrigger className="rpg-lp-btn" masquerOuvert>
+            <BetaTrigger className="rpg-lp-btn" ouvert="Entrer dans Rakorn">
               {HERO.action}
             </BetaTrigger>
             <a href="#metiers" className="rpg-lp-btn is-ghost">

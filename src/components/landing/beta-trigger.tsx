@@ -14,25 +14,20 @@ import { URL_DU_JEU, useBetaOuverte } from "@/lib/landing/ouverture";
  * ces trois-là est ce qui se passe au clic.
  *
  * Une fois la bêta ouverte (`BETA_OUVERTE`), il devient un vrai lien vers
- * l'inscription du jeu, sous le mot `ouvert` ; `masquerOuvert` l'efface là où
- * le compte à rebours, devenu bouton, fait déjà l'appel.
+ * l'inscription du jeu, sous le mot `ouvert`.
  */
 export function BetaTrigger({
   className,
   children,
   ouvert = "Jouer à la bêta",
-  masquerOuvert = false,
 }: {
   className: string;
   children: React.ReactNode;
   /** Le mot du lien une fois la bêta ouverte. */
   ouvert?: string;
-  /** Une fois la bêta ouverte, ne rien rendre : un autre bouton fait l'appel. */
-  masquerOuvert?: boolean;
 }) {
   const estOuverte = useBetaOuverte();
   if (estOuverte) {
-    if (masquerOuvert) return null;
     return (
       <a href={URL_DU_JEU} className={className}>
         {ouvert}
