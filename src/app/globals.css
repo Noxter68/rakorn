@@ -2378,6 +2378,21 @@ body {
     margin-top: 1.6rem;
     animation: rpg-lp-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 400ms both;
   }
+  /* Les portes ouvertes : le titre, puis le bouton qui y mène, plus grand
+     que les autres — c'est le seul geste qui reste à faire. */
+  .rpg-lp-decompte.is-ouverte .rpg-lp-decompte-titre {
+    color: rgba(233, 205, 133, 0.9);
+  }
+  .rpg-lp-btn.is-entree {
+    margin-top: 0.9rem;
+    min-height: 3.6rem;
+    padding: 0 2.4rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.45),
+      0 0 32px rgba(226, 185, 100, 0.28);
+  }
   .rpg-lp-decompte-titre {
     @apply font-heading m-0 uppercase;
     font-size: 0.6875rem;

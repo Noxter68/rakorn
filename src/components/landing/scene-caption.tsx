@@ -30,7 +30,8 @@ export function SceneCaption({
   surtitre: string;
   titre: string;
   accent?: string;
-  texte: string;
+  /** Une phrase, ou ce qui la choisit selon l'heure (`SelonOuverture`). */
+  texte: React.ReactNode;
   reperes?: string[];
   chiffres?: Repere[];
   /** Le titre d'ouverture et celui de clôture, plus grands que les autres. */

@@ -48,7 +48,9 @@ export function Topnav() {
               `justify-between` ne se mette pas à répartir quatre enfants. */}
           <div className="rpg-lp-nav-actions">
             <DiscordLink className="rpg-lp-nav-discord" />
-            <BetaTrigger className="rpg-lp-nav-play">S&apos;inscrire</BetaTrigger>
+            <BetaTrigger className="rpg-lp-nav-play" ouvert="Jouer">
+              S&apos;inscrire
+            </BetaTrigger>
           </div>
         </div>
       </nav>

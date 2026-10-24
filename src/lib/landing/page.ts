@@ -6,13 +6,13 @@
 /**
  * Où mènent les boutons.
  *
- * Nulle part, désormais : ils descendent à `#final`, où l'on demande une
- * adresse. Ils ont pointé vers le `/register` du jeu tant qu'on a cru pouvoir
- * ouvrir tout de suite — mais un bouton « Jouer » qui mène à un jeu fermé
- * dépense, en une seconde, la confiance que neuf scènes viennent de bâtir. Il
- * n'y a donc plus de lien sortant, et plus de `NEXT_PUBLIC_JEU_URL` : le jour
- * de l'ouverture, on rebranchera les trois `href` sur le jeu, ce qui est une
- * ligne par bouton.
+ * Avant l'ouverture, nulle part : ils ouvrent la fenêtre où l'on laisse son
+ * adresse. Un bouton « Jouer » qui mènerait à un jeu fermé dépenserait, en une
+ * seconde, la confiance que neuf scènes viennent de bâtir.
+ *
+ * À l'heure dite, ils mènent au jeu (`URL_DU_JEU`, `lib/landing/ouverture.ts`)
+ * d'eux-mêmes : le navigateur lit l'heure, et la page construite avant
+ * dix-huit heures bascule sans redéploiement.
  */
 
 /**
@@ -185,6 +185,9 @@ export const FINAL = {
   accent: "Bâtissez tout le reste.",
   texte:
     `Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre sa bêta le ${DATE_BETA} : laissez votre adresse, et vous serez prévenu à l'heure où la vallée s'ouvre.`,
+  /* Ce que la scène dit une fois les portes ouvertes (`SelonOuverture`). */
+  texteOuvert:
+    "Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. La bêta est ouverte : les cinquante premiers héros reçoivent un titre que nul autre ne gagnera, du Premier au Cinquantième Pionnier de Rakorn.",
   action: "Rejoindre la bêta",
 };
 

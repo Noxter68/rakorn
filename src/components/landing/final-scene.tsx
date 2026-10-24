@@ -1,5 +1,6 @@
 import { DISCORD, FINAL } from "@/lib/landing/page";
 import { BetaTrigger } from "./beta-trigger";
+import { SelonOuverture } from "./selon-ouverture";
 import { DiscordLink } from "./discord-link";
 import { Reveal } from "./reveal";
 import { Scene } from "./scene";
@@ -35,11 +36,13 @@ export function FinalScene() {
           surtitre={FINAL.surtitre}
           titre={FINAL.titre}
           accent={FINAL.accent}
-          texte={FINAL.texte}
+          texte={<SelonOuverture avant={FINAL.texte} apres={FINAL.texteOuvert} />}
         />
 
         <Reveal delay={340} className="rpg-lp-final-actions">
-          <BetaTrigger className="rpg-lp-btn">{FINAL.action}</BetaTrigger>
+          <BetaTrigger className="rpg-lp-btn" ouvert="Entrer dans Rakorn">
+            {FINAL.action}
+          </BetaTrigger>
         </Reveal>
 
         {/* Trois blocs : la marque, la devise, le serveur. La devise s'efface

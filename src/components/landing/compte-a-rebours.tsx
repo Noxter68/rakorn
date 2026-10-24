@@ -1,7 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { DATE_BETA, OUVERTURE_BETA } from "@/lib/landing/page";
+import { URL_DU_JEU, useMaintenant } from "@/lib/landing/ouverture";
 
 const SECONDE = 1000;
 const MINUTE = 60 * SECONDE;
@@ -9,17 +9,6 @@ const HEURE = 60 * MINUTE;
 const JOUR = 24 * HEURE;
 
 const UNITES = ["Jours", "Heures", "Minutes", "Secondes"] as const;
-
-/** L'horloge à laquelle le composant s'abonne : un battement par seconde. */
-function abonner(prevenir: () => void) {
-  const tic = setInterval(prevenir, SECONDE);
-  return () => clearInterval(tic);
-}
-/* La seconde entière et non `Date.now()` : React relit l'instantané plusieurs
-   fois par rendu et exige qu'il ne change pas entre deux lectures — à la
-   milliseconde, il changerait toujours. */
-const seconde = () => Math.floor(Date.now() / SECONDE) * SECONDE;
-const aucune = () => null;
 
 /** Ce qui reste jusqu'à l'ouverture, unité par unité ; `null` une fois ouverte. */
 function decompte(maintenant: number): number[] | null {
@@ -55,15 +44,26 @@ function decompte(maintenant: number): number[] | null {
  *
  * Les chiffres sont cachés aux lecteurs d'écran : une seconde qui change
  * n'apprend rien à qui écoute, la date qui les précède dit tout.
+ *
+ * ── À l'heure dite, le bouton ─────────────────────────────────────────────
+ *
+ * Le compte arrivé à zéro, la place qu'il tenait — juste au-dessus des
+ * boutons, là où l'on demandait « pour quand ? » — revient au seul geste qui
+ * compte désormais : entrer dans le jeu. Le bouton d'inscription du héros
+ * s'efface en même temps (`BetaTrigger masquerOuvert`), pour ne pas faire
+ * deux appels côte à côte.
  */
 export function CompteARebours() {
-  const maintenant = useSyncExternalStore(abonner, seconde, aucune);
+  const maintenant = useMaintenant();
   const reste = maintenant === null ? undefined : decompte(maintenant);
 
   if (reste === null) {
     return (
-      <div className="rpg-lp-decompte">
-        <p className="rpg-lp-decompte-titre">La bêta est ouverte</p>
+      <div className="rpg-lp-decompte is-ouverte">
+        <p className="rpg-lp-decompte-titre">La bêta est ouverte · cinquante places titrées</p>
+        <a href={URL_DU_JEU} className="rpg-lp-btn is-entree">
+          Entrer dans Rakorn
+        </a>
       </div>
     );
   }
