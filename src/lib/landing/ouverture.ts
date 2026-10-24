@@ -1,21 +1,16 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { OUVERTURE_BETA } from "./page";
+import { BETA_OUVERTE } from "./page";
 
 /**
- * L'heure de l'ouverture, lue par tout ce qui change ce jour-là.
+ * Ce que lit tout ce qui change à l'ouverture : l'interrupteur, l'adresse du
+ * jeu, et l'horloge du compte à rebours.
  *
- * La vitrine est construite en statique, avant l'ouverture : c'est donc le
- * navigateur qui décide, à la seconde, si la bêta est ouverte. Le compte à
- * rebours laisse alors sa place au bouton qui mène au jeu, les appels à
- * s'inscrire deviennent des liens vers le jeu, et la scène finale cesse de
- * demander une adresse — sans redéploiement à dix-huit heures.
- *
- * Ce qu'elle refuse : décider à la construction. L'instantané serveur dit
- * « fermée », comme la page qu'on construit, et la bascule n'a lieu qu'une
- * fois le navigateur monté : sans quoi l'hydratation se fâcherait à chaque
- * visite d'après dix-huit heures.
+ * L'ouverture n'est pas une heure lue dans le navigateur mais un interrupteur
+ * (`BETA_OUVERTE`, `page.ts`) : la page construite contient directement ce
+ * qu'il faut montrer, et c'est le déploiement qui ouvre les portes. Le compte
+ * à rebours garde son horloge pour le temps où l'interrupteur est éteint.
  */
 
 /** Où mène la vitrine une fois la bêta ouverte : l'inscription du jeu. */
@@ -37,8 +32,7 @@ export function useMaintenant(): number | null {
   return useSyncExternalStore(abonner, seconde, aucune);
 }
 
-/** La bêta est-elle ouverte, à l'heure du navigateur ? */
+/** La bêta est-elle ouverte ? L'interrupteur, rien d'autre. */
 export function useBetaOuverte(): boolean {
-  const maintenant = useMaintenant();
-  return maintenant !== null && maintenant >= new Date(OUVERTURE_BETA).getTime();
+  return BETA_OUVERTE;
 }

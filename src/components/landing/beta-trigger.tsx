@@ -13,7 +13,7 @@ import { URL_DU_JEU, useBetaOuverte } from "@/lib/landing/ouverture";
  * scènes ont celles des boutons d'appel — parce que le seul point commun entre
  * ces trois-là est ce qui se passe au clic.
  *
- * Une fois la bêta ouverte (`useBetaOuverte`), il devient un vrai lien vers
+ * Une fois la bêta ouverte (`BETA_OUVERTE`), il devient un vrai lien vers
  * l'inscription du jeu, sous le mot `ouvert` ; `masquerOuvert` l'efface là où
  * le compte à rebours, devenu bouton, fait déjà l'appel.
  */

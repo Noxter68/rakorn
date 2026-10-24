@@ -10,10 +10,17 @@
  * adresse. Un bouton « Jouer » qui mènerait à un jeu fermé dépenserait, en une
  * seconde, la confiance que neuf scènes viennent de bâtir.
  *
- * À l'heure dite, ils mènent au jeu (`URL_DU_JEU`, `lib/landing/ouverture.ts`)
- * d'eux-mêmes : le navigateur lit l'heure, et la page construite avant
- * dix-huit heures bascule sans redéploiement.
+ * Ouverte (`BETA_OUVERTE`), ils mènent au jeu (`URL_DU_JEU`,
+ * `lib/landing/ouverture.ts`).
  */
+
+/**
+ * La bêta est-elle ouverte ? Un interrupteur, et non l'heure du navigateur :
+ * c'est le déploiement qui ouvre les portes. La page construite contient
+ * alors directement le bouton du jeu — ni attente, ni bascule visible au
+ * chargement —, et l'on choisit l'instant en poussant.
+ */
+export const BETA_OUVERTE = true;
 
 /**
  * L'ouverture de la bêta : le 24 octobre, à dix-huit heures, heure de Paris.
