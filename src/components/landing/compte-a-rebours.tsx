@@ -1,6 +1,8 @@
 "use client";
 
 import { BETA_OUVERTE, DATE_BETA, OUVERTURE_BETA } from "@/lib/landing/page";
+import type { CSSProperties } from "react";
+import { FREQUENTATION, NOTE, SONDAGE } from "@/lib/landing/joueurs";
 import { useMaintenant } from "@/lib/landing/ouverture";
 
 const SECONDE = 1000;
@@ -50,7 +52,10 @@ function decompte(maintenant: number): number[] | null {
  * La bêta ouverte (`BETA_OUVERTE`), le décompte n'a plus de question à
  * répondre : il ne garde que son titre, en plus grand, au-dessus de la rangée
  * où le bouton d'inscription est devenu « Entrer dans Rakorn », à côté de
- * « Découvrir ».
+ * « Découvrir ». Dessous, trois chiffres : la note que lui donnent ceux qui y
+ * jouent, d'abord, parce que l'avis des autres joueurs est ce qui décide ;
+ * puis combien y sont déjà. La scène des joueurs en dit davantage, plus bas
+ * (`#joueurs`).
  */
 export function CompteARebours() {
   const maintenant = useMaintenant();
@@ -60,6 +65,35 @@ export function CompteARebours() {
     return (
       <div className="rpg-lp-decompte is-ouverte">
         <p className="rpg-lp-decompte-titre">La bêta est ouverte · cinquante places titrées</p>
+        <a
+          href="#joueurs"
+          className="rpg-lp-decompte-joueurs"
+          aria-label={`Noté ${NOTE} sur 5 par ${SONDAGE.reponses} joueurs. Déjà ${FREQUENTATION.inscrits} joueurs, dont ${FREQUENTATION.actifs7j} actifs ces sept derniers jours`}
+        >
+          <span className="is-note">
+            <b>
+              {NOTE}
+              <i>/ 5</i>
+            </b>
+            <small>
+              <span
+                className="rpg-lp-etoiles"
+                style={{ "--note": `${(SONDAGE.note / 5) * 100}%` } as CSSProperties}
+              >
+                ★★★★★
+              </span>{" "}
+              {SONDAGE.reponses} avis
+            </small>
+          </span>
+          <span>
+            <b>{FREQUENTATION.inscrits}</b>
+            <small>Joueurs</small>
+          </span>
+          <span>
+            <b>{FREQUENTATION.actifs7j}</b>
+            <small>Actifs cette semaine</small>
+          </span>
+        </a>
       </div>
     );
   }

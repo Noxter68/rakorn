@@ -9,6 +9,7 @@ import { EquipementScene } from "@/components/landing/equipement-scene";
 import { FinalScene } from "@/components/landing/final-scene";
 import { GuildeScene } from "@/components/landing/guilde-scene";
 import { HeroScene } from "@/components/landing/hero-scene";
+import { JoueursScene } from "@/components/landing/joueurs-scene";
 import { MarcheScene } from "@/components/landing/marche-scene";
 import { MetiersScene } from "@/components/landing/metiers-scene";
 import { ScrollDirector } from "@/components/landing/scroll-director";
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 /**
  * La vitrine.
  *
- * Onze scènes, chacune d'une hauteur d'écran, chacune bâtie sur la même règle :
+ * Douze scènes, chacune d'une hauteur d'écran, chacune bâtie sur la même règle :
  * le décor prend toute la place, les onglets se tiennent en haut, le titre en
  * bas à gauche, ce qu'il faut en savoir en bas à droite, et rien ne flotte
  * par-dessus qui ne démontre quelque chose.
@@ -49,6 +50,7 @@ export default function LandingPage() {
         <GuildeScene />
         <AutresScene />
         <ApercuScene />
+        <JoueursScene />
         <FinalScene />
       </main>
       {/* Une seule fenêtre pour les trois appels — barre du haut, ouverture,
