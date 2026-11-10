@@ -93,7 +93,7 @@ export function TactiqueOverlay({ tactique }: { tactique: Tactique }) {
           <li>
             <span className="rpg-lp-rota-ico">
               <Image
-                src="/game/UI/pages/inventaire/sections/defense.avif"
+                src="/game/UI/pages/inventaire/sections/parade-v2.avif"
                 alt=""
                 fill
                 sizes="30px"
@@ -116,7 +116,7 @@ export function TactiqueOverlay({ tactique }: { tactique: Tactique }) {
           </li>
           <li>
             <span className="rpg-lp-rota-ico">
-              <Image src="/game/UI/icons/xp.avif" alt="" fill sizes="30px" className="object-contain" />
+              <Image src="/game/UI/pages/inventaire/sections/experience-v2.avif" alt="" fill sizes="30px" className="object-contain" />
             </span>
             Ouvertes du niveau {Math.min(...niveaux)} au {Math.max(...niveaux)}
           </li>
