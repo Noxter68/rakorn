@@ -63,29 +63,19 @@ export const DISCORD = {
 
 /** Les ancres de la barre du haut, dans l'ordre où la page les déroule. */
 export const NAVIGATION = [
-  { href: "#metiers", libelle: "Métiers" },
-  { href: "#marche", libelle: "Marché" },
-  { href: "#equipement", libelle: "Équipement" },
-  { href: "#combat", libelle: "Combat" },
-  { href: "#campagne", libelle: "Campagne" },
-  { href: "#conquete", libelle: "Conquête" },
-  { href: "#guilde", libelle: "Guilde" },
+  { href: "#metiers", libelle: "Métiers", icone: "/game/UI/navigation-v4/metiers.avif" },
+  { href: "#marche", libelle: "Marché", icone: "/game/UI/navigation-v4/marche.avif" },
+  { href: "#equipement", libelle: "Équipement", icone: "/game/UI/navigation-v4/inventaire.avif" },
+  { href: "#combat", libelle: "Combat", icone: "/game/UI/navigation-v4/talent.avif" },
+  { href: "#campagne", libelle: "Campagne", icone: "/game/UI/navigation-v4/campagne.avif" },
+  { href: "#conquete", libelle: "Conquête", icone: "/game/UI/navigation-v4/haut-faits.avif" },
+  { href: "#guilde", libelle: "Guilde", icone: "/game/UI/navigation-v4/guilde.avif" },
 ];
 
 export const HERO = {
-  /* Le fond de la page des Compétences : une nuit bleue qui s'éclaire au
-     centre, juste derrière la vitrine. La vallée de l'accueil a tenu cette
-     place tant que l'ouverture n'avait que du texte à porter ; devant une
-     interface, ses couleurs lui disputaient l'œil. */
-  fond: "/game/UI/pages/competences/background-skill.avif",
-  /**
-   * Le Marché, en vitrine sous le texte — prise par `pnpm captures marche`,
-   * à 2 560 pixels : c'est la plus grande image de la page, et la première.
-   */
-  capture: "/captures/ouverture-marche.avif",
-  captureAlt:
-    "Le Marché de Rakorn : les objets en vente avec leur prix moyen, et la fiche de l'objet choisi.",
-  surtitre: "Jeu de rôle · artisanat et commerce · dans le navigateur",
+  /* Le paysage home-v1 du jeu, derrière les quatre écrans d'ouverture. */
+  fond: "/game/UI/pages/home/home-v1.avif",
+  surtitre: "Jeu de rôle · navigateur ordinateur et mobile · application à venir",
   /** Trois mots, trois lignes. Le deuxième est en or. */
   titre: ["Récoltez.", "Forgez.", "Vendez."] as const,
   /**
@@ -102,10 +92,33 @@ export const HERO = {
    * phrase que les prix sont ceux des joueurs.
    */
   texte:
-    "Huit métiers à monter, cent vingt créatures à vaincre au tour par tour, une cité à bâtir en guilde — et une économie qui vous appartient : chaque prix du Marché, c'est un joueur qui l'a fixé.",
-  action: "Rejoindre la bêta",
+    "Huit métiers à monter, cent vingt créatures à vaincre au tour par tour, une cité à bâtir en guilde. Jouez dès maintenant dans votre navigateur, sur ordinateur ou sur mobile ; une application mobile viendra plus tard.",
+  action: "Entrer dans Rakorn",
   actionSecondaire: "Découvrir",
 };
+
+export const CAPTURES_OUVERTURE = [
+  {
+    label: "Marché", icone: "/game/UI/navigation-v4/marche.avif",
+    image: "/captures/ouverture-marche.avif", mobile: "/captures/ouverture-marche-mobile.avif",
+    alt: "Le Marché de Rakorn avec les offres du comptoir et des joueurs.",
+  },
+  {
+    label: "Compétences", icone: "/game/UI/navigation-v4/talent.avif",
+    image: "/captures/jeu-competences.avif", mobile: "/captures/jeu-competences-mobile.avif",
+    alt: "L'Ordre de bataille et les techniques du personnage.",
+  },
+  {
+    label: "Forge", icone: "/game/UI/navigation-v4/forge.avif",
+    image: "/captures/jeu-forge.avif", mobile: "/captures/jeu-forge-mobile.avif",
+    alt: "La Forge de Rakorn et ses outils pour améliorer l'équipement.",
+  },
+  {
+    label: "Combat", icone: "/game/UI/navigation-v4/campagne.avif",
+    image: "/captures/ouverture-combat.avif", mobile: "/captures/ouverture-combat-mobile.avif",
+    alt: "Une scène de combat de Rakorn contre un bandit chevronné.",
+  },
+] as const;
 
 /**
  * Les chiffres du monde, relevés dans la base et non arrondis pour la vitrine.
@@ -139,42 +152,42 @@ export const AUTRES = {
     "Huit systèmes de plus, que vous croiserez dans vos premières heures de jeu. Aucun n'est un bonus payant ni une récompense lointaine : ils sont là, ouverts, dès que vous en avez l'usage.",
   entrees: [
     {
-      art: "/game/UI/navigation/haut-faits.avif",
+      art: "/game/UI/navigation-v4/haut-faits.avif",
       nom: "Hauts faits",
       texte: "Mille un à décrocher, et les titres que vous porterez ensuite sous votre nom.",
     },
     {
-      art: "/game/UI/navigation/codex.avif",
+      art: "/game/UI/navigation-v4/codex.avif",
       nom: "Codex",
       texte: "461 fiches pour ne jamais chercher : d'où vient une matière, à quoi sert une pièce.",
     },
     {
-      art: "/game/UI/navigation/competences.avif",
+      art: "/game/UI/navigation-v4/talent.avif",
       nom: "Compétences",
-      texte: "Trois arbres de talents, trois sources de points, et une clé de voûte au sommet de chacun.",
+      texte: "Préparez vos techniques et leur ordre avant le prochain combat.",
     },
     {
-      art: "/game/UI/navigation/contrats.avif",
+      art: "/game/UI/navigation-v4/contrats.avif",
       nom: "Commandes",
       texte: "Faites fabriquer ce que vous ne savez pas faire, ou fabriquez pour les autres.",
     },
     {
-      art: "/game/UI/pages/inventaire/sections/recyclage.avif",
+      art: "/game/UI/pages/inventaire/sections/recycler-v2.avif",
       nom: "Recyclage",
       texte: "Rien ne se perd : ce qui ne sert plus repart en matière première.",
     },
     {
-      art: "/game/UI/pages/inventaire/sections/sertissage.avif",
+      art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif",
       nom: "Sertissage",
       texte: "Des châsses à remplir, et la prime d'harmonie quand trois couleurs s'accordent.",
     },
     {
-      art: "/game/UI/pages/inventaire/sections/sac.avif",
+      art: "/game/UI/navigation-v4/inventaire.avif",
       nom: "Le sac",
       texte: "Quinze emplacements au départ, et autant que vous saurez en fabriquer ensuite.",
     },
     {
-      art: "/game/UI/navigation/forge.avif",
+      art: "/game/UI/navigation-v4/forge.avif",
       nom: "Maison de Maître",
       texte: "Recherches, traitements et forge magistrale : ce qui vous attend au niveau 60.",
     },
@@ -182,11 +195,8 @@ export const AUTRES = {
 };
 
 export const FINAL = {
-  /* La vallée de l'accueil du jeu, de nuit — celle qu'on retrouve en se
-     connectant passé dix-huit heures. L'ouverture a quitté la vallée pour la
-     vitrine du Marché : la page commence par ce qu'on fera, et finit par
-     l'endroit où l'on arrivera. */
-  fond: "/game/UI/pages/home/home-night.avif",
+  /* Le décor login.png du jeu, servi dans sa variante AVIF légère. */
+  fond: "/game/UI/pages/home/login.avif",
   surtitre: "Votre place vous attend",
   titre: "Commencez avec presque rien.",
   accent: "Bâtissez tout le reste.",

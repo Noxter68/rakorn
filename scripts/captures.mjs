@@ -1,6 +1,7 @@
 /**
- * Photographie le jeu pour la vitrine : les quatre salles du Marché, les
- * dix pages de la galerie d'aperçu, et la carte de la conquête.
+ * Photographie le jeu pour la vitrine : le Marché, les Commandes, les
+ * dix pages de la galerie d'aperçu et la carte de la conquête, en bureau
+ * et dans le navigateur mobile.
  *
  * Elle montrait d'abord un tableau de prix reconstitué en HTML : une imitation,
  * plus pauvre que la vraie salle et surtout menteuse, puisqu'un visiteur ne
@@ -17,7 +18,8 @@
  *
  *   pnpm --filter landing-preview captures
  *   pnpm captures conquete        # une seule série : marche, galerie, conquete
- *   pnpm captures galerie --sans=maison,archives   # tout sauf ces prises-là
+ *   pnpm captures galerie --mobile-only
+ *   pnpm captures marche --sans=acheter,vendre
  *
  * L'authentification est forgée à la main plutôt que jouée au formulaire : le
  * jeton est signé avec le secret de développement, et le cookie ne sert qu'à
@@ -37,15 +39,16 @@ const APP = join(ICI, "..");
 const CIBLE = join(APP, "public", "captures");
 const JEU = process.env.JEU_URL ?? "http://localhost:3000";
 const SECRET = process.env.JWT_SECRET ?? "change-me-in-production";
-const JOUEUR = process.env.CAPTURE_SUB ?? "2d31f0b9-2d12-40f4-b8e5-0965198adebf";
+const JOUEUR = process.env.CAPTURE_SUB ?? "258e3625-e8ad-4ca9-a6d9-db2952567ce9";
 const COURRIEL = process.env.CAPTURE_EMAIL ?? "dorn@recrue.test";
+const VENDEUR = process.env.CAPTURE_SELLER_SUB ?? "7c919502-c085-4614-9a84-bb09e7cd4b0c";
 
 /**
  * Les salles du jeu, pour la galerie d'aperçu.
  *
  * Une page par onglet, photographiée telle qu'un joueur la trouve. Certaines
  * ne montrent rien tant qu'on n'a rien désigné — le Codex ouvre sur une liste
- * et une colonne vide, la Maison sur un hall — d'où le `geste` : un clic, une
+ * et une colonne vide — d'où le `geste` : un clic, une
  * fois la page montée, sur ce qui la fait parler.
  *
  * `attente` est le sélecteur qui dit que la page est là. L'attendre plutôt que
@@ -53,44 +56,37 @@ const COURRIEL = process.env.CAPTURE_EMAIL ?? "dorn@recrue.test";
  * l'attente « au cas où » pour les dix.
  */
 const SALLES_JEU = [
-  /* La salle s'ouvre sur le métier actif du personnage, qui n'est pas
-     forcément son meilleur — celui de Dorn est un bûcheron de niveau sept, à
-     côté de deux métiers au soixante. On passe au Forgeron, à l'établi, et
-     sur une pièce majeure : c'est elle qui montre ce qu'on vient chercher. */
+  /* Le Forgeron ouvre l'établi et montre ses recettes. */
   {
     cle: "metiers",
     route: "/crafting",
     attente: ".rpg-met",
     geste: [
-      '.rpg-met-job:has-text("Forgeron")',
-      '.rpg-met-tab:has-text("Artisanat")',
-      '.rpg-met-row:has-text("Épée du magma éternel")',
+      '.rpg-met-onglet[title^="Forgeron"]',
+      '.rpg-met button:has-text("Artisanat"):visible',
     ],
   },
-  /* Le Codex s'ouvre sur la première entrée de l'aperçu, une aiguille
-     commune. La recherche rend l'ensemble du Serment en entier — douze pièces
-     mythiques dans la grille —, et sa lame occupe la scène. */
+  /* La recherche du Serment peuple la grille et ouvre la première pièce. */
   {
     cle: "codex",
     route: "/codex",
     attente: ".rpg-cdx",
     geste: [
       { champ: "input[placeholder^='Rechercher']", texte: "Serment" },
-      '.rpg-plan-case[aria-label^="Lame du Serment"]',
     ],
   },
   /* Les trois écrans passés au plan ont perdu leur classe de salle : leur
      racine est `.rpg-plan`, et l'attente sur l'ancienne expirait. */
   { cle: "contrats", route: "/orders", attente: ".rpg-plan" },
   { cle: "competences", route: "/skills", attente: ".rpg-board-page" },
-  { cle: "personnage", route: "/character", attente: ".rpg-per" },
+  { cle: "personnage", route: "/character", attente: ".rpg-board-page" },
   /* Le sac s'ouvre sur sa première case, une botte de sisal : on choisit une
      gemme légendaire, dont la fiche dit ce qu'elle apporte une fois sertie. */
   {
     cle: "inventaire",
     route: "/inventory",
     attente: ".rpg-plan",
-    geste: '.rpg-plan-case[aria-label^="Saphir des profondeurs V "]',
+    geste: '.rpg-plan-case:visible',
   },
   { cle: "campagne", route: "/map", attente: ".rpg-camp-card, .rpg-campaign-strip" },
   /* La Forge s'ouvre sur une amulette commune « déjà en parfait état » : un
@@ -102,35 +98,22 @@ const SALLES_JEU = [
     attente: ".rpg-plan",
     geste: '.rpg-plan-case[aria-label^="Bouclier du Roi sous la Montagne"]',
   },
-  /* Le hall porte `.rpg-hall`, pas `.rpg-house` — cette dernière habille les
-     salles ouvertes, pas la façade. Un sélecteur voisin, et le script attendait
-     quinze secondes un élément qui n'arrive qu'au clic suivant. */
-  { cle: "maison", route: "/house", attente: ".rpg-hall" },
-  /* `text=Archives` visait le titre de la carte, pas la carte : le clic
-     tombait sur un nœud de texte et le hall ne bougeait pas — la capture
-     doublait celle du hall, à l'identique. */
-  { cle: "archives", route: "/house", attente: ".rpg-hall", geste: 'button:has-text("ARCHIVES")' },
+  /* Les quêtes et la guilde montrent deux systèmes actifs dans cette partie
+     locale ; la Maison de Maître reste encore à construire. */
+  { cle: "quetes", route: "/quests", attente: ".rpg-qj" },
   { cle: "guilde", route: "/guild", attente: ".rpg-board-page" },
 ];
 
-/** Les quatre modes du Marché, dans l'ordre où la salle les présente. */
+/** Les trois modes du Marché puis les vues de la salle des Commandes. */
 const SALLES = [
-  { cle: "acheter", onglet: "ACHETER" },
-  { cle: "vendre", onglet: "VENDRE" },
-  { cle: "mes-ventes", onglet: "MES VENTES" },
-  { cle: "commandes", onglet: "COMMANDES" },
-  /* Les trois vues qui vivent **sous** l'onglet Commandes. Le Marché en a cinq
-     — Ouvertes, Créer, Mes commandes, Confier, Mes traitements — et la
-     vitrine n'en montrait qu'une, celle qui s'ouvre par défaut. Passer une
-     commande, confier une pièce à un artisan et la faire traiter sont trois
-     gestes distincts, et deux d'entre eux n'existaient nulle part sur la
-     page. Les libellés vont par paires depuis que le Marché porte l'habit du
-     plan — *Créer / Mes commandes*, *Confier / Mes traitements* — et le clic
-     les cherche au mot près : l'ancien « Confier une pièce » ne trouvait plus
-     rien. */
-  { cle: "creer", onglet: "COMMANDES", sous: "Créer" },
-  { cle: "confier", onglet: "COMMANDES", sous: "Confier" },
-  { cle: "traitements", onglet: "COMMANDES", sous: "Mes traitements" },
+  { cle: "acheter", route: "/market", onglet: "ACHETER" },
+  { cle: "vendre", route: "/market", onglet: "VENDRE" },
+  { cle: "mes-ventes", route: "/market", onglet: "MES VENTES" },
+  { cle: "commandes", route: "/commissions", onglet: "OUVERTES" },
+  /* Les Commandes ont maintenant leur propre route. */
+  { cle: "creer", route: "/commissions", onglet: "CRÉER" },
+  { cle: "confier", route: "/commissions", onglet: "CONFIER" },
+  { cle: "traitements", route: "/commissions", onglet: "MES TRAITEMENTS" },
 ];
 
 /**
@@ -176,8 +159,8 @@ const CONQUETE = [
  * n'existe qu'en développement et se posait au coin inférieur gauche de
  * toutes les captures.
  */
-const HABILLAGE = ".rpg-topnav { visibility: hidden !important; } nextjs-portal { display: none !important; }";
-const habiller = (onglet) => onglet.addStyleTag({ content: HABILLAGE });
+const HABILLAGE = "nextjs-portal, .rpg-toast-stack, .rpg-heraut, .rpg-banc-etats, .rpg-rappel-validation { display: none !important; }";
+const habiller = (page, mobile) => page.addStyleTag({ content: `${HABILLAGE} ${mobile ? "" : ".rpg-topnav { visibility: hidden !important; }"}` });
 
 /** Les séries demandées en argument ; aucune, c'est toutes. */
 const SERIES = new Set(process.argv.slice(2).filter((a) => !a.startsWith("--")));
@@ -195,153 +178,115 @@ const SANS = new Set(
 );
 
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
-const corps = `${b64({ alg: "HS256", typ: "JWT" })}.${b64({
-  sub: JOUEUR,
-  email: COURRIEL,
-  iat: Math.floor(Date.now() / 1000),
-})}`;
-const jeton = `${corps}.${createHmac("sha256", SECRET).update(corps).digest("base64url")}`;
-
+const signer = (sub, email) => {
+  const corps = `${b64({ alg: "HS256", typ: "JWT" })}.${b64({
+    sub, email, iat: Math.floor(Date.now() / 1000),
+  })}`;
+  return `${corps}.${createHmac("sha256", SECRET).update(corps).digest("base64url")}`;
+};
+const modes = process.argv.includes("--desktop-only") ? ["desktop"]
+  : process.argv.includes("--mobile-only") ? ["mobile"] : ["desktop", "mobile"];
+const erreurs = [];
 await mkdir(CIBLE, { recursive: true });
-
 const nav = await chromium.launch();
 
 try {
-  /* Double densité. À densité 1, la source faisait mille six cents pixels de
-     large pour un décor affiché sur deux mille quatre cents pixels réels d'un
-     écran Retina : une image agrandie d'une fois et demie, et un texte
-     d'interface qui bave. C'est le seul défaut de netteté de la page que l'on
-     puisse corriger — les illustrations du jeu, elles, n'existent qu'en mille
-     six cent soixante-douze pixels. */
-  const ctx = await nav.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 2 });
-  await ctx.addCookies([{ name: "rpg_access_token", value: "1", domain: "localhost", path: "/" }]);
-  await ctx.addInitScript((t) => localStorage.setItem("rpg_access_token", t), jeton);
-  const page = await ctx.newPage();
-
-  // ── Les quatre salles du Marché ─────────────────────────────────────────
-  await page.goto(`${JEU}/market`, { waitUntil: "networkidle" });
-  await page.waitForSelector(".rpg-mkt", { timeout: 20000 });
-  await page.waitForTimeout(3000);
-
-  // La barre du jeu est retirée à la prise de vue : la capture sert de décor à
-  // la vitrine, qui a déjà la sienne. Les garder toutes les deux donnait deux
-  // barres l'une sur l'autre et deux rangées d'onglets disant la même chose.
-  // Sa hauteur est **mesurée** et non écrite : elle vient d'un `min-height` en
-  // rem plus deux rembourrages, et l'avoir devinée à soixante-dix-huit pixels
-  // laissait dix pixels d'icônes dans le cadre.
-  const barre = Math.round(
-    await page.locator(".rpg-topnav").first().evaluate((el) => el.getBoundingClientRect().height),
-  );
-  console.log(`barre du jeu : ${barre} px, retirés du cadrage`);
-  await habiller(page);
-
-  for (const salle of veut("marche") ? SALLES : []) {
-    await page.locator(".rpg-mkt-mode", { hasText: salle.onglet }).first().click();
-    // Les colonnes se remplissent après la requête ; trois secondes évitent de
-    // photographier un écran à moitié monté.
-    await page.waitForTimeout(3000);
-    if (salle.sous) {
-      await page
-        .getByRole("button", { name: salle.sous, exact: true })
-        .first()
-        .click({ timeout: 5000 });
-      await page.waitForTimeout(2500);
-    }
-    const png = await page.screenshot({
-      clip: { x: 0, y: barre, width: 1920, height: 1080 - barre },
+  for (const mode of modes) {
+    const mobile = mode === "mobile";
+    const viewport = mobile ? { width: 390, height: 844 } : { width: 1920, height: 1080 };
+    const ctx = await nav.newContext({
+      viewport, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile,
     });
-    // En AVIF plutôt qu'en PNG : deux mégaoctets par capture sur une page qu'on
-    // veut légère. La qualité 56 tient largement pour un écran d'interface, qui
-    // est surtout du texte sur du sombre.
-    await sharp(png)
-      /* Mille neuf cent vingt, la largeur du plus grand écran visé. La prise
-         est faite en densité deux, donc en 3840 : c'est cette moitié-là qu'on
-         garde. Les capturer en 3200 doublait leur poids pour des pixels que
-         la page n'affiche nulle part. */
-      .resize({ width: 1920, withoutEnlargement: true })
-      /* Soixante-dix et non cinquante-six : `next/image` réencode ces fichiers
-         en AVIF avant de les servir, et une seconde passe avec perte sur une
-         image déjà pauvre ne rattrape rien. Mieux vaut lui donner de quoi
-         travailler. */
-      .avif({ quality: 70 })
-      .toFile(join(CIBLE, `marche-${salle.cle}.avif`));
-    console.log(`marche-${salle.cle}.avif`);
-    /* L'ouverture de la vitrine montre « Acheter » en vitrine de produit, au
-       centre et en grand : c'est la première image qu'on voit, et elle est
-       affichée jusqu'à mille trois cents pixels de large — sur un écran à
-       double densité, la version à 1 920 y serait déjà agrandie. On garde
-       donc 2 560 de la prise en densité deux, pour elle seule. */
-    if (salle.cle === "acheter") {
-      await sharp(png)
-        .resize({ width: 2560, withoutEnlargement: true })
-        .avif({ quality: 68 })
-        .toFile(join(CIBLE, "ouverture-marche.avif"));
-      console.log("ouverture-marche.avif");
-    }
-  }
+    await ctx.addCookies([{ name: "rpg_access_token", value: "1", domain: "localhost", path: "/" }]);
+    await ctx.addInitScript((t) => localStorage.setItem("rpg_access_token", t), signer(JOUEUR, COURRIEL));
+    const pagePrincipale = await ctx.newPage();
+    let page = pagePrincipale;
+    const ctxVendeur = await nav.newContext({ viewport, deviceScaleFactor: 2, isMobile: mobile, hasTouch: mobile });
+    await ctxVendeur.addCookies([{ name: "rpg_access_token", value: "1", domain: "localhost", path: "/" }]);
+    await ctxVendeur.addInitScript((t) => localStorage.setItem("rpg_access_token", t), signer(VENDEUR, "ostrik@recrue.test"));
+    const pageVendeur = await ctxVendeur.newPage();
 
-  // ── Les salles du jeu, pour la galerie d'aperçu ─────────────────────────
-  const galerie = await ctx.newPage();
-  for (const salle of veut("galerie") ? SALLES_JEU.filter((s) => !SANS.has(s.cle)) : []) {
-    try {
-      await galerie.goto(`${JEU}${salle.route}`, { waitUntil: "networkidle" });
-      await galerie.waitForSelector(salle.attente, { timeout: 15000 });
-      await habiller(galerie);
-      await galerie.waitForTimeout(2500);
-      // Un clic manqué n'est pas fatal : la page a déjà de quoi se montrer, et
-      // une galerie amputée d'un onglet vaut mieux qu'un script qui s'arrête au
-      // huitième.
-      /* Un geste est un clic, ou une saisie quand il porte un champ. */
-      for (const cible of [salle.geste ?? []].flat()) {
-        const quoi = typeof cible === "string" ? cible : cible.champ;
-        const lieu = galerie.locator(quoi).first();
-        await (typeof cible === "string"
-          ? lieu.click({ timeout: 5000 })
-          : lieu.fill(cible.texte, { timeout: 5000 })
-        ).catch(() => console.log(`  (${salle.cle} : « ${quoi} » introuvable)`));
-        await galerie.waitForTimeout(1800);
-      }
-      const png = await galerie.screenshot({
-        clip: { x: 0, y: barre, width: 1920, height: 1080 - barre },
+    async function sauver(nom) {
+      await habiller(page, mobile);
+      await page.waitForTimeout(900);
+      const barre = mobile ? 0 : await page.locator(".rpg-topnav").first()
+        .evaluate((el) => Math.round(el.getBoundingClientRect().height)).catch(() => 0);
+      const png = await page.screenshot({
+        clip: { x: 0, y: barre, width: viewport.width,
+          height: mobile && nom.startsWith("conquete-") ? 700 : viewport.height - barre },
+        animations: "disabled",
       });
-      await sharp(png)
-        .resize({ width: 1920, withoutEnlargement: true })
-        .avif({ quality: 70 })
-        .toFile(join(CIBLE, `jeu-${salle.cle}.avif`));
-      console.log(`jeu-${salle.cle}.avif`);
-    } catch (erreur) {
-      console.error(`  ${salle.cle} : ${String(erreur).slice(0, 120)}`);
+      const suffixe = mobile ? "-mobile" : "";
+      await sharp(png).resize({ width: mobile ? 780 : 1920 }).avif({ quality: 70 })
+        .toFile(join(CIBLE, `${nom}${suffixe}.avif`));
+      if (nom === "marche-acheter") {
+        await sharp(png).resize({ width: mobile ? 780 : 2560 }).avif({ quality: 70 })
+          .toFile(join(CIBLE, `ouverture-marche${suffixe}.avif`));
+      }
+      console.log(`${nom}${suffixe}.avif`);
     }
-  }
 
-  // ── La carte de la conquête ─────────────────────────────────────────────
-  const carte = await ctx.newPage();
-  for (const vue of veut("conquete") ? CONQUETE : []) {
-    await carte.goto(`${JEU}/conquete${vue.territoire ? `?t=${vue.territoire}` : ""}`, {
-      waitUntil: "networkidle",
-    });
-    await carte.waitForSelector(".rpg-carte-marqueur", { timeout: 20000 });
-    await carte.waitForTimeout(2000);
-    await carte.locator(".rpg-banc-etats button", { hasText: vue.banc }).first().click();
-    /* Le pointeur repart dans la marge de gauche : laissé sur le ruban, il
-       survolerait après coup le territoire du haut, qui s'allume au survol. */
-    await carte.mouse.move(90, 600);
-    await carte.addStyleTag({ content: ".rpg-banc-etats { display: none !important; }" });
-    await habiller(carte);
-    /* Le temps que les marqueurs finissent de changer — un territoire qui
-       passe à nous bat une fois. */
-    await carte.waitForTimeout(1600);
-    const png = await carte.screenshot({
-      clip: { x: 0, y: barre, width: 1920, height: 1080 - barre },
-    });
-    await sharp(png)
-      .resize({ width: 1920, withoutEnlargement: true })
-      .avif({ quality: 70 })
-      .toFile(join(CIBLE, `conquete-${vue.cle}.avif`));
-    console.log(`conquete-${vue.cle}.avif`);
+    async function ouvrir(route, attente) {
+      await page.goto(`${JEU}${route}`, { waitUntil: "domcontentloaded", timeout: 30000 });
+      await page.waitForSelector(attente, { timeout: 20000 });
+      await page.waitForTimeout(1400);
+    }
+
+    for (const salle of veut("marche") ? SALLES.filter((s) => !SANS.has(s.cle)) : []) {
+      page = salle.cle === "mes-ventes" ? pageVendeur : pagePrincipale;
+      try {
+        await ouvrir(salle.route, ".rpg-mkt");
+        if (salle.cle === "mes-ventes") {
+          await page.locator(".rpg-fiche-passer").first().click({ timeout: 2000 }).catch(() => {});
+        }
+        if (salle.cle !== "acheter") {
+          await page.locator("button", { hasText: salle.onglet }).first()
+            .evaluate((el) => el.click(), { timeout: 8000 });
+        }
+        await page.waitForTimeout(1000);
+        await sauver(`marche-${salle.cle}`);
+      } catch (e) {
+        erreurs.push(`${mode} marché ${salle.cle}: ${String(e).slice(0, 160)}`);
+      }
+    }
+    page = pagePrincipale;
+
+    for (const salle of veut("galerie") ? SALLES_JEU.filter((s) => !SANS.has(s.cle)) : []) {
+      try {
+        await ouvrir(salle.route, salle.attente);
+        for (const cible of [salle.geste ?? []].flat()) {
+          const quoi = typeof cible === "string" ? cible : cible.champ;
+          const lieu = page.locator(quoi).first();
+          await (typeof cible === "string"
+            ? lieu.evaluate((el) => el.click())
+            : lieu.fill(cible.texte, { timeout: 4000 }))
+            .catch(() => console.log(`  ${salle.cle}: ${quoi} introuvable`));
+          await page.waitForTimeout(500);
+        }
+        await sauver(`jeu-${salle.cle}`);
+      } catch (e) {
+        erreurs.push(`${mode} galerie ${salle.cle}: ${String(e).slice(0, 160)}`);
+      }
+    }
+
+    for (const vue of veut("conquete") ? CONQUETE.filter((s) => !SANS.has(s.cle)) : []) {
+      try {
+        await ouvrir(`/conquete${!mobile && vue.territoire ? `?t=${vue.territoire}` : ""}`, ".rpg-conquete");
+        await page.locator(".rpg-banc-etats button", { hasText: vue.banc }).first()
+          .evaluate((el) => el.click(), { timeout: 8000 });
+        await page.mouse.move(20, viewport.height - 100);
+        await sauver(`conquete-${vue.cle}`);
+      } catch (e) {
+        erreurs.push(`${mode} conquête ${vue.cle}: ${String(e).slice(0, 160)}`);
+      }
+    }
+    await ctx.close();
+    await ctxVendeur.close();
   }
 } finally {
   await nav.close();
 }
-
-console.log(`\nÉcrit dans public/captures/ : ${[...(SERIES.size ? SERIES : ["marche", "galerie", "conquete"])].join(", ")}.`);
+if (erreurs.length) {
+  console.error(erreurs.join("\n"));
+  process.exitCode = 1;
+}

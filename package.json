@@ -12,7 +12,8 @@
     "start": "next start -p 3002",
     "lint": "eslint",
     "assets": "node scripts/sync-assets.mjs",
-    "captures": "node scripts/captures.mjs"
+    "captures": "node scripts/captures.mjs",
+    "captures:combat": "node scripts/capture-combat.mjs"
   },
   "dependencies": {
     "next": "16.2.12",

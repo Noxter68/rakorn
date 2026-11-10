@@ -75,13 +75,13 @@ const SURTITRE = "05 — Combat tactique";
  */
 export const CHIFFRES_COMBAT: Repere[] = [
   {
-    art: "/game/UI/pages/inventaire/sections/inventory-arms.avif",
+    art: "/game/UI/navigation-v4/talent.avif",
     valeur: "22",
     quoi: "compétences",
   },
-  { art: "/game/UI/pages/inventaire/sections/defense.avif", valeur: "5", quoi: "emportées" },
-  { art: "/game/UI/navigation/codex.avif", valeur: "120", quoi: "créatures" },
-  { art: "/game/UI/navigation/haut-faits.avif", valeur: "8", quoi: "boss" },
+  { art: "/game/UI/pages/inventaire/sections/equipement-v2.avif", valeur: "5", quoi: "emportées" },
+  { art: "/game/UI/navigation-v4/codex.avif", valeur: "120", quoi: "créatures" },
+  { art: "/game/UI/navigation-v4/haut-faits.avif", valeur: "8", quoi: "boss" },
 ];
 
 /**

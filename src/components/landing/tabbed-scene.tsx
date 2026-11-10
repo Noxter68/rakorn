@@ -81,6 +81,9 @@ export function TabbedScene({
     <Scene id={id} ref={ref} className={className}>
       <SceneBackdrop
         sources={onglets.map((o) => o.fond)}
+        mobileSources={onglets.some((o) => o.fondMobile)
+          ? onglets.map((o) => o.fondMobile ?? o.fond)
+          : undefined}
         active={actif}
         cadrage={courant.cadrage}
         priority={priority}

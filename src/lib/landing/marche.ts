@@ -27,24 +27,26 @@ import type { Onglet } from "./types";
  * manière de la montrer assez grande pour qu'on y lise quelque chose.
  */
 export type Salle = Onglet;
-const SURTITRE = "03 — Le marché";
+const SURTITRE = "03 — Le marché et les commandes";
 
 export const SALLES_MARCHE: Salle[] = [
   {
     cle: "acheter",
     onglet: "Acheter",
     fond: "/captures/marche-acheter.avif",
+    fondMobile: "/captures/marche-acheter-mobile.avif",
     surtitre: SURTITRE,
     titre: "Tout a un prix.",
-    accent: "À vous de le fixer.",
+    accent: "À vous de choisir.",
     texte:
-      "Aucun marchand ne décide à votre place. Tout ce que vous voyez à l'étal a été extrait, travaillé et mis en vente par des joueurs — et le prix que vous payez, c'est celui qu'ils ont osé demander. Apprenez à lire le marché, et vous achèterez toujours au bon moment.",
-    reperes: ["PRIX LIBRES", "OFFRE & DEMANDE", "FRAIS DÉGRESSIFS"],
+      "Parcourez les offres du comptoir et celles des joueurs. Comparez les prix, inspectez les objets et choisissez le bon moment pour acheter.",
+    reperes: ["COMPTOIR ET JOUEURS", "OFFRES À COMPARER", "PRIX DU MARCHÉ"],
   },
   {
     cle: "vendre",
     onglet: "Vendre",
     fond: "/captures/marche-vendre.avif",
+    fondMobile: "/captures/marche-vendre-mobile.avif",
     surtitre: SURTITRE,
     titre: "Votre prix,",
     accent: "votre décision.",
@@ -56,28 +58,31 @@ export const SALLES_MARCHE: Salle[] = [
     cle: "mes-ventes",
     onglet: "Mes ventes",
     fond: "/captures/marche-mes-ventes.avif",
+    fondMobile: "/captures/marche-mes-ventes-mobile.avif",
     surtitre: SURTITRE,
     titre: "Ajustez vos prix",
     accent: "sans rien retirer.",
     texte:
-      "Dix emplacements d'étal, l'activité du marché en regard, et un prix que vous corrigez d'un clic dès qu'un concurrent passe dessous. Montez la compétence « Négociant » et le comptoir prélève de moins en moins sur chacune de vos ventes.",
-    reperes: ["10 OFFRES ACTIVES", "RÉVISION DU PRIX", "FRAIS SELON COMPÉTENCE"],
+      "Retrouvez vos offres en cours, leur prix, leur position sur le marché et les ventes récentes. Ajustez votre tarif ou retirez une pièce directement depuis cette salle.",
+    reperes: ["OFFRES ACTIVES", "RÉVISION DU PRIX", "SUIVI DES VENTES"],
   },
   {
     cle: "commandes",
     onglet: "Commandes",
     fond: "/captures/marche-commandes.avif",
+    fondMobile: "/captures/marche-commandes-mobile.avif",
     surtitre: SURTITRE,
     titre: "Gagnez de l'or",
     accent: "avec le métier des autres.",
     texte:
-      "Toutes les commandes ouvertes du royaume, tous métiers confondus. Choisissez celle qui vous arrange, fabriquez-la, encaissez la commission — et gagnez au passage du Renom, qui n'existe nulle part ailleurs. Il y en a toujours à prendre.",
+      "La salle des Commandes rassemble les demandes ouvertes du royaume. Choisissez une pièce à fabriquer pour un autre joueur, puis suivez sa livraison et sa récompense.",
     reperes: ["OUVERTES À TOUS", "L'ARTISAN SE PAIE", "REPRISE APRÈS 30 MIN"],
   },
   {
     cle: "creer",
     onglet: "Créer",
     fond: "/captures/marche-creer.avif",
+    fondMobile: "/captures/marche-creer-mobile.avif",
     surtitre: SURTITRE,
     titre: "Faites faire",
     accent: "ce que vous ne savez pas faire.",
@@ -89,6 +94,7 @@ export const SALLES_MARCHE: Salle[] = [
     cle: "confier",
     onglet: "Confier",
     fond: "/captures/marche-confier.avif",
+    fondMobile: "/captures/marche-confier-mobile.avif",
     surtitre: SURTITRE,
     titre: "Confiez votre pièce.",
     accent: "Elle vous revient meilleure.",
@@ -100,6 +106,7 @@ export const SALLES_MARCHE: Salle[] = [
     cle: "traitements",
     onglet: "Traitements",
     fond: "/captures/marche-traitements.avif",
+    fondMobile: "/captures/marche-traitements-mobile.avif",
     surtitre: SURTITRE,
     titre: "Poussez une pièce",
     accent: "au-delà de la forge.",

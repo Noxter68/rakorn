@@ -238,7 +238,7 @@ export const APERCUS: Apercu[] = [
   {
     /* L'enclume de la barre du jeu : l'outil n'a pas d'illustration à lui,
        et c'est sous cet emblème qu'on le trouve en jouant. */
-    art: "/game/UI/navigation/forge.avif",
+    art: "/game/UI/navigation-v4/forge.avif",
     titre: "Outil",
     nom: "Cinq crans à la forge",
     gain: "−20 % de temps de fabrication",
@@ -258,10 +258,10 @@ export const ETAPES_FORGE: EtapeForge[] = [
     texte:
       "Tout part d'un filon. Le fer que vous en tirez devient lingot à l'établi, le lingot devient plastron à la forge — et chaque marche est un métier : le vôtre, ou celui d'un joueur à qui vous l'achetez. Trois cent treize recettes relient ainsi la matière brute à ce que vous porterez.",
     chiffres: [
-      { art: "/game/UI/navigation/codex.avif", valeur: "313", quoi: "recettes" },
-      { art: "/game/UI/navigation/forge.avif", valeur: "5", quoi: "crans d'outil" },
-      { art: "/game/UI/pages/inventaire/sections/sertissage.avif", valeur: "3", quoi: "châsses" },
-      { art: "/game/UI/navigation/competences.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
+      { art: "/game/UI/navigation-v4/codex.avif", valeur: "313", quoi: "recettes" },
+      { art: "/game/UI/navigation-v4/forge.avif", valeur: "5", quoi: "crans d'outil" },
+      { art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif", valeur: "3", quoi: "châsses" },
+      { art: "/game/UI/navigation-v4/talent.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
     ],
     defaut: "plastron_du_sentinelle",
     passages: ["5 fers par lingot", "12 lingots et 2 aciers par plastron"],
@@ -332,9 +332,9 @@ export const ETAPES_FORGE: EtapeForge[] = [
     texte:
       "Les traitements de Maître se cumulent sur trois rangs et ne se retirent jamais. Votre pièce part, revient, et n'a plus rien à voir avec celle que le forgeron a sortie de l'enclume — c'est là que se creuse l'écart.",
     chiffres: [
-      { art: "/game/UI/navigation/haut-faits.avif", valeur: "4", quoi: "traitements" },
+      { art: "/game/UI/navigation-v4/haut-faits.avif", valeur: "4", quoi: "traitements" },
       { art: "/game/UI/icons/xp.avif", valeur: "3", quoi: "rangs cumulés" },
-      { art: "/game/UI/pages/inventaire/sections/recyclage.avif", valeur: "Sans", quoi: "retour" },
+      { art: "/game/UI/pages/inventaire/sections/recycler-v2.avif", valeur: "Sans", quoi: "retour" },
     ],
     traitements: TRAITEMENTS,
   },
@@ -356,9 +356,9 @@ export const ETAPES_FORGE: EtapeForge[] = [
     texte:
       "Montez une pierre du rang I au rang V et son effet monte cinq fois avec elle. Alignez trois pierres de la même couleur sur une pièce et vous décrochez l'harmonie par-dessus — une pièce monochrome au rang II tient tête à une pièce panachée au rang III. À vous de choisir votre couleur.",
     chiffres: [
-      { art: "/game/UI/pages/inventaire/sections/sertissage.avif", valeur: "5", quoi: "rangs, I à V" },
+      { art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif", valeur: "5", quoi: "rangs, I à V" },
       { art: "/game/UI/pages/inventaire/sections/defense.avif", valeur: "16", quoi: "châsses" },
-      { art: "/game/UI/navigation/competences.avif", valeur: "3", quoi: "pour l'harmonie" },
+      { art: "/game/UI/navigation-v4/talent.avif", valeur: "3", quoi: "pour l'harmonie" },
     ],
     gemmes: GEMMES,
   },
@@ -373,9 +373,9 @@ export const ETAPES_FORGE: EtapeForge[] = [
     texte:
       "Les bonus s'ouvrent par paliers de trois : trois pièces portées, six, neuf, douze. Chaque palier franchi se voit immédiatement sur votre fiche — et le douzième, on le croise assez rarement pour qu'il se remarque.",
     chiffres: [
-      { art: "/game/UI/pages/inventaire/sections/sac.avif", valeur: "12", quoi: "pièces" },
+      { art: "/game/UI/navigation-v4/inventaire.avif", valeur: "12", quoi: "pièces" },
       { art: "/game/UI/icons/xp.avif", valeur: "3 · 6 · 9 · 12", quoi: "paliers" },
-      { art: "/game/UI/navigation/competences.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
+      { art: "/game/UI/navigation-v4/talent.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
     ],
     pieces: [
       {

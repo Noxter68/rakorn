@@ -111,13 +111,25 @@ forgez — et la recette qui passe de l'un à l'autre, relevée dans la base.
 
 ## Les captures du jeu
 
-Trois séries, prises sur le jeu qui tourne : les salles du Marché, les pages de
-la galerie d'aperçu, et la carte de la conquête dans cinq états.
+Trois séries, prises sur le jeu qui tourne : le Marché et les Commandes, les
+pages de la galerie d'aperçu, et la carte de la conquête dans cinq états. Chaque
+écran est capturé en bureau et en navigateur mobile ; la landing affiche la
+prise adaptée à la largeur du visiteur.
 
 ```bash
 pnpm captures              # les trois
 pnpm captures conquete     # une seule : marche, galerie ou conquete
+pnpm captures galerie --mobile-only
+pnpm captures:combat       # arène réelle pour le carrousel d'ouverture
 ```
+
+L'ouverture fait défiler le Marché, les Compétences, la Forge et un combat avec
+un fondu toutes les cinq secondes. La prise du combat lance puis annule une
+mission locale ; le jeu débite cinq points d'énergie à ce personnage. Les
+icônes ivoire viennent de `navigation-v4` et leur cadre en losange reprend le
+dessin des écrans Codex, Forge et Inventaire. Le haut utilise `home-v1`, la
+clôture l'image `login.png` du jeu (servie en AVIF), et le Sertissage prend
+`objets-rares-v2`.
 
 La conquête passe par le **banc d'essai** du jeu, qui n'existe qu'en
 développement : un royaume de développement est au repos, et vingt-cinq
@@ -141,8 +153,8 @@ jamais ses écrans. On pouvait tout lire et n'avoir aucune idée de ce à quoi l
 jeu ressemble une fois ouvert. La galerie ne raconte rien : dix captures de
 pages réelles, en onglets, la capture servant de décor comme au marché.
 
-Elles portent les chiffres d'un personnage de niveau soixante — sac plein,
-métiers hauts, Maison achevée. C'est délibéré : un écran vide ne montre pas un
+Elles portent les chiffres d'un personnage de niveau soixante — sac plein et
+métiers avancés. C'est délibéré : un écran vide ne montre pas un
 jeu, il montre un formulaire.
 
 ## La fiche d'objet
@@ -216,27 +228,25 @@ campagne. Il se calcule sur l'expérience cumulée du bestiaire : 5, 15, 30, 48,
 
 ## Les illustrations
 
-`public/game/` **n'est pas dans git** : ce sont des copies de `apps/web/public`,
-et le dépôt n'a pas à porter deux fois les mêmes trois cent cinquante
-mégaoctets. Après un clone, ou après avoir cité une nouvelle image :
+`public/game/` est versionné avec la landing. Il ne contient que les images
+citées par la page, retaillées quand leur taille source est inutilement grande.
+Après avoir cité une nouvelle image du jeu :
 
 ```bash
 pnpm --filter landing-preview assets
 ```
 
 Le script relit les sources, y relève tous les chemins `/game/…` — JSX comme
-CSS —, vide le dossier et copie ceux-là. Il n'y a pas de liste à tenir à jour,
-il purge ce qu'on a cessé de citer, et il sort en erreur si la page réclame une
-image absente. Une centaine de fichiers, dix-sept mégaoctets, contre trois cent
-quarante-neuf pour le dossier complet du jeu.
+CSS —, vide le dossier et copie ceux-là. Il purge ce qu'on a cessé de citer et
+signale les images absentes.
 
 **Un chemin doit s'écrire en entier, dans une seule chaîne.** Factoriser un
 dossier commun — `DOSSIER + "trone-de-braise.avif"` — le rend invisible au
 relevé, et l'image manque à l'exécution sans que rien n'ait échoué à la
 compilation.
 
-Le jour du détachement, ce dossier sera là : il suffira de le mettre dans git
-et de supprimer le script.
+Le dépôt garde ainsi les images nécessaires même lorsque le jeu n'est pas
+présent sur la machine qui construit la landing.
 
 ## Deux écarts avec le jeu
 

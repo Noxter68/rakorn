@@ -22,42 +22,36 @@ import Image from "next/image";
  */
 export function SceneBackdrop({
   sources,
+  mobileSources,
   active = 0,
   cadrage,
   priority = false,
 }: {
   sources: string[];
+  mobileSources?: string[];
   active?: number;
   /** `object-position`, quand le centre de l'image n'est pas le bon endroit. */
   cadrage?: string;
   /** Réservé à l'ouverture : c'est la seule image qui doit précéder le reste. */
   priority?: boolean;
 }) {
-  const uniques = [...new Set(sources)];
-  const actif = Math.max(0, uniques.indexOf(sources[active] ?? sources[0]));
+  const uniques = [...new Set(sources.map((source, i) => `${source}\u0000${mobileSources?.[i] ?? ""}`))];
+  const actif = Math.max(0, uniques.indexOf(`${sources[active] ?? sources[0]}\u0000${mobileSources?.[active] ?? ""}`));
 
   return (
     <div className="rpg-lp-backdrop" aria-hidden>
-      {uniques.map((art, i) => (
-        <Image
-          key={art}
-          src={art}
-          alt=""
-          fill
-          sizes="100vw"
-          priority={priority && i === 0}
-          /* Servi tel quel, sans repasser par l'optimiseur.
-             Ces fichiers sont **déjà** en AVIF, et à une taille qui n'excède
-             jamais ce que la page en demande : les faire réencoder en AVIF,
-             c'est une seconde compression avec perte sur une image qui n'a plus
-             de marge, pour un octet gagné ou perdu au hasard. C'est le même
-             raisonnement que le `formats` de `next.config.ts` — un AVIF qui
-             repasse par un encodeur en ressort plus flou, jamais plus net. */
-          unoptimized
-          className={`rpg-lp-backdrop-art ${i === actif ? "is-on" : ""}`}
-          style={cadrage ? { objectPosition: cadrage } : undefined}
-        />
-      ))}
+      {uniques.map((paire, i) => {
+        const [art, mobile] = paire.split("\u0000");
+        return (
+          <div key={paire} className={`rpg-lp-backdrop-layer ${i === actif ? "is-on" : ""}`}>
+            <Image src={art} alt="" fill sizes="100vw" priority={priority && i === 0}
+              unoptimized className={`rpg-lp-backdrop-art ${mobile ? "is-desktop" : ""}`}
+              style={cadrage ? { objectPosition: cadrage } : undefined} />
+            {mobile && <Image src={mobile} alt="" fill sizes="(max-width: 900px) 390px, 1px"
+              unoptimized className="rpg-lp-backdrop-art is-mobile" />}
+          </div>
+        );
+      })}
       <span className="rpg-lp-backdrop-veil" />
     </div>
   );

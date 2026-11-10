@@ -105,7 +105,7 @@ export function TactiqueOverlay({ tactique }: { tactique: Tactique }) {
           <li>
             <span className="rpg-lp-rota-ico">
               <Image
-                src="/game/UI/pages/inventaire/sections/recyclage.avif"
+                src="/game/UI/pages/inventaire/sections/recycler-v2.avif"
                 alt=""
                 fill
                 sizes="30px"

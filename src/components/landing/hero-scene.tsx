@@ -4,18 +4,14 @@ import { BetaTrigger } from "./beta-trigger";
 import { CompteARebours } from "./compte-a-rebours";
 import { Scene } from "./scene";
 import { SceneBackdrop } from "./scene-backdrop";
+import { HeroShowcase } from "./hero-showcase";
 
 /**
  * L'ouverture.
  *
  * Elle ne suit pas le gabarit des autres scènes, et c'est délibéré : le
- * texte au centre, en haut, et sous lui **le jeu** — le Marché, en vitrine,
- * comme on montre un produit. On lisait une promesse sur un paysage, et la
- * première capture n'arrivait qu'à la troisième scène : on pouvait décider de
- * s'inscrire sans avoir vu à quoi le jeu ressemble.
- *
- * Le Marché plutôt qu'un autre écran, parce que c'est lui qui prouve la
- * phrase du dessus : une liste de prix posés par des joueurs.
+ * texte au centre, en haut, puis quatre écrans du jeu en fondu. Le Marché
+ * ouvre la série ; l'Ordre de bataille, la Forge et une arène lui succèdent.
  *
  * Les six chiffres passent sous la vitrine plutôt qu'en bandeau de compteurs.
  * Un encadré aurait fait une carte, et une carte est exactement ce que cette
@@ -66,22 +62,7 @@ export function HeroScene() {
           </div>
         </div>
 
-        <figure className="rpg-lp-hero-vitrine">
-          <span className="rpg-lp-hero-ecran">
-            {/* Servie telle quelle, comme les décors : c'est déjà un AVIF à
-                la taille voulue, et un second encodage avec perte sur du
-                texte d'interface ne rendrait rien de plus net. */}
-            <Image
-              src={HERO.capture}
-              alt={HERO.captureAlt}
-              width={2560}
-              height={1323}
-              priority
-              unoptimized
-              draggable={false}
-            />
-          </span>
-        </figure>
+        <HeroShowcase />
 
         <div className="rpg-lp-hero-foot">
           <ul className="rpg-lp-counts">

@@ -32,13 +32,9 @@ export function AutresScene() {
           {AUTRES.entrees.map((entree, i) => (
             <Reveal as="li" key={entree.nom} delay={(i % 4) * 90}>
               <span className="rpg-lp-others-tete">
-                <Image
-                  src={entree.art}
-                  alt=""
-                  width={44}
-                  height={44}
-                  className="rpg-lp-others-ico"
-                />
+                <span className="rpg-lp-diamond rpg-lp-others-diamond" aria-hidden>
+                  <Image src={entree.art} alt="" fill sizes="44px" />
+                </span>
                 <h3>{entree.nom}</h3>
               </span>
               <p>{entree.texte}</p>

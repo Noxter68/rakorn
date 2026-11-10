@@ -78,10 +78,10 @@ export function etapesDe(metier: Metier): string[] {
  * du jeu — l'enclume des Métiers, le codex des recettes, la criée du marché.
  */
 export const CHIFFRES_METIERS: Repere[] = [
-  { art: "/game/UI/navigation/forge.avif", valeur: "8", quoi: "métiers" },
-  { art: "/game/UI/icons/xp.avif", valeur: "60", quoi: "niveaux chacun" },
-  { art: "/game/UI/navigation/codex.avif", valeur: "313", quoi: "recettes" },
-  { art: "/game/UI/market/auction.avif", valeur: "Économie", quoi: "de joueurs" },
+  { art: "/game/UI/navigation-v4/metiers.avif", valeur: "8", quoi: "métiers" },
+  { art: "/game/UI/pages/inventaire/sections/experience-v2.avif", valeur: "60", quoi: "niveaux chacun" },
+  { art: "/game/UI/navigation-v4/codex.avif", valeur: "313", quoi: "recettes" },
+  { art: "/game/UI/pages/inventaire/sections/divers-v2.avif", valeur: "Économie", quoi: "de joueurs" },
 ];
 
 export interface Metier extends Onglet {

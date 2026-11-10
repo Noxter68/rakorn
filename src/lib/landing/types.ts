@@ -54,6 +54,8 @@ export interface Onglet {
   onglet: string;
   /** Le décor plein écran. */
   fond: string;
+  /** Capture adaptée au navigateur mobile, si cette scène montre le jeu. */
+  fondMobile?: string;
   /** Le cadrage du décor, quand le centre n'est pas le bon endroit. */
   cadrage?: string;
   surtitre: string;
