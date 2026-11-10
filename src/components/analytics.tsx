@@ -19,27 +19,25 @@
  * du premier mois auraient d'abord mesuré son auteur.
  */
 
-/* L'identifiant part dans un script en clair. Il vient d'une variable qu'on
-   écrit soi-même, mais une valeur mal recopiée — un guillemet égaré — casserait
-   la page entière plutôt que la seule mesure. */
-const FORME = /^G-[A-Z0-9]+$/;
+// Cet identifiant public appartient à la landing et doit être présent dans
+// le HTML de production, même si l'hébergeur ne fournit aucune variable.
+const MARQUEUR = "G-KJHTXL8ZNX";
 
 export function Analytics() {
-  const marqueur = process.env.NEXT_PUBLIC_GA_ID;
-  if (process.env.NODE_ENV !== "production" || !marqueur || !FORME.test(marqueur)) {
+  if (process.env.NODE_ENV !== "production") {
     return null;
   }
 
   return (
     <>
       {/* React remonte les scripts `async` dans l'en-tête de lui-même. */}
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${marqueur}`} />
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${MARQUEUR}`} />
       <script
         dangerouslySetInnerHTML={{
           __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${marqueur}');`,
+gtag('config', '${MARQUEUR}');`,
         }}
       />
     </>
