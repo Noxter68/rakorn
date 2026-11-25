@@ -48,11 +48,7 @@ export function JoueursScene() {
           </Reveal>
           <Reveal as="li" delay={90}>
             <b>{FREQUENTATION.inscrits}</b>
-            <span className="rpg-lp-joueurs-quoi">joueurs en deux semaines</span>
-          </Reveal>
-          <Reveal as="li" delay={180}>
-            <b>{FREQUENTATION.actifs7j}</b>
-            <span className="rpg-lp-joueurs-quoi">actifs ces 7 derniers jours</span>
+            <span className="rpg-lp-joueurs-quoi">joueurs depuis l&apos;ouverture</span>
           </Reveal>
         </ul>
 

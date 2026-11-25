@@ -50,12 +50,30 @@ export function ScrollDirector() {
       guetteur.observe(scene);
     }
 
+    /* Les liens de la barre et leur section : celui dont la section tient le
+       milieu de l'écran prend l'or, comme l'onglet actif d'une fenêtre du jeu. */
+    const liens = [...racine.querySelectorAll<HTMLAnchorElement>(".rpg-lp-nav-links a")]
+      .map((lien) => ({ lien, cible: document.querySelector<HTMLElement>(lien.hash) }))
+      .filter((l): l is { lien: HTMLAnchorElement; cible: HTMLElement } => !!l.cible);
+    let lienActif: HTMLAnchorElement | null = null;
+
     let image = 0;
 
     function peindre() {
       image = 0;
       const course = document.documentElement.scrollHeight - window.innerHeight;
       const y = window.scrollY;
+      const milieu = window.innerHeight / 2;
+      const actif =
+        liens.find(({ cible }) => {
+          const cadre = cible.getBoundingClientRect();
+          return cadre.top <= milieu && cadre.bottom > milieu;
+        })?.lien ?? null;
+      if (actif !== lienActif) {
+        lienActif?.removeAttribute("aria-current");
+        actif?.setAttribute("aria-current", "location");
+        lienActif = actif;
+      }
 
       if (jauge) jauge.style.transform = `scaleX(${course > 0 ? y / course : 0})`;
       // Un attribut sur la racine plutôt qu'un état React : la barre du haut

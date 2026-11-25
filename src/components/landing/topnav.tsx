@@ -29,8 +29,8 @@ export function Topnav() {
           <div className="rpg-lp-nav-links">
             {NAVIGATION.map((lien) => (
               <a key={lien.href} href={lien.href} aria-label={lien.libelle} title={lien.libelle}>
-                <span className="rpg-lp-diamond rpg-lp-nav-diamond" aria-hidden>
-                  <Image src={lien.icone} alt="" fill sizes="32px" />
+                <span className="rpg-lp-nav-icone" aria-hidden>
+                  <Image src={lien.icone} alt="" fill sizes="22px" />
                 </span>
                 <span className="rpg-lp-nav-label">{lien.libelle}</span>
               </a>

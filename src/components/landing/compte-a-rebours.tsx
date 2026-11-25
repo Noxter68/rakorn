@@ -68,7 +68,7 @@ export function CompteARebours() {
         <a
           href="#joueurs"
           className="rpg-lp-decompte-joueurs"
-          aria-label={`Noté ${NOTE} sur 5 par ${SONDAGE.reponses} joueurs. Déjà ${FREQUENTATION.inscrits} joueurs, dont ${FREQUENTATION.actifs7j} actifs ces sept derniers jours`}
+          aria-label={`Noté ${NOTE} sur 5 par ${SONDAGE.reponses} joueurs. Déjà ${FREQUENTATION.inscrits} joueurs`}
         >
           <span className="is-note">
             <b>
@@ -88,10 +88,6 @@ export function CompteARebours() {
           <span>
             <b>{FREQUENTATION.inscrits}</b>
             <small>Joueurs</small>
-          </span>
-          <span>
-            <b>{FREQUENTATION.actifs7j}</b>
-            <small>Actifs cette semaine</small>
           </span>
         </a>
       </div>

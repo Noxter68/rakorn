@@ -55,8 +55,8 @@ export function HeroShowcase() {
           <button key={capture.label} type="button" aria-label={`Voir ${capture.label}`}
             aria-pressed={i === actif} className={`rpg-lp-hero-control ${i === actif ? "is-on" : ""}`}
             onClick={() => { setActif(i); setTenu(true); }}>
-            <span className="rpg-lp-diamond" aria-hidden>
-              <Image src={capture.icone} alt="" fill sizes="26px" />
+            <span className="rpg-lp-nav-icone" aria-hidden>
+              <Image src={capture.icone} alt="" fill sizes="22px" />
             </span>
             <span>{capture.label}</span>
           </button>

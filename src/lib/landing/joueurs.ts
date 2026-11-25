@@ -20,10 +20,9 @@ export interface Reponse {
 
 /** Ce qui se compte sans sondage. */
 export const FREQUENTATION = {
-  inscrits: 180,
-  actifs7j: 140,
+  inscrits: 263,
   /** Le jour du relevé, tel qu'on l'écrit dans une phrase. */
-  releve: "10 novembre",
+  releve: "25 novembre",
 };
 
 export const SONDAGE = {
@@ -60,10 +59,10 @@ export const JOUEURS = {
      peinture du jeu qui montre un lieu habité. */
   fond: "/game/UI/guild/background/cite-apercu.avif",
   surtitre: "11 — Ils y sont déjà",
-  titre: "En deux semaines,",
+  titre: "Depuis l'ouverture,",
   accent: `${FREQUENTATION.inscrits} héros.`,
   /* Direct, sans tiret : on parle des joueurs comme on en parlerait à
      quelqu'un qui hésite. */
   texte:
-    `${FREQUENTATION.inscrits} joueurs nous ont déjà rejoints, et ${FREQUENTATION.actifs7j} ont joué ces sept derniers jours. On leur a demandé leur avis : ${SONDAGE.reponses} nous ont répondu, avec une note moyenne de ${NOTE} sur 5. Et ce qu'ils aiment le plus, c'est récolter et fabriquer.`,
+    `${FREQUENTATION.inscrits} joueurs nous ont déjà rejoints. On leur a demandé leur avis : ${SONDAGE.reponses} nous ont répondu, avec une note moyenne de ${NOTE} sur 5. Et ce qu'ils aiment le plus, c'est récolter et fabriquer.`,
 };
