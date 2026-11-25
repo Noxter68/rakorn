@@ -64,7 +64,7 @@ export function CompteARebours() {
   if (BETA_OUVERTE || reste === null) {
     return (
       <div className="rpg-lp-decompte is-ouverte">
-        <p className="rpg-lp-decompte-titre">La bêta est ouverte · cinquante places titrées</p>
+        <p className="rpg-lp-decompte-titre">La bêta est ouverte · Saison 1 en cours</p>
         <a
           href="#joueurs"
           className="rpg-lp-decompte-joueurs"

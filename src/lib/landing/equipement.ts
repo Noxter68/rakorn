@@ -74,11 +74,12 @@ export interface EtapeForge extends Onglet {
   /**
    * Ce qui passe d'un poste au suivant, un de moins que de postes.
    *
-   * Relevé dans les recettes : cinq fers par lingot (`lingot_de_fer`), douze
-   * lingots et deux aciers trempés par plastron (`plastron_du_sentinelle`).
-   * Le plastron demande aussi des scories et de la fonte : « par plastron »
-   * dit ce qu'il en coûte de ces deux-là, pas que la liste est close — « font
-   * un plastron » l'aurait prétendu.
+   * Relevé dans les recettes le 25 novembre 2026 : un fer fait un lingot
+   * (`lingot_de_fer`), un lingot et un coke font une fonte (`fonte_de_fer`) ;
+   * le plastron demande huit lingots de fonte grise, deux fontes de fer et
+   * deux veines d'argent vif rapportées de campagne (`plastron_du_sentinelle`).
+   * « par plastron » dit ce qu'il en coûte des deux premiers, pas que la
+   * liste est close.
    */
   passages?: string[];
   /**
@@ -241,7 +242,7 @@ export const APERCUS: Apercu[] = [
     art: "/game/UI/navigation-v4/forge.avif",
     titre: "Outil",
     nom: "Cinq crans à la forge",
-    gain: "−20 % de temps de fabrication",
+    gain: "−50 % de temps de fabrication",
   },
 ];
 
@@ -256,26 +257,33 @@ export const ETAPES_FORGE: EtapeForge[] = [
     titre: "Récoltez, transformez,",
     accent: "forgez votre armure.",
     texte:
-      "Tout part d'un filon. Le fer que vous en tirez devient lingot à l'établi, le lingot devient plastron à la forge — et chaque marche est un métier : le vôtre, ou celui d'un joueur à qui vous l'achetez. Trois cent treize recettes relient ainsi la matière brute à ce que vous porterez.",
+      "Tout part d'un filon. Le fer que vous en tirez devient lingot puis fonte à l'établi, la fonte rejoint le plastron à la forge — et chaque marche est un métier : le vôtre, ou celui d'un joueur à qui vous l'achetez. Quatre cent quatre-vingt-quinze recettes relient ainsi la matière brute à ce que vous porterez.",
     chiffres: [
-      { art: "/game/UI/navigation-v4/codex.avif", valeur: "313", quoi: "recettes" },
+      { art: "/game/UI/navigation-v4/codex.avif", valeur: "495", quoi: "recettes" },
       { art: "/game/UI/navigation-v4/forge.avif", valeur: "5", quoi: "crans d'outil" },
       { art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif", valeur: "3", quoi: "châsses" },
       { art: "/game/UI/navigation-v4/talent.avif", valeur: "Survolez", quoi: "pour la fiche", survol: true },
     ],
     defaut: "plastron_du_sentinelle",
-    passages: ["5 fers par lingot", "12 lingots et 2 aciers par plastron"],
+    passages: ["Fer, lingot, puis fonte", "8 lingots et 2 fontes par plastron"],
     postes: [
       {
         verbe: "Récoltez",
-        lieu: "Au filon, dans la Mine",
+        lieu: "Aux filons, depuis les Métiers",
         pieces: [
           {
             art: "/game/ressources/mining/veins/filon-de-fer.avif",
             nom: "Fer",
             rarete: "uncommon",
-            role: "La matière brute",
+            role: "Extrait par un mineur",
             fiche: "fer",
+          },
+          {
+            art: "/game/ressources/forge/coulee-de-fonte-grise.avif",
+            nom: "Fonte grise",
+            rarete: "uncommon",
+            role: "Coulée par un forgeron",
+            fiche: "fonte_grise",
           },
         ],
       },
@@ -284,18 +292,18 @@ export const ETAPES_FORGE: EtapeForge[] = [
         lieu: "À l'établi",
         pieces: [
           {
-            art: "/game/ressources/mining/lingo/lingo-de-fer.avif",
-            nom: "Lingot de fer",
+            art: "/game/ressources/mining/lingo/fonte-de-fer.avif",
+            nom: "Fonte de fer",
             rarete: "uncommon",
-            role: "Fondu par un mineur",
-            fiche: "lingot_de_fer",
+            role: "Fondue par un mineur",
+            fiche: "fonte_de_fer",
           },
           {
-            art: "/game/ressources/forge/acier-trempe.avif",
-            nom: "Acier trempé",
+            art: "/game/ressources/forge/lingot-de-fonte-grise.avif",
+            nom: "Lingot de fonte grise",
             rarete: "uncommon",
-            role: "Allié par un forgeron",
-            fiche: "acier_trempe",
+            role: "Coulé par un forgeron",
+            fiche: "lingot_de_fonte_grise",
           },
         ],
       },
@@ -307,14 +315,14 @@ export const ETAPES_FORGE: EtapeForge[] = [
             art: "/game/ressources/forge/plastron_du_sentinelle.avif",
             nom: "Plastron du sentinelle",
             rarete: "rare",
-            role: "Torse — une châsse",
+            role: "Torse",
             fiche: "plastron_du_sentinelle",
           },
           {
             art: "/game/ressources/forge/bouclier-du-bastion.avif",
             nom: "Bouclier du bastion",
             rarete: "rare",
-            role: "Main gauche — une châsse",
+            role: "Main gauche",
             fiche: "bouclier_du_bastion",
           },
         ],
@@ -344,8 +352,8 @@ export const ETAPES_FORGE: EtapeForge[] = [
       titre: "Une châsse, et ce qu'on y met",
       texte: [
         "Une pièce d'équipement porte des châsses : des logements vides, taillés dans le métal. On y sertit une gemme, et sa statistique s'ajoute à celle de la pièce.",
-        "Combien de châsses ? L'emplacement décide — trois sur une arme ou un plastron, deux sur un casque, une ceinture ou un bouclier — et la rareté plafonne : une pièce peu commune n'en a aucune, une rare une seule, une épique deux, une légendaire jusqu'à trois. Seize en tout sur un porteur entièrement équipé.",
-        "La pierre, elle, se monte du rang I au rang V, et son effet monte du même pas à chaque cran.",
+        "Combien de châsses ? Seules les pièces de haut niveau en portent — toutes les mythiques, la moitié des légendaires, un tiers des épiques et des rares, à partir du niveau 40. L'emplacement décide du maximum — trois sur une arme ou un plastron, deux ailleurs — et la rareté le plafonne. Seize en tout sur un porteur entièrement équipé.",
+        "Elles s'ouvrent aux niveaux 40, 48 et 56 du héros. La pierre, elle, se monte du rang I au rang V, et son effet monte du même pas à chaque cran.",
       ],
     },
     onglet: "Sertir",
@@ -354,11 +362,11 @@ export const ETAPES_FORGE: EtapeForge[] = [
     titre: "Cinq rangs de pierres,",
     accent: "et la prime de l'accord.",
     texte:
-      "Montez une pierre du rang I au rang V et son effet monte cinq fois avec elle. Alignez trois pierres de la même couleur sur une pièce et vous décrochez l'harmonie par-dessus — une pièce monochrome au rang II tient tête à une pièce panachée au rang III. À vous de choisir votre couleur.",
+      "Montez une pierre du rang I au rang V et son effet monte cinq fois avec elle. Garnissez toutes les châsses d'une pièce d'une même couleur et vous décrochez l'harmonie par-dessus — une pièce monochrome au rang II tient tête à une pièce panachée au rang III. Six couleurs : à vous de choisir la vôtre.",
     chiffres: [
       { art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif", valeur: "5", quoi: "rangs, I à V" },
       { art: "/game/UI/pages/inventaire/sections/defense.avif", valeur: "16", quoi: "châsses" },
-      { art: "/game/UI/navigation-v4/talent.avif", valeur: "3", quoi: "pour l'harmonie" },
+      { art: "/game/UI/navigation-v4/talent.avif", valeur: "6", quoi: "couleurs" },
     ],
     gemmes: GEMMES,
   },
@@ -394,7 +402,7 @@ export const ETAPES_FORGE: EtapeForge[] = [
       },
       {
         art: "/game/ressources/armors/set-mythique/lame_mythique.avif",
-        nom: "Lame du Serment",
+        nom: "Marteau du Serment",
         rarete: "mythic",
         role: "Arme — 3 châsses",
         fiche: "lame_mythique",

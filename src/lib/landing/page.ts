@@ -116,12 +116,16 @@ export const CAPTURES_OUVERTURE = [
   {
     label: "Combat", icone: "/game/UI/navigation-v4/campagne.avif",
     image: "/captures/ouverture-combat.avif", mobile: "/captures/ouverture-combat-mobile.avif",
-    alt: "Une scène de combat de Rakorn contre un bandit chevronné.",
+    alt: "Un combat de Rakorn contre la Garde royale, au Trône sous la Montagne.",
   },
 ] as const;
 
 /**
  * Les chiffres du monde, relevés dans la base et non arrondis pour la vitrine.
+ *
+ * Relevés le 25 novembre 2026 : `Item`, `Recipe`, `HarvestNode` (les seize
+ * eaux du Maître-queux comprises), `CampaignMonster` et `Feat`, Harnois des
+ * Âges Oubliés compris — il entre au Codex le jour même.
  *
  * Ils passent en une seule ligne au pied de l'ouverture, et non dans un
  * bandeau de compteurs : une promesse se vérifie en dix minutes de jeu, elle
@@ -129,11 +133,11 @@ export const CAPTURES_OUVERTURE = [
  */
 export const CHIFFRES = [
   { valeur: "8", quoi: "métiers" },
-  { valeur: "461", quoi: "objets" },
-  { valeur: "313", quoi: "recettes" },
-  { valeur: "111", quoi: "filons" },
+  { valeur: "785", quoi: "objets" },
+  { valeur: "495", quoi: "recettes" },
+  { valeur: "127", quoi: "filons" },
   { valeur: "120", quoi: "créatures" },
-  { valeur: "1 001", quoi: "hauts faits" },
+  { valeur: "1 372", quoi: "hauts faits" },
 ];
 
 /**
@@ -149,22 +153,22 @@ export const AUTRES = {
   titre: "Et il vous restera",
   accent: "tout ça à découvrir.",
   texte:
-    "Huit systèmes de plus, que vous croiserez dans vos premières heures de jeu. Aucun n'est un bonus payant ni une récompense lointaine : ils sont là, ouverts, dès que vous en avez l'usage.",
+    "Huit systèmes de plus, que la page n'a pas eu le temps de déplier. Aucun n'est un bonus payant : ils s'ouvrent à mesure que votre héros grandit, du premier jour au niveau 60.",
   entrees: [
     {
       art: "/game/UI/navigation-v4/haut-faits.avif",
       nom: "Hauts faits",
-      texte: "Mille un à décrocher, et les titres que vous porterez ensuite sous votre nom.",
+      texte: "Mille trois cent soixante-douze à décrocher, et les titres que vous porterez ensuite sous votre nom.",
     },
     {
       art: "/game/UI/navigation-v4/codex.avif",
       nom: "Codex",
-      texte: "461 fiches pour ne jamais chercher : d'où vient une matière, à quoi sert une pièce.",
+      texte: "785 fiches pour ne jamais chercher : d'où vient une matière, à quoi sert une pièce, ce qu'elle change face à la vôtre.",
     },
     {
-      art: "/game/UI/navigation-v4/talent.avif",
-      nom: "Compétences",
-      texte: "Préparez vos techniques et leur ordre avant le prochain combat.",
+      art: "/game/UI/navigation-v4/recherche-de-groupe.avif",
+      nom: "L'Ossuaire",
+      texte: "Le premier donjon, à cinq et en temps réel dès le niveau 30 : cinq boss dont personne ne vous dira la stratégie.",
     },
     {
       art: "/game/UI/navigation-v4/contrats.avif",
@@ -172,14 +176,14 @@ export const AUTRES = {
       texte: "Faites fabriquer ce que vous ne savez pas faire, ou fabriquez pour les autres.",
     },
     {
-      art: "/game/UI/pages/inventaire/sections/recycler-v2.avif",
-      nom: "Recyclage",
-      texte: "Rien ne se perd : ce qui ne sert plus repart en matière première.",
+      art: "/game/UI/pages/metier/marmite/chaudron.avif",
+      nom: "Maître-queux",
+      texte: "Un métier en plus, ouvert à tous dès le niveau 10 : pêchez, cuisinez, et partez au combat rassasié.",
     },
     {
       art: "/game/UI/pages/inventaire/sections/objets-rares-v2.avif",
       nom: "Sertissage",
-      texte: "Des châsses à remplir, et la prime d'harmonie quand trois couleurs s'accordent.",
+      texte: "Des châsses à remplir sur les pièces de haut niveau, et la prime d'harmonie quand toutes portent la même couleur.",
     },
     {
       art: "/game/UI/navigation-v4/inventaire.avif",
@@ -201,10 +205,10 @@ export const FINAL = {
   titre: "Commencez avec presque rien.",
   accent: "Bâtissez tout le reste.",
   texte:
-    `Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre sa bêta le ${DATE_BETA} : laissez votre adresse, et vous serez prévenu à l'heure où la vallée s'ouvre.`,
+    `Dix-huit visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. Rakorn ouvre sa bêta le ${DATE_BETA} : laissez votre adresse, et vous serez prévenu à l'heure où la vallée s'ouvre.`,
   /* Ce que la scène dit une fois les portes ouvertes (`SelonOuverture`). */
   texteOuvert:
-    "Dix visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. La bêta est ouverte : les cinquante premiers héros reçoivent un titre que nul autre ne gagnera, du Premier au Cinquantième Pionnier de Rakorn.",
+    "Dix-huit visages, deux métiers à choisir, quinze emplacements dans le sac et mille pièces d'or pour démarrer. La bêta est ouverte, la première saison aussi : quarante jours, cinquante rangs, et un peuple nouveau à débloquer.",
   action: "Rejoindre la bêta",
 };
 

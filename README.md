@@ -91,7 +91,15 @@ Mesuré au navigateur sur un parcours complet : intervalle médian 8,3 ms,
 Une scène par fichier dans `src/lib/landing/`. Rien d'inventé : les huit
 métiers et leurs objets, les huit zones et leurs boss, les bâtiments de guilde
 et les huit expéditions sortent tous du contenu du jeu, et les chiffres —
-455 objets, 111 filons, 1 001 hauts faits — de la base.
+785 objets, 495 recettes, 127 filons, 1 372 hauts faits, relevés le
+25 novembre 2026 — de la base.
+
+Le 25 novembre 2026, tous les textes ont été relus contre Rakorn 2.0 : la
+conquête se prend en guilde et par objectifs, le combat se range par
+familles de techniques (Dégâts, Défense, Contrôle, Soins, celles de l'Ordre
+de bataille), les boss portent les chiffres de l'écran de campagne, et les
+fiches d'objet ceux de la base. Les chiffres de la scène des joueurs (avis,
+inscrits, actifs) viennent de la production et n'ont pas été relus.
 
 La scène des métiers ne raconte pas huit chaînes de fabrication mais **une
 seule boucle, montrée huit fois** : récolter, fabriquer, échanger, et une
@@ -131,13 +139,23 @@ dessin des écrans Codex, Forge et Inventaire. Le haut utilise `home-v1`, la
 clôture l'image `login.png` du jeu (servie en AVIF), et le Sertissage prend
 `objets-rares-v2`.
 
-La conquête passe par le **banc d'essai** du jeu, qui n'existe qu'en
-développement : un royaume de développement est au repos, et vingt-cinq
-territoires libres ne montrent rien de ce qui fait le jeu. Le script choisit un
-état — tenus, en siège, places prises —, puis cache le ruban et l'indicateur de
-Next avant la prise de vue. Le panneau de droite, lui, lit toujours le serveur :
-les deux vues de guilde n'ouvrent donc aucune fiche, qui dirait « libre » à côté
-d'un sol peint aux couleurs d'une maison.
+Depuis Rakorn 2.0, le jeu ne quitte plus l'accueil : chaque page est une
+**fenêtre** posée dessus (`/home?fenetre=marche`, `…=codex`…). Au bureau, la
+prise est cadrée sur la fenêtre seule — l'accueil assombri derrière et la barre
+du bas, avec leurs pastilles du moment, n'appartiennent pas à l'écran montré.
+Au téléphone, tenu debout, on garde l'écran entier. Avant chaque prise, le
+script referme ce qu'un compte reçoit en arrivant : la présentation, la visite
+guidée et les grandes annonces des proclamations non lues.
+
+La conquête est la fenêtre `conquete` : la carte du monde au bureau, une liste
+de zones au doigt. Au bureau, elle passe par le **banc d'essai** du jeu, qui
+n'existe qu'en développement — son rayon « Conquête » peint la carte (conflits,
+carte prise, tout à la fois) sans rien écrire — et la fiche d'un territoire
+s'ouvre par `__ouvrirLeTiroir`. Les cinq prises partagent le même cadrage : le
+script attend toutes les tuiles, et épuise d'abord la visite de la conquête,
+qui déplacerait la carte. La liste du téléphone, elle, ne lit pas le banc : ses
+vues montrent ce que la partie locale tient vraiment — les zones, une zone
+dépliée, la fiche d'un territoire tenu, disputé ou tenu par une autre maison.
 
 Il faut pour cela que la pile locale soit debout : Postgres et Redis
 (`docker compose up -d`, ports 5433 et 6380), l'API sur 3001, le jeu sur 3000.
@@ -150,7 +168,7 @@ script.
 Huit sections racontent des systèmes — la boucle des métiers, les rangs de
 gemmes, les paliers d'ensemble — avec les illustrations du jeu mais presque
 jamais ses écrans. On pouvait tout lire et n'avoir aucune idée de ce à quoi le
-jeu ressemble une fois ouvert. La galerie ne raconte rien : dix captures de
+jeu ressemble une fois ouvert. La galerie ne raconte rien : douze captures de
 pages réelles, en onglets, la capture servant de décor comme au marché.
 
 Elles portent les chiffres d'un personnage de niveau soixante — sac plein et
@@ -173,7 +191,7 @@ permis de partir dans son propre dépôt.
 
 Les chiffres sont relevés dans la base, objet par objet. Deux choses sont mises
 en scène et se voient : le nombre de pièces portées d'un ensemble, et les trois
-topazes serties sur la Lame du Serment. Aucun visiteur n'a de personnage ; il
+topazes serties sur le Marteau du Serment. Aucun visiteur n'a de personnage ; il
 fallait bien décider ce qu'il porte pour que les paliers et le sertissage aient
 quelque chose à montrer. Les valeurs, elles, restent celles du jeu.
 

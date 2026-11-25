@@ -39,8 +39,8 @@ export const SALLES_MARCHE: Salle[] = [
     titre: "Tout a un prix.",
     accent: "À vous de choisir.",
     texte:
-      "Parcourez les offres du comptoir et celles des joueurs. Comparez les prix, inspectez les objets et choisissez le bon moment pour acheter.",
-    reperes: ["COMPTOIR ET JOUEURS", "OFFRES À COMPARER", "PRIX DU MARCHÉ"],
+      "Parcourez les offres du comptoir et celles des joueurs, et comparez-les au prix du marché : il suit les vraies ventes entre joueurs, à la hausse comme à la baisse, et un « i » vous dit d'où il vient. La courbe des sept derniers jours dit le reste.",
+    reperes: ["COMPTOIR ET JOUEURS", "PRIX DES VENTES RÉELLES", "SEPT JOURS D'HISTORIQUE"],
   },
   {
     cle: "vendre",
@@ -51,8 +51,8 @@ export const SALLES_MARCHE: Salle[] = [
     titre: "Votre prix,",
     accent: "votre décision.",
     texte:
-      "Vous fixez votre prix, et personne ne peut vous en empêcher. La salle vous montre l'historique de l'objet, la meilleure offre du moment et ce que vous toucherez net — puis elle vous laisse aller contre le marché si vous le sentez.",
-    reperes: ["PRIX LIBRE", "HISTORIQUE À L'APPUI", "AUCUN FRAIS DE MISE"],
+      "Vous fixez votre prix. La salle vous montre l'historique de l'objet, la meilleure offre du moment et le prix proposé — puis elle vous laisse aller contre le marché si vous le sentez, jusqu'au double de la référence. Mettre en vente ne coûte rien.",
+    reperes: ["VOTRE PRIX", "HISTORIQUE À L'APPUI", "AUCUN FRAIS DE MISE"],
   },
   {
     cle: "mes-ventes",
@@ -68,15 +68,15 @@ export const SALLES_MARCHE: Salle[] = [
   },
   {
     cle: "commandes",
-    onglet: "Commandes",
+    onglet: "Ouvertes",
     fond: "/captures/marche-commandes.avif",
     fondMobile: "/captures/marche-commandes-mobile.avif",
     surtitre: SURTITRE,
     titre: "Gagnez de l'or",
     accent: "avec le métier des autres.",
     texte:
-      "La salle des Commandes rassemble les demandes ouvertes du royaume. Choisissez une pièce à fabriquer pour un autre joueur, puis suivez sa livraison et sa récompense.",
-    reperes: ["OUVERTES À TOUS", "L'ARTISAN SE PAIE", "REPRISE APRÈS 30 MIN"],
+      "La salle des Commandes rassemble les demandes du royaume, matières fournies. Une commande s'ouvre d'abord aux artisans de votre niveau, puis monte d'une bande toutes les dix minutes : ceux qui débutent ont leur part avant que le sommet ne rafle tout.",
+    reperes: ["PAR BANDE DE NIVEAU", "L'ARTISAN SE PAIE", "À TOUS APRÈS 30 MIN"],
   },
   {
     cle: "creer",
@@ -87,8 +87,8 @@ export const SALLES_MARCHE: Salle[] = [
     titre: "Faites faire",
     accent: "ce que vous ne savez pas faire.",
     texte:
-      "Choisissez la pièce dans un catalogue de 461, la quantité, et ce que vous offrez par unité. Fournissez les matières pour payer moins, ou laissez l'artisan s'en charger : dans les deux cas, quelqu'un s'en occupe pendant que vous jouez ailleurs.",
-    reperes: ["CATALOGUE DE 461", "COMMISSION LIBRE", "MATIÈRES AU CHOIX"],
+      "Choisissez la pièce dans un catalogue de 495 recettes, la quantité, l'œuvre minimale et ce que vous offrez par unité. Vous fournissez les matières, l'artisan son savoir-faire — et si c'est pressé, une commande urgente s'ouvre à tous d'un coup, pour un quart de commission en plus.",
+    reperes: ["CATALOGUE DE 495", "COMMISSION LIBRE", "COMMANDE URGENTE"],
   },
   {
     cle: "confier",
@@ -99,12 +99,12 @@ export const SALLES_MARCHE: Salle[] = [
     titre: "Confiez votre pièce.",
     accent: "Elle vous revient meilleure.",
     texte:
-      "Votre plastron a besoin d'une gravure que vous ne savez pas poser ? Confiez-le à un artisan qui la maîtrise. La pièce sort de votre sac, revient améliorée, et elle n'a jamais cessé de vous appartenir.",
-    reperes: ["LA PIÈCE RESTE À VOUS", "PAR MÉTIER", "ALLER-RETOUR"],
+      "Votre plastron a besoin d'une gravure que vous ne savez pas poser ? Confiez-le à un artisan qui la maîtrise. La pièce sort de votre sac, revient améliorée, et elle n'a jamais cessé de vous appartenir. Il faut qu'elle en vaille la peine : rare au moins, et de niveau 50.",
+    reperes: ["LA PIÈCE RESTE À VOUS", "DÈS LE NIVEAU 50", "ALLER-RETOUR"],
   },
   {
     cle: "traitements",
-    onglet: "Traitements",
+    onglet: "Mes traitements",
     fond: "/captures/marche-traitements.avif",
     fondMobile: "/captures/marche-traitements-mobile.avif",
     surtitre: SURTITRE,

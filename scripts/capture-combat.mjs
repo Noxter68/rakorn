@@ -42,7 +42,12 @@ try {
   const page = await bureau.newPage();
   await page.goto(`${jeu}/map`, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: /Continuer l.expédition/ }).first().click({ timeout: 20000 });
-  await page.getByRole("button", { name: "Combattre", exact: true }).click({ timeout: 10000 });
+  /* Une campagne terminée ouvre son dernier chapitre sur le boss, qui demande
+     un droit d'entrée : on prend la première créature de la rangée, qui n'en
+     demande pas, et le bouton dit alors « Affronter à nouveau ». */
+  await page.locator("button", { hasText: /^Vaincu\d/ }).first().click({ timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(800);
+  await page.getByRole("button", { name: /^(Combattre|Affronter à nouveau)$/ }).first().click({ timeout: 10000 });
   await page.waitForURL(/\/map\/fight\/[a-f0-9-]+/, { timeout: 20000 });
   missionId = page.url().match(/\/map\/fight\/([a-f0-9-]+)/)?.[1];
   await sauver(page, "ouverture-combat.avif", 1920);

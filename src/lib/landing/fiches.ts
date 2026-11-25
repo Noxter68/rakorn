@@ -13,7 +13,7 @@
  * mentirait se ferait démentir à la première pièce ramassée.
  *
  * Deux choses sont mises en scène, et se voient : le nombre de pièces portées
- * d'un ensemble, et les gemmes serties sur la Lame du Serment. Aucun visiteur
+ * d'un ensemble, et les gemmes serties sur le Marteau du Serment. Aucun visiteur
  * n'a de personnage ; il fallait bien décider ce qu'il porte pour que les
  * paliers et le sertissage aient quelque chose à montrer. Les valeurs, elles,
  * restent celles du jeu — trois topazes de rang V donnent bien cinq pour cent
@@ -58,32 +58,33 @@ export interface Fiche {
 /**
  * Les quatre paliers de l'Ensemble du Roi sous la Montagne.
  *
- * Relevés dans `ItemSetBonus` le 29 septembre 2026. Les chiffres d'avant
+ * Relevés dans `ItemSetBonus` le 25 novembre 2026 (et une première fois le
+ * 29 septembre). Les chiffres d'avant
  * dataient d'un barème que le jeu a quitté — soixante-cinq d'armure au
  * troisième palier, quand la base en donne dix-neuf : la vitrine promettait
  * trois fois ce qu'une pièce ramassée tiendrait.
  */
 const ROI: Palier[] = [
   { pieces: 3, label: "Armure", valeur: "+19" },
-  { pieces: 6, label: "Attaque", valeur: "+19" },
-  { pieces: 9, label: "Parade", valeur: "+10 %" },
-  { pieces: 12, label: "Vie max", valeur: "+116" },
+  { pieces: 6, label: "Attaque", valeur: "+38" },
+  { pieces: 9, label: "Parade", valeur: "+14 %" },
+  { pieces: 12, label: "Vie max", valeur: "+286" },
 ];
 
 /** Ceux de l'Ensemble des Sylves Éternelles. */
 const SYLVES: Palier[] = [
-  { pieces: 3, label: "Critique", valeur: "+7 %" },
-  { pieces: 6, label: "Attaque", valeur: "+15" },
-  { pieces: 9, label: "Armure", valeur: "+15" },
-  { pieces: 12, label: "Vie max", valeur: "+88" },
+  { pieces: 3, label: "Critique", valeur: "+3 %" },
+  { pieces: 6, label: "Attaque", valeur: "+24" },
+  { pieces: 9, label: "Armure", valeur: "+36" },
+  { pieces: 12, label: "Vie max", valeur: "+178" },
 ];
 
 /** Ceux de l'Ensemble du Serment. */
 const SERMENT: Palier[] = [
-  { pieces: 3, label: "Attaque", valeur: "+22" },
-  { pieces: 6, label: "Armure", valeur: "+22" },
-  { pieces: 9, label: "Critique", valeur: "+11 %" },
-  { pieces: 12, label: "Vie max", valeur: "+130" },
+  { pieces: 3, label: "Attaque", valeur: "+30" },
+  { pieces: 6, label: "Armure", valeur: "+60" },
+  { pieces: 9, label: "Critique", valeur: "+22 %" },
+  { pieces: 12, label: "Vie max", valeur: "+450" },
 ];
 
 export const FICHES: Record<string, Fiche> = {
@@ -96,16 +97,15 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Couronne du Roi sous la Montagne",
     rarete: "legendary",
     nature: "Casque",
-    metier: "Mineur niv. 57",
-    niveau: 57,
+    metier: "Mineur niv. 53",
+    niveau: 53,
     art: "/game/ressources/mining/craft/couronne-du-roi-sous-la-montagne.avif",
-    chasses: 2,
-    principale: { stat: "defense", valeur: 24 },
+    principale: { stat: "defense", valeur: 47 },
     secondaires: [
-      { stat: "attack", valeur: 8 },
+      { stat: "attack", valeur: 16 },
       { stat: "parade", valeur: 3 },
       { stat: "crit", valeur: 3 },
-      { stat: "hp", valeur: 32 },
+      { stat: "hp", valeur: 64 },
     ],
     durabilite: [119, 120],
     ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
@@ -114,15 +114,15 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Arc des Sylves Éternelles",
     rarete: "epic",
     nature: "Main gauche",
-    metier: "Bûcheron niv. 48",
-    niveau: 48,
+    metier: "Bûcheron niv. 45",
+    niveau: 45,
     art: "/game/ressources/armors/set-sylves_eternelles/arc_des_sylves_eternelles.avif",
     chasses: 2,
-    principale: { stat: "attack", valeur: 20 },
+    principale: { stat: "attack", valeur: 36 },
     secondaires: [
-      { stat: "defense", valeur: 7 },
-      { stat: "crit", valeur: 4 },
-      { stat: "hp", valeur: 17 },
+      { stat: "defense", valeur: 12 },
+      { stat: "crit", valeur: 3 },
+      { stat: "hp", valeur: 30 },
     ],
     durabilite: [100, 100],
     ensemble: { nom: "Ensemble des Sylves Éternelles", portees: 4, paliers: SYLVES },
@@ -131,14 +131,14 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Masse du Roi sous la Montagne",
     rarete: "legendary",
     nature: "Arme",
-    metier: "Forgeron niv. 55",
-    niveau: 55,
+    metier: "Forgeron niv. 50",
+    niveau: 50,
     art: "/game/ressources/armors/set-roi_sous_la_montagne/masse_du_roi_sous_la_montagne.avif",
     chasses: 3,
-    principale: { stat: "attack", valeur: 33 },
+    principale: { stat: "attack", valeur: 68 },
     secondaires: [
       { stat: "crit", valeur: 4 },
-      { stat: "hp", valeur: 24 },
+      { stat: "hp", valeur: 50 },
     ],
     durabilite: [120, 120],
     ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
@@ -147,13 +147,13 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Cape du Roi sous la Montagne",
     rarete: "legendary",
     nature: "Cape",
-    metier: "Couturier niv. 59",
-    niveau: 59,
+    metier: "Couturier niv. 52",
+    niveau: 52,
     art: "/game/ressources/armors/set-roi_sous_la_montagne/cape_du_roi_sous_la_montagne.avif",
-    principale: { stat: "defense", valeur: 21 },
+    principale: { stat: "defense", valeur: 40 },
     secondaires: [
-      { stat: "parade", valeur: 9 },
-      { stat: "hp", valeur: 63 },
+      { stat: "parade", valeur: 8 },
+      { stat: "hp", valeur: 117 },
     ],
     durabilite: [120, 120],
     ensemble: { nom: "Ensemble du Roi sous la Montagne", portees: 5, paliers: ROI },
@@ -162,12 +162,12 @@ export const FICHES: Record<string, Fiche> = {
     nom: "Anneau du Roi sous la Montagne",
     rarete: "legendary",
     nature: "Anneau",
-    metier: "Joaillier niv. 58",
-    niveau: 58,
+    metier: "Joaillier niv. 56",
+    niveau: 56,
     art: "/game/ressources/armors/set-roi_sous_la_montagne/anneau_du_roi_sous_la_montagne.avif",
-    principale: { stat: "attack", valeur: 23 },
+    principale: { stat: "attack", valeur: 48 },
     secondaires: [
-      { stat: "defense", valeur: 10 },
+      { stat: "defense", valeur: 22 },
       { stat: "crit", valeur: 10 },
     ],
     durabilite: [120, 120],
@@ -181,6 +181,14 @@ export const FICHES: Record<string, Fiche> = {
     niveau: 0,
     art: "/game/ressources/alchimist/elixir-de-regeneration-ancienne.avif",
   },
+  nectar_de_l_arbre_du_monde: {
+    nom: "Nectar de l'Arbre-Monde",
+    rarete: "legendary",
+    nature: "Potion",
+    metier: "Alchimiste niv. 60",
+    niveau: 0,
+    art: "/game/ressources/alchimist/nectar-de-arbre-monde.avif",
+  },
   coeur_d_architecte_runique: {
     nom: "Cœur d'architecte runique",
     rarete: "legendary",
@@ -188,10 +196,10 @@ export const FICHES: Record<string, Fiche> = {
     metier: "Ingénieur niv. 60",
     niveau: 60,
     art: "/game/ressources/enginering/coeur-architecte-runique.avif",
-    principale: { stat: "defense", valeur: 27 },
+    principale: { stat: "defense", valeur: 58 },
     secondaires: [
-      { stat: "parade", valeur: 9 },
-      { stat: "hp", valeur: 65 },
+      { stat: "parade", valeur: 10 },
+      { stat: "hp", valeur: 142 },
     ],
     durabilite: [120, 120],
   },
@@ -204,6 +212,26 @@ export const FICHES: Record<string, Fiche> = {
     art: "/game/ressources/logistician/sceau-des-routes-franches.avif",
     flavour:
       "Le cachet que reconnaissent les vingt-deux péages entre la Mine et les Marais. Il ne s'achète pas : il se mérite convoi après convoi, et il ouvre ce que l'or ne rouvre plus.",
+  },
+
+  tablee_du_trone: {
+    nom: "Tablée du Trône",
+    rarete: "epic",
+    nature: "Tablée",
+    metier: "Maître-queux niv. 58",
+    niveau: 0,
+    art: "/game/ressources/maitre-queux/banquets/tablee-du-trone.avif",
+    flavour:
+      "Posée au seuil de l'Ossuaire ou avant une expédition, elle fait cinq parts : chacun prend la sienne, et la garde deux heures.",
+  },
+  charte_specialisation: {
+    nom: "Charte de spécialisation",
+    rarete: "legendary",
+    nature: "Divers",
+    metier: "Logisticien niv. 60",
+    niveau: 0,
+    art: "/game/ressources/logistician/charte-de-specialisation.avif",
+    flavour: "Le parchemin qui ouvre un troisième métier à qui la signe. Seul le logisticien sait la rédiger.",
   },
 
   // ── De la mine à l'armure ───────────────────────────────────────────────
@@ -223,6 +251,30 @@ export const FICHES: Record<string, Fiche> = {
     niveau: 0,
     art: "/game/ressources/mining/lingo/lingo-de-fer.avif",
   },
+  fonte_grise: {
+    nom: "Fonte grise",
+    rarete: "uncommon",
+    nature: "Ressource",
+    metier: "Forgeron niv. 20",
+    niveau: 0,
+    art: "/game/ressources/forge/coulee-de-fonte-grise.avif",
+  },
+  fonte_de_fer: {
+    nom: "Fonte de fer",
+    rarete: "uncommon",
+    nature: "Ressource",
+    metier: "Mineur niv. 14",
+    niveau: 0,
+    art: "/game/ressources/mining/lingo/fonte-de-fer.avif",
+  },
+  lingot_de_fonte_grise: {
+    nom: "Lingot de fonte grise",
+    rarete: "uncommon",
+    nature: "Ressource",
+    metier: "Forgeron niv. 20",
+    niveau: 0,
+    art: "/game/ressources/forge/lingot-de-fonte-grise.avif",
+  },
   acier_trempe: {
     nom: "Acier trempé",
     rarete: "uncommon",
@@ -238,11 +290,10 @@ export const FICHES: Record<string, Fiche> = {
     metier: "Forgeron niv. 28",
     niveau: 28,
     art: "/game/ressources/forge/plastron_du_sentinelle.avif",
-    chasses: 1,
-    principale: { stat: "defense", valeur: 19 },
+    principale: { stat: "defense", valeur: 22 },
     secondaires: [
-      { stat: "parade", valeur: 2 },
-      { stat: "hp", valeur: 40 },
+      { stat: "parade", valeur: 1 },
+      { stat: "hp", valeur: 47 },
     ],
     durabilite: [80, 80],
   },
@@ -253,13 +304,12 @@ export const FICHES: Record<string, Fiche> = {
     metier: "Forgeron niv. 37",
     niveau: 37,
     art: "/game/ressources/forge/bouclier-du-bastion.avif",
-    chasses: 1,
-    principale: { stat: "defense", valeur: 20 },
+    principale: { stat: "defense", valeur: 25 },
     secondaires: [
-      { stat: "parade", valeur: 5 },
-      { stat: "hp", valeur: 16 },
+      { stat: "parade", valeur: 3 },
+      { stat: "hp", valeur: 20 },
     ],
-    durabilite: [100, 100],
+    durabilite: [80, 80],
   },
 
   // ── La panoplie du Serment ──────────────────────────────────────────────
@@ -271,12 +321,12 @@ export const FICHES: Record<string, Fiche> = {
     niveau: 60,
     art: "/game/ressources/armors/set-mythique/couronne_mythique.avif",
     chasses: 2,
-    principale: { stat: "defense", valeur: 28 },
+    principale: { stat: "defense", valeur: 78 },
     secondaires: [
-      { stat: "attack", valeur: 9 },
-      { stat: "parade", valeur: 5 },
-      { stat: "crit", valeur: 3 },
-      { stat: "hp", valeur: 40 },
+      { stat: "attack", valeur: 26 },
+      { stat: "parade", valeur: 7 },
+      { stat: "crit", valeur: 4 },
+      { stat: "hp", valeur: 111 },
     ],
     durabilite: [150, 150],
     ensemble: { nom: "Ensemble du Serment", portees: 4, paliers: SERMENT },
@@ -289,26 +339,26 @@ export const FICHES: Record<string, Fiche> = {
     niveau: 60,
     art: "/game/ressources/armors/set-mythique/plastron_mythique.avif",
     chasses: 3,
-    principale: { stat: "defense", valeur: 28 },
+    principale: { stat: "defense", valeur: 96 },
     secondaires: [
-      { stat: "parade", valeur: 4 },
-      { stat: "hp", valeur: 62 },
+      { stat: "parade", valeur: 6 },
+      { stat: "hp", valeur: 209 },
     ],
     durabilite: [150, 150],
     ensemble: { nom: "Ensemble du Serment", portees: 4, paliers: SERMENT },
   },
   lame_mythique: {
-    nom: "Lame du Serment",
+    nom: "Marteau du Serment",
     rarete: "mythic",
     nature: "Arme",
     metier: "Forgeron niv. 60",
     niveau: 60,
     art: "/game/ressources/armors/set-mythique/lame_mythique.avif",
     chasses: 3,
-    principale: { stat: "attack", valeur: 34 },
+    principale: { stat: "attack", valeur: 106 },
     secondaires: [
-      { stat: "crit", valeur: 6 },
-      { stat: "hp", valeur: 39 },
+      { stat: "crit", valeur: 10 },
+      { stat: "hp", valeur: 120 },
     ],
     durabilite: [150, 150],
     gemmes: [
@@ -343,10 +393,10 @@ export const FICHES: Record<string, Fiche> = {
     niveau: 60,
     art: "/game/ressources/armors/set-mythique/bouclier_mythique.avif",
     chasses: 2,
-    principale: { stat: "defense", valeur: 36 },
+    principale: { stat: "defense", valeur: 103 },
     secondaires: [
-      { stat: "parade", valeur: 10 },
-      { stat: "hp", valeur: 22 },
+      { stat: "parade", valeur: 14 },
+      { stat: "hp", valeur: 63 },
     ],
     durabilite: [150, 150],
     ensemble: { nom: "Ensemble du Serment", portees: 4, paliers: SERMENT },

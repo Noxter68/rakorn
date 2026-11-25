@@ -914,7 +914,7 @@ body {
     --fiche-debord: clamp(0px, (100vw - var(--lp-max)) / 2 - 3rem, 18rem);
   }
   /* L'échelle suit l'écran, et la hauteur autant que la largeur : la plus
-     haute des fiches — la Lame du Serment, gemmes, primes, paliers et poinçon —
+     haute des fiches — le Marteau du Serment, gemmes, primes, paliers et poinçon —
      fait six cent trente pixels à sa taille, et la colonne va de la barre au
      pied de page. */
   @media (max-width: 1499px), (max-height: 979px) {
@@ -958,6 +958,9 @@ body {
   }
   .rpg-lp-scene.is-fiche .rpg-lp-tabs {
     @apply shrink-0;
+    /* La colonne laissée par la fiche est plus étroite que l'écran : avec le
+       Maître-queux, neuf onglets n'y tenaient plus à l'écart ordinaire. */
+    gap: clamp(0.9rem, 1.4vw, 1.5rem);
   }
   /* La démonstration prend la hauteur qui reste et s'y centre. Les couches
      s'empilent dans une seule case de grille : la scène prend la hauteur de la

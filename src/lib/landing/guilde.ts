@@ -21,13 +21,13 @@ export const VOLETS_GUILDE: Volet[] = [
     titre: "Une cité",
     accent: "que vous bâtissez ensemble.",
     texte:
-      "Six bâtiments à financer en commun, et chacun rend son service à toute la guilde : l'entrepôt garde, le comptoir négocie, l'écurie raccourcit vos routes, la Tour des Contrats élargit vos commandes. Ce que vous versez profite à tout le monde, y compris à vous.",
+      "Six bâtiments à financer en commun, et chacun rend son service à toute la guilde : l'entrepôt garde, le comptoir négocie, l'écurie raccourcit vos routes, la Tour des Commandes élargit vos commandes. Ce que vous versez profite à tout le monde, y compris à vous.",
     reperes: ["6 BÂTIMENTS", "TRÉSORERIE COMMUNE", "RÔLES ET DROITS"],
     pieces: [
       { art: "/game/UI/guild/cite/hall-de-guilde.avif", nom: "Hall de guilde", palier: "" },
       { art: "/game/UI/guild/cite/enrtepot.avif", nom: "Entrepôt", palier: "" },
       { art: "/game/UI/guild/cite/comptoir-marchand.avif", nom: "Comptoir marchand", palier: "" },
-      { art: "/game/UI/guild/cite/citadelle.avif", nom: "Citadelle", palier: "" },
+      { art: "/game/UI/guild/cite/tour-des-contrats.avif", nom: "Tour des Commandes", palier: "" },
     ],
   },
   {
@@ -38,8 +38,8 @@ export const VOLETS_GUILDE: Volet[] = [
     titre: "Huit sorties",
     accent: "que vous mènerez ensemble.",
     texte:
-      "Chargez les caravanes, encaissez les imprévus de la route, partagez le butin au retour. La Nécropole des Rois Brisés et la Forge des Dieux Déchus se donnent à ceux qui viennent à plusieurs — et elles gardent le meilleur du jeu.",
-    reperes: ["8 EXPÉDITIONS", "EN GROUPE", "BUTIN PARTAGÉ"],
+      "Chargez les caravanes, encaissez les imprévus de la route, et au retour chacun tire son propre butin, droit dans son sac ; la maison garde sa part de l'or. Huit sorties à cinq, de plus en plus loin à mesure que la guilde grandit — jusqu'à la Salle des Deux Couronnes.",
+    reperes: ["8 EXPÉDITIONS", "À CINQ", "CHACUN SON BUTIN"],
     pieces: [
       { art: "/game/UI/guild/background/expeditions/caveau-de-cendre/caveau-de-cendre.avif", nom: "Caveau de Cendre", palier: "" },
       { art: "/game/UI/guild/background/expeditions/observatoir-noir/observatoir-noir.avif", nom: "Observatoire Noir", palier: "" },

@@ -18,7 +18,7 @@ import { Topnav } from "@/components/landing/topnav";
 export const metadata: Metadata = {
   title: "Rakorn — le RPG où l'économie appartient aux joueurs",
   description:
-    "Huit métiers, 461 objets, 313 recettes. Récoltez, forgez, vendez : à Rakorn, aucun marchand ne fixe les prix — c'est vous.",
+    "Huit métiers, 785 objets, 495 recettes. Récoltez, forgez, vendez : à Rakorn, ce sont les ventes entre joueurs qui font les prix.",
 };
 
 /**

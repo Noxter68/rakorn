@@ -7,10 +7,15 @@
  * ce qui attend. Montrer un écran de jeu dans sa propre disposition en dit
  * plus qu'un texte qui le décrirait dans une autre.
  *
- * **Les chiffres viennent de la base, un par un.** Vie, attaque, armure,
- * parade, expérience : relevés sur `CampaignMonster`, pas estimés. Un boss
- * dont on gonflerait les points de vie pour la vitrine se ferait démentir au
- * premier combat.
+ * **Les chiffres viennent du jeu, un par un.** Attaque, armure, parade et
+ * niveau attendu : relevés le 25 novembre 2026 sur l'API de campagne
+ * (`/campaign/zones/:zone/levels`), tels que l'écran les affiche. La vie
+ * vient de la migration `vie_des_boss_au_dessus` (6 novembre 2026), que le
+ * semis n'écrit pas — sauf celle de Malachar, qu'aucune migration récente ne
+ * touche. L'expérience est celle d'une première victoire, `xpBruteDeCombat`
+ * au niveau attendu : `xpAward` ne règle plus que l'or. Un boss dont on
+ * gonflerait les points de vie pour la vitrine se ferait démentir au premier
+ * combat.
  *
  * Les portraits sont peints avec leur fond — c'est ce qui les rendait
  * impossibles à poser en surimpression sur une scène. Dans un médaillon rond
@@ -47,9 +52,9 @@ export interface Boss {
    *
    * Ce n'est pas le rang dans la zone — tous les boss sont quinzièmes de la
    * leur, et écrire « niveau 15 » sur le Roi sous la Montagne annonçait un
-   * gobelin là où se tient ce qui clôt la campagne. C'est le niveau d'un joueur
-   * qui a battu tout ce qui précède une fois chacun, calculé sur l'expérience
-   * cumulée du bestiaire — voir `niveauxAttendus` côté API.
+   * gobelin là où se tient ce qui clôt la campagne. Il suit les bandes de
+   * niveau des terres (`SEUILS_TERRES`), le rang quinze tenant le haut de la
+   * sienne — voir `niveauxAttendus` côté API.
    */
   niveau: number;
   vie: number;
@@ -70,7 +75,7 @@ export const OUVERTURE = {
   chiffres: [
     { valeur: "8", quoi: "zones" },
     { valeur: "120", quoi: "créatures" },
-    { valeur: "8", quoi: "boss" },
+    { valeur: "24", quoi: "boss" },
   ],
 };
 
@@ -83,12 +88,12 @@ export const BOSS: Boss[] = [
     chapitre: "Chapitre I",
     fond: "/game/map/village-des-apprentis/village-des-apprentis.avif",
     art: "/game/map/village-des-apprentis/11-15/malachar-ombre.avif",
-    niveau: 5,
+    niveau: 6,
     vie: 204,
-    attaque: 17,
+    attaque: 38,
     armure: 22,
     parade: 10,
-    xp: 209,
+    xp: 220,
     traits: [
       { nom: "Rapide", art: "/game/UI/campagne/traits/rapide-2.avif", quoi: "Frappe avant qu'on ait fini de lever la garde." },
       { nom: "Spectral", art: "/game/UI/campagne/traits/spectral-2.avif", quoi: "L'acier le traverse à moitié." },
@@ -105,12 +110,12 @@ export const BOSS: Boss[] = [
     chapitre: "Chapitre III",
     fond: "/game/map/sylve-de-rouvre/sylve-de-rouvre.avif",
     art: "/game/map/sylve-de-rouvre/11-15/rouvre-ancien.avif",
-    niveau: 15,
-    vie: 1028,
-    attaque: 44,
-    armure: 51,
+    niveau: 20,
+    vie: 2550,
+    attaque: 58,
+    armure: 3,
     parade: 5,
-    xp: 288,
+    xp: 276,
     traits: [
       { nom: "Colossal", art: "/game/UI/campagne/traits/colossal-2.avif", quoi: "Trop grand pour qu'on l'encercle, trop lourd pour qu'il vous suive." },
       { nom: "Cuirassé", art: "/game/UI/campagne/traits/cuirasse-2.avif", quoi: "Plaques, écailles, chitine : les coups francs glissent." },
@@ -122,17 +127,17 @@ export const BOSS: Boss[] = [
   {
     cle: "fendeval",
     onglet: "Fendeval",
-    nom: "Fendeval, la Crue",
+    nom: "Fendeval, la crue",
     zone: "Gorges de Fendeval",
     chapitre: "Chapitre V",
     fond: "/game/map/gorges-de-fendeval/gorges-de-fendeval.avif",
     art: "/game/map/gorges-de-fendeval/11-15/fendeval-la-crue.avif",
-    niveau: 30,
-    vie: 2265,
-    attaque: 99,
-    armure: 89,
+    niveau: 36,
+    vie: 4970,
+    attaque: 121,
+    armure: 18,
     parade: 26,
-    xp: 546,
+    xp: 340,
     traits: [
       { nom: "Colossal", art: "/game/UI/campagne/traits/colossal-2.avif", quoi: "Trop grand pour qu'on l'encercle, trop lourd pour qu'il vous suive." },
       { nom: "Rapide", art: "/game/UI/campagne/traits/rapide-2.avif", quoi: "Frappe avant qu'on ait fini de lever la garde." },
@@ -144,17 +149,17 @@ export const BOSS: Boss[] = [
   {
     cle: "sombrefer",
     onglet: "Sombrefer",
-    nom: "Sombrefer, la Fournaise",
+    nom: "Sombrefer, la fournaise",
     zone: "Profondeurs de Sombrefer",
     chapitre: "Chapitre VII",
     fond: "/game/map/profondeurs-de-sombrefer/profondeurs-de-sombrefer.avif",
     art: "/game/map/profondeurs-de-sombrefer/11-15/sombrefer-la-fournaise.avif",
-    niveau: 48,
-    vie: 2463,
-    attaque: 120,
-    armure: 132,
+    niveau: 52,
+    vie: 6090,
+    attaque: 248,
+    armure: 20,
     parade: 33,
-    xp: 895,
+    xp: 404,
     traits: [
       { nom: "Colossal", art: "/game/UI/campagne/traits/colossal-2.avif", quoi: "Trop grand pour qu'on l'encercle, trop lourd pour qu'il vous suive." },
       { nom: "Ignifugé", art: "/game/UI/campagne/traits/ignifuge-2.avif", quoi: "Le feu ne lui fait rien, et il en porte souvent." },
@@ -171,12 +176,12 @@ export const BOSS: Boss[] = [
     chapitre: "Chapitre VIII",
     fond: "/game/map/trone-sous-la-montagne/trone-sous-la-montagne.avif",
     art: "/game/map/trone-sous-la-montagne/11-15/le-roi-sous-la-montagne.avif",
-    niveau: 58,
-    vie: 3028,
-    attaque: 150,
-    armure: 164,
+    niveau: 60,
+    vie: 5770,
+    attaque: 395,
+    armure: 66,
     parade: 53,
-    xp: 1165,
+    xp: 436,
     traits: [
       { nom: "Colossal", art: "/game/UI/campagne/traits/colossal-2.avif", quoi: "Trop grand pour qu'on l'encercle, trop lourd pour qu'il vous suive." },
       { nom: "Cuirassé", art: "/game/UI/campagne/traits/cuirasse-2.avif", quoi: "Plaques, écailles, chitine : les coups francs glissent." },

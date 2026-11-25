@@ -3,34 +3,33 @@ import type { Onglet } from "./types";
 /**
  * La conquête du royaume, en cinq vues de la carte.
  *
- * ── Pourquoi elle a pris la place de la carte interactive ─────────────────
+ * ── Ce qu'elle est depuis Rakorn 2.0 ──────────────────────────────────────
  *
- * La section racontait une carte qu'on parcourait à la molette, où les filons
- * changeaient de place à chaque rotation. Le jeu n'a plus cette carte :
- * l'atlas est devenu un registre de terres, et la seule carte qui reste est
- * celle de la conquête — vingt-cinq territoires qu'on tient un temps, seul ou
- * en guilde. Garder l'ancienne section, c'était promettre un écran qu'aucun
- * joueur ne trouverait. Les avis, les chantiers et les coffres, qui y avaient
- * leurs onglets, sont partis avec elle : ce sont des gestes de l'atlas, plus
- * des points sur une carte.
+ * La conquête est la fenêtre « Conquête » du jeu, sur la carte du monde :
+ * cent onze territoires en huit zones (3, 3, 3, 5, 7, 30, 20, 40), et Rakorn
+ * au milieu (`territoires-de-la-carte.json`). Ils se prennent **en guilde**
+ * et par **objectifs** — vaincre des créatures de la zone, récolter à ses
+ * gisements aux Métiers, parfois abattre son seigneur —, et se tiennent
+ * jusqu'à ce qu'une autre maison les reprenne (`shared/conquete.ts`). Plus
+ * de situations, d'apports d'objets, de places personnelles, de durée de
+ * contrôle ni de fenêtres de siège : la version précédente de cette scène
+ * les décrivait toutes, et un visiteur les aurait cherchées en vain.
  *
  * ── L'écran est le décor, et il ne bouge pas d'une vue à l'autre ──────────
  *
- * Comme la galerie, la capture sert de fond. Les cinq prises
- * (`pnpm captures conquete`) partagent le même cadrage au pixel : changer
- * d'onglet fait changer la carte **sur place** — les couleurs passent, les
- * bannières se lèvent, le rouge d'un siège monte —, et c'est ce changement
- * qui apprend à la lire. Les états viennent du banc d'essai du jeu : un
- * royaume de développement est au repos, et vingt-cinq territoires libres
- * n'auraient rien montré.
+ * Les cinq prises de bureau (`pnpm captures conquete`) partagent le même
+ * cadrage au pixel : changer d'onglet fait changer la carte **sur place**.
+ * Les états viennent du banc d'essai du jeu ; au téléphone, la liste montre
+ * l'état réel de la partie locale. Les clefs des onglets sont celles des
+ * fichiers de capture, d'où « solo » pour la vue qui montre la prise.
  *
  * ── Peu de mots ───────────────────────────────────────────────────────────
  *
- * Chaque vue répond à une seule question — qu'est-ce que c'est, j'y joue
- * seul, j'y joue en guilde, est-ce que je peux le perdre, qu'est-ce que ça
- * rapporte — en trois phrases au plus. Les chiffres sont ceux de
- * `shared/conquete.ts` : dix places, deux par joueur, huit heures seul, seize
- * en guilde, quatre de répit, des fenêtres de huit.
+ * Chaque vue répond à une seule question — qu'est-ce que c'est, comment on
+ * prend, combien de temps on garde, est-ce qu'on peut le perdre, qu'est-ce
+ * que ça rapporte — en trois phrases au plus. Les chiffres sont ceux de
+ * `shared/conquete.ts` : vingt effets, du simple au double de la zone 1 à la
+ * 8, une attaque à une fois et demie, la dîme d'un dixième.
  */
 export const VUES_CONQUETE: Onglet[] = [
   {
@@ -39,47 +38,47 @@ export const VUES_CONQUETE: Onglet[] = [
     fond: "/captures/conquete-royaume.avif",
     fondMobile: "/captures/conquete-royaume-mobile.avif",
     surtitre: "07 — La conquête du royaume",
-    titre: "Vingt-cinq territoires,",
+    titre: "Cent onze territoires,",
     accent: "un seul royaume.",
     texte:
-      "Au-dessus de l'atlas, une carte à prendre. Chaque territoire traverse une situation — famine, hiver, infestation — et réclame ce que vous savez faire : vos pièces, de l'or, des bêtes abattues. Les couleurs disent qui tient quoi ; les régions sombres, celles que la campagne ne vous a pas encore ouvertes.",
-    reperes: ["25 TERRITOIRES", "8 SITUATIONS", "UN CLASSEMENT PAR SEMAINE"],
+      "La conquête se joue sur la carte du monde : huit zones découpées en territoires, et Rakorn au milieu. Les couleurs disent qui tient quoi — bleu pour votre maison, rouge pour ce qui se dispute, or pour ce que vous êtes en train de prendre ; les zones que la campagne ne vous a pas encore ouvertes restent dans le brouillard.",
+    reperes: ["111 TERRITOIRES", "8 ZONES", "UN CLASSEMENT PAR SEMAINE"],
   },
   {
     cle: "solo",
-    onglet: "En solo",
+    onglet: "Prendre",
     fond: "/captures/conquete-solo.avif",
     fondMobile: "/captures/conquete-solo-mobile.avif",
     surtitre: "07 — La conquête du royaume",
-    titre: "Seul,",
-    accent: "vous tenez votre place.",
+    titre: "Une terre se prend,",
+    accent: "elle ne s'achète pas.",
     texte:
-      "Huit points stratégiques, dix places chacun. Apportez vous-même ce que le lieu réclame, prenez votre place, et gardez son bonus huit heures. Deux à la fois, sans guilde : un joueur seul compte sur la carte.",
-    reperes: ["8 POINTS STRATÉGIQUES", "10 PLACES", "8 H DE CONTRÔLE"],
+      "Engagez-vous sur un territoire, et chaque victoire en campagne dans sa zone, chaque récolte à ses gisements fait avancer votre maison. Certains demandent aussi la tête de leur seigneur. La première maison qui achève tout l'emporte.",
+    reperes: ["EN GUILDE", "CAMPAGNE ET RÉCOLTE", "UN TERRITOIRE À LA FOIS"],
   },
   {
     cle: "guilde",
-    onglet: "En guilde",
+    onglet: "Tenir",
     fond: "/captures/conquete-guilde.avif",
     fondMobile: "/captures/conquete-guilde-mobile.avif",
     surtitre: "07 — La conquête du royaume",
-    titre: "En guilde,",
-    accent: "on prend des régions.",
+    titre: "Ce qu'on tient,",
+    accent: "on le garde.",
     texte:
-      "La capitale, les sièges et les bastions se prennent à plusieurs : une jauge commune, où chacun verse la pièce de son métier. La maison en tête d'influence l'emporte à la dernière unité ; chacun touche sa part, pesée à ce qu'il a porté, et la maison battue repart avec le quart.",
-    reperes: ["17 TERRITOIRES", "16 H DE CONTRÔLE", "PART AU MÉRITE"],
+      "Pas d'horloge, pas de bail : une maison tient son territoire tant qu'une autre ne le lui reprend pas. Chaque terre verse son tribut au trésor tous les jours, et prélève la dîme — un dixième de ce que les autres y récoltent et y gagnent.",
+    reperes: ["SANS LIMITE DE DURÉE", "TRIBUT QUOTIDIEN", "DÎME DE 10 %"],
   },
   {
     cle: "siege",
-    onglet: "Le siège",
+    onglet: "Le conflit",
     fond: "/captures/conquete-siege.avif",
     fondMobile: "/captures/conquete-siege-mobile.avif",
     surtitre: "07 — La conquête du royaume",
-    titre: "Ce qu'on tient,",
+    titre: "Ce que vous tenez,",
     accent: "d'autres le convoitent.",
     texte:
-      "Une maison rivale peut remplir une jauge de siège sur votre terre : pleine, le territoire change de main sur-le-champ. Le répit, la fortification et l'horloge vous défendent — la jauge retombe à chaque nouvelle fenêtre, et tenir bon ne demande pas d'être devant l'écran.",
-    reperes: ["4 H DE RÉPIT", "3 CRANS DE FORTIFICATION", "FENÊTRES DE 8 H"],
+      "Une maison rivale peut s'engager sur votre terre : ses objectifs y comptent une fois et demie, et quand elle les achève, le territoire change de main sur-le-champ. On ne monte pas la garde — on reprend.",
+    reperes: ["OBJECTIFS × 1,5", "CHANGE DE MAIN SUR-LE-CHAMP", "EN CONFLIT SUR LA CARTE"],
   },
   {
     cle: "bonus",
@@ -90,7 +89,7 @@ export const VUES_CONQUETE: Onglet[] = [
     titre: "Ce que la terre",
     accent: "vous rapporte.",
     texte:
-      "Chaque territoire a sa signature : plus de récolte, une taxe de marché plus douce, de l'expérience à l'établi, de l'or et de l'attaque en campagne. Tant que vous le tenez, chaque écran qu'il touche montre la valeur d'avant et celle d'après. Les bonus de maison vont aux caravanes, à la cité et aux expéditions.",
-    reperes: ["20 EFFETS", "25 SIGNATURES", "AVANT → APRÈS"],
+      "Chaque territoire porte un effet : plus de récolte, une taxe de marché plus douce, de l'expérience à l'établi, de l'or et de l'attaque en campagne, des caravanes et des expéditions plus fructueuses. Il profite à toute la maison, et vaut deux fois plus au fond du royaume qu'à ses portes. Tenez Rakorn, et chaque membre reçoit 3 000 or par semaine.",
+    reperes: ["20 EFFETS", "TOUTE LA MAISON", "3 000 OR PAR SEMAINE"],
   },
 ];

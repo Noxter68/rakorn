@@ -1,7 +1,14 @@
 import type { Onglet, Piece, Repere } from "./types";
 
 /**
- * Les huit métiers, et la boucle du jeu montrée huit fois.
+ * Les huit métiers, le Maître-queux en annexe, et la boucle du jeu montrée
+ * neuf fois.
+ *
+ * Le Maître-queux n'est pas un neuvième métier : il ne se choisit pas à la
+ * naissance, ne prend la place d'aucun autre, et tout héros l'apprend dès le
+ * niveau 10 (`METIERS_ANNEXES`, proclamation « Le Maître-queux passe à
+ * table »). Les chiffres disent donc toujours huit métiers ; l'onglet, lui,
+ * le montre, parce que c'est le seul dont tout le monde se sert.
  *
  * **La scène ne montre plus que la boucle.** Elle portait aussi un réseau —
  * le métier au centre d'un cercle, quatre voisins reliés par des fils — et ce
@@ -53,20 +60,27 @@ export const ETAPES_METIER = [
 /**
  * La quatrième marche, qui dépend du métier.
  *
- * Seuls cinq métiers fabriquent des pièces d'ensemble — mineur, bûcheron,
- * forgeron, couturier, joaillier, relevés dans les recettes dont la pièce
- * appartient à un `ItemSet`. Écrire « Complétez l'ensemble » sous un élixir
- * ou un sceau de route promettait une panoplie que l'alchimiste ne fabriquera
- * jamais. Les trois autres visent leur pièce d'exception.
+ * Seuls cinq métiers fabriquent des pièces des ensembles permanents —
+ * mineur, bûcheron, forgeron, couturier, joaillier, relevés dans les recettes
+ * dont la pièce appartient à un `ItemSet`. (Le Harnois des Âges Oubliés, un
+ * événement, en confie aussi à l'ingénieur et à l'alchimiste ; il passe.)
+ * Écrire « Complétez l'ensemble » sous un nectar ou une charte promettait une
+ * panoplie que ces métiers ne fabriquent pas. Les trois autres visent leur
+ * pièce légendaire — une vraie, relevée en base.
  */
 export const FINALES = {
   ensemble: "Complétez l'ensemble",
   legendaire: "Visez le légendaire",
+  /* Le Maître-queux ne fait ni ensemble ni légendaire : son sommet est la
+     tablée, un grand plat de cinq parts qu'on partage avant l'Ossuaire ou une
+     expédition. */
+  tablee: "Dressez la tablée",
 } as const;
 
 /** Les quatre marches d'un métier, dans l'ordre où elles se lisent. */
 export function etapesDe(metier: Metier): string[] {
-  return [...ETAPES_METIER, FINALES[metier.finale]];
+  const [premiere, ...suite] = ETAPES_METIER;
+  return [metier.premiere ?? premiere, ...suite, FINALES[metier.finale]];
 }
 
 /**
@@ -80,7 +94,7 @@ export function etapesDe(metier: Metier): string[] {
 export const CHIFFRES_METIERS: Repere[] = [
   { art: "/game/UI/navigation-v4/metiers.avif", valeur: "8", quoi: "métiers" },
   { art: "/game/UI/pages/inventaire/sections/experience-v2.avif", valeur: "60", quoi: "niveaux chacun" },
-  { art: "/game/UI/navigation-v4/codex.avif", valeur: "313", quoi: "recettes" },
+  { art: "/game/UI/navigation-v4/codex.avif", valeur: "495", quoi: "recettes" },
   { art: "/game/UI/pages/inventaire/sections/divers-v2.avif", valeur: "Économie", quoi: "de joueurs" },
 ];
 
@@ -98,6 +112,12 @@ export interface Metier extends Onglet {
    * paliers d'ensemble : aucun texte ne rend cela, la fiche le rend en entier.
    */
   fiche: string;
+  /**
+   * La première marche, quand « Récoltez la matière » serait faux : le
+   * logisticien ne récolte rien (« Ne récolte rien : il transforme », dit le
+   * jeu), il achète la sienne.
+   */
+  premiere?: string;
 }
 
 export const METIERS: Metier[] = [
@@ -111,7 +131,7 @@ export const METIERS: Metier[] = [
     titre: "Tout ce qui se forge",
     accent: "commence par vous.",
     texte:
-      "Cent onze filons vous attendent, du banc de pierre au gisement d'obsidienne. Fondez ce que vous en tirez, vendez-le au forgeron qui l'attend : votre lingot devient son épée, et son épée vous rapporte. Sept autres métiers ont besoin du vôtre.",
+      "Seize filons, de la pierre au mithril, qui se récoltent depuis la fenêtre des Métiers pendant que vous jouez ailleurs. Fondez ce que vous en tirez, vendez-le au forgeron qui l'attend : votre lingot devient son épée, et son épée vous rapporte. Sept autres métiers ont besoin du vôtre.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/mining/veins/filon-de-fer.avif", nom: "Filon de fer", palier: "Extrait" },
@@ -134,7 +154,7 @@ export const METIERS: Metier[] = [
     titre: "Quinze essences,",
     accent: "et tout le reste tient debout.",
     texte:
-      "Du pin des lisières au bois-fer des forêts profondes. Vos planches deviennent des arcs, des pavois, des caisses de convoi : il n'y a pas un chantier du royaume qui se passe de vous, et vous fixez votre prix.",
+      "Du pin des lisières au bois-fer des forêts profondes. Vos planches deviennent des arcs, des pavois, des caisses de convoi : il n'y a pas un chantier du royaume qui se passe de vous, et ce sont vos ventes qui font le prix du bois.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/wood/chene.avif", nom: "Chêne", palier: "Abattu" },
@@ -157,7 +177,7 @@ export const METIERS: Metier[] = [
     titre: "Ce que vous forgez,",
     accent: "d'autres le porteront.",
     texte:
-      "Du plastron de mailles à la panoplie de douze pièces. Votre acier part au combat sur les épaules d'un autre, garde les châsses qu'un joaillier viendra remplir, et revient chez vous quand il faut le réparer. Le métier le plus demandé du royaume.",
+      "Du plastron de mailles à la panoplie de douze pièces. Votre acier part au combat sur les épaules d'un autre, et garde les châsses qu'un joaillier viendra remplir. Votre maîtrise décide de chaque exemplaire : honnête, royal, ou chef-d'œuvre — et un chef-d'œuvre se vend jusqu'au double.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/forge/cendre-de-forge.avif", nom: "Cendre de forge", palier: "Récupérée" },
@@ -178,9 +198,9 @@ export const METIERS: Metier[] = [
     fond: FOND_METIERS,
     surtitre: "02 — Les métiers",
     titre: "Plus de place au sac,",
-    accent: "plus de chemin dans la journée.",
+    accent: "plus de butin au retour.",
     texte:
-      "Capes, sacoches et bottes légères. Vous décidez de ce que les autres peuvent rapporter d'une expédition et de la vitesse à laquelle ils rentrent — deux choses dont personne ne se passe, et qu'on rachète à chaque palier.",
+      "Capes, sacoches et bottes légères. Les plus grands sacs du royaume sortent de votre atelier, jusqu'à trente places : vous décidez de ce que les autres peuvent rapporter, et c'est une chose dont personne ne se passe, qu'on rachète à chaque palier.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/suing/laine-brut.avif", nom: "Laine brute", palier: "Récoltée" },
@@ -203,7 +223,7 @@ export const METIERS: Metier[] = [
     titre: "Vos pierres finissent",
     accent: "sur l'équipement de tous.",
     texte:
-      "Seize gemmes à extraire, cinq rangs de taille, et toutes les châsses du royaume à remplir. Trois pierres de même couleur sur une pièce accordent leur harmonie et ajoutent leur prime : c'est vous qui décidez de la couleur d'un personnage.",
+      "Seize filons à extraire, six couleurs de gemmes, cinq rangs de taille, et les châsses des grandes pièces à remplir. Une pièce dont toutes les pierres sont de la même couleur s'accorde et ajoute sa prime : c'est vous qui décidez de la couleur d'un personnage.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/jewelery/filon/filon-de-rubis-brut.avif", nom: "Filon de rubis", palier: "Brut" },
@@ -218,23 +238,23 @@ export const METIERS: Metier[] = [
   },
   {
     cle: "alchimiste",
-    fiche: "elixir_de_regeneration_ancienne",
+    fiche: "nectar_de_l_arbre_du_monde",
     finale: "legendaire",
     onglet: "Alchimiste",
     fond: FOND_METIERS,
     surtitre: "02 — Les métiers",
-    titre: "Le seul métier",
-    accent: "dont la clientèle revient.",
+    titre: "Ce que vous vendez",
+    accent: "se boit avant chaque boss.",
     texte:
-      "Plantes, mousses et rosées deviennent extraits ; les extraits deviennent potions. Ce que vous vendez se boit et disparaît : vos clients reviennent avant le prochain boss, et ils reviendront toujours.",
+      "Plantes, mousses et rosées deviennent extraits ; les extraits deviennent potions. Ce que vous vendez se boit et disparaît : vos clients reviennent avant le prochain boss, et ils reviendront toujours. Au sommet, le Nectar de l'Arbre-Monde, que même les écuries de la cité de guilde réclament.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/alchimist/racine-rouge.avif", nom: "Racine rouge", palier: "Cueillie" },
       { art: "/game/ressources/alchimist/extrait-de-valeriane.avif", nom: "Extrait de valériane", palier: "Distillé" },
       { art: "/game/ressources/alchimist/potion-de-soin-majeure.avif", nom: "Potion de soin majeure", palier: "Brassée" },
       {
-        art: "/game/ressources/alchimist/elixir-de-regeneration-ancienne.avif",
-        nom: "Élixir de régénération ancienne",
+        art: "/game/ressources/alchimist/nectar-de-arbre-monde.avif",
+        nom: "Nectar de l'Arbre-Monde",
         palier: "Légendaire",
       },
     ],
@@ -249,7 +269,7 @@ export const METIERS: Metier[] = [
     titre: "Repoussez la limite",
     accent: "que tout le monde subit.",
     texte:
-      "Engrenages, noyaux, lentilles. Vous relevez des pièces usées et vous en faites des mécanismes de précision — dont les sacs. Chaque emplacement que vous ajoutez, c'est une récolte de plus pour celui qui l'achète.",
+      "Engrenages, noyaux, lentilles. Vous relevez des pièces usées et vous en faites des mécanismes de précision : des sacs, et les trousses dont chacun se sert pour réparer son équipement à la Forge. Chaque emplacement que vous ajoutez, c'est une récolte de plus pour celui qui l'achète.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/enginering/engrenage-use.avif", nom: "Engrenage usé", palier: "Récupéré" },
@@ -264,24 +284,49 @@ export const METIERS: Metier[] = [
   },
   {
     cle: "logisticien",
-    fiche: "sceau_des_routes_franches",
+    fiche: "charte_specialisation",
     finale: "legendaire",
+    premiere: "Achetez la matière",
     onglet: "Logisticien",
     fond: FOND_METIERS,
     surtitre: "02 — Les métiers",
     titre: "Faites circuler",
     accent: "ce que les autres produisent.",
     texte:
-      "Caravanes, convois et sceaux de route. Vous achetez où c'est abondant, vous vendez où c'est rare, et la marge est à vous. Le seul métier qui gagne sur la géographie plutôt que sur l'établi.",
+      "Caravanes, convois et sceaux de route : vous ne récoltez rien, vous transformez. Vos caravanes portent les expéditions de la guilde, vos mandats de prime rendent chaque butin de l'Ossuaire plus probable, et votre Charte de spécialisation ouvre un troisième métier à qui la signe.",
     chiffres: CHIFFRES_METIERS,
     chaine: [
       { art: "/game/ressources/logistician/cordage-tresse.avif", nom: "Cordage tressé", palier: "Tressé" },
       { art: "/game/ressources/logistician/caisse-de-transport.avif", nom: "Caisse de transport", palier: "Assemblée" },
       { art: "/game/ressources/logistician/caravane-legere.avif", nom: "Caravane légère", palier: "Attelée" },
       {
-        art: "/game/ressources/logistician/sceau-des-routes-franches.avif",
-        nom: "Sceau des routes franches",
+        art: "/game/ressources/logistician/charte-de-specialisation.avif",
+        nom: "Charte de spécialisation",
         palier: "Légendaire",
+      },
+    ],
+  },
+  {
+    cle: "maitre-queux",
+    fiche: "tablee_du_trone",
+    finale: "tablee",
+    premiere: "Pêchez la prise",
+    onglet: "Maître-queux",
+    fond: FOND_METIERS,
+    surtitre: "02 — Les métiers · le métier annexe",
+    titre: "Une épée dure des semaines,",
+    accent: "un repas, une soirée.",
+    texte:
+      "Le métier annexe, ouvert à tous dès le niveau 10, en plus des vôtres. Pêchez dans seize eaux du royaume, cuisinez à la marmite avec le gibier que rapportent les combattants : un héros rassasié est plus solide ou plus dangereux, de 5 à 12 %, pendant une à deux heures, dans chaque combat qu'il livre.",
+    chiffres: CHIFFRES_METIERS,
+    chaine: [
+      { art: "/game/ressources/maitre-queux/peche/goujon-des-gues.avif", nom: "Goujon des gués", palier: "Pêché" },
+      { art: "/game/ressources/maitre-queux/preparations/bouillon-clair.avif", nom: "Bouillon clair", palier: "Mijoté" },
+      { art: "/game/ressources/maitre-queux/plats/soupe-de-goujons.avif", nom: "Soupe de goujons", palier: "Servie" },
+      {
+        art: "/game/ressources/maitre-queux/banquets/tablee-du-trone.avif",
+        nom: "Tablée du Trône",
+        palier: "Épique",
       },
     ],
   },

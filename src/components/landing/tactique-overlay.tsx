@@ -100,7 +100,7 @@ export function TactiqueOverlay({ tactique }: { tactique: Tactique }) {
                 className="object-contain"
               />
             </span>
-            5 compétences emportées sur 22
+            5 techniques emportées sur 36
           </li>
           <li>
             <span className="rpg-lp-rota-ico">

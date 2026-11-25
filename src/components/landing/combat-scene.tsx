@@ -2,7 +2,7 @@ import { TACTIQUES } from "@/lib/landing/combat";
 import { TabbedScene } from "./tabbed-scene";
 import { TactiqueOverlay } from "./tactique-overlay";
 
-/** Le combat : quatre manières d'entrer, quatre coups pour chacune. */
+/** Le combat : les quatre familles de techniques du jeu, quatre coups pour chacune. */
 export function CombatScene() {
   return (
     <TabbedScene
